@@ -26,6 +26,7 @@
             <ImageView
                 android:layout_width="70dp"
                 android:layout_height="70dp"
+                android:layout_marginRight="5dp"
                 android:contentDescription="扫描" />
 
             <LinearLayout
@@ -37,16 +38,17 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:maxLines="1"
-                    android:text="扫描"
+                    android:text="扫描SD卡"
                     android:textColor="#333333"
                     android:textSize="25sp" />
 
                 <TextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:paddingTop="5dp"
                     android:text="汇总SD卡中的文件信息"
                     android:textColor="#666666"
-                    android:textSize="16sp" />
+                    android:textSize="14sp" />
             </LinearLayout>
         </LinearLayout>
     </android.support.v7.widget.CardView>
@@ -70,6 +72,7 @@
             <ImageView
                 android:layout_width="70dp"
                 android:layout_height="70dp"
+                android:layout_marginRight="5dp"
                 android:contentDescription="白名单" />
 
             <LinearLayout
@@ -88,9 +91,10 @@
                 <TextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:paddingTop="5dp"
                     android:text="单独指定不被清理的文件或文件夹"
                     android:textColor="#666666"
-                    android:textSize="16sp" />
+                    android:textSize="14sp" />
             </LinearLayout>
         </LinearLayout>
     </android.support.v7.widget.CardView>
@@ -114,6 +118,7 @@
             <ImageView
                 android:layout_width="70dp"
                 android:layout_height="70dp"
+                android:layout_marginRight="5dp"
                 android:contentDescription="黑名单" />
 
             <LinearLayout
@@ -132,9 +137,56 @@
                 <TextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:paddingTop="5dp"
                     android:text="单独指定需要被清理的文件或文件夹"
                     android:textColor="#666666"
-                    android:textSize="16sp" />
+                    android:textSize="14sp" />
+            </LinearLayout>
+        </LinearLayout>
+    </android.support.v7.widget.CardView>
+
+    <android.support.v7.widget.CardView
+        android:id="@+id/cardview_set"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="5dp"
+        android:foreground="?android:selectableItemBackground"
+        app:cardBackgroundColor="#af88e6"
+        app:cardElevation="5dp"
+        app:contentPadding="10dp">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center_vertical"
+            android:orientation="horizontal">
+
+            <ImageView
+                android:layout_width="70dp"
+                android:layout_height="70dp"
+                android:layout_marginRight="5dp"
+                android:contentDescription="设置" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:maxLines="1"
+                    android:text="设置"
+                    android:textColor="#333333"
+                    android:textSize="25sp" />
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:paddingTop="5dp"
+                    android:text="进行一些基本设置"
+                    android:textColor="#666666"
+                    android:textSize="14sp" />
             </LinearLayout>
         </LinearLayout>
     </android.support.v7.widget.CardView>
