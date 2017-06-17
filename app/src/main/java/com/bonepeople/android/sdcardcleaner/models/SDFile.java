@@ -4,6 +4,8 @@ import com.bonepeople.android.sdcardcleaner.utils.FileScanUtil;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Comparator;
 
 /**
  * SD卡中文件的数据模型
@@ -22,14 +24,14 @@ public class SDFile {
 
     public SDFile(SDFile _parent, File _file) {
         if (_file.isDirectory()) {
-            File[] _files = _file.listFiles();
+            File[] _files = sortFile(_file.listFiles());
             if (_files != null)
                 for (File _child : _files) {
-                    if (_child == null) {
-                    } else if (FileScanUtil.get_state() == FileScanUtil.STATE_SCANING)
-                        _children.add(new SDFile(this, _child));
-                    else
-                        break;
+                    if (_child != null)
+                        if (FileScanUtil.get_state() == FileScanUtil.STATE_SCANING)
+                            _children.add(new SDFile(this, _child));
+                        else
+                            break;
                 }
             if (_parent != null)
                 _parent.updateSize(_size);
@@ -44,8 +46,34 @@ public class SDFile {
         _path = _file.getAbsolutePath();
     }
 
+    private File[] sortFile(File[] _files) {
+        if (_files != null) {
+            Arrays.sort(_files, new Comparator<File>() {
+                @Override
+                public int compare(File _file1, File _file2) {
+                    if (_file1.isDirectory() && _file2.isDirectory()) {
+                        return _file1.getName().compareToIgnoreCase(_file2.getName());
+                    } else {
+                        if (_file1.isDirectory() && _file2.isFile()) {
+                            return -1;
+                        } else if (_file1.isFile() && _file2.isDirectory()) {
+                            return 1;
+                        } else {
+                            return _file1.getName().compareToIgnoreCase(_file2.getName());
+                        }
+                    }
+                }
+            });
+        }
+        return _files;
+    }
+
     public void updateSize(long _fileSize) {
         _size += _fileSize;
+    }
+
+    public String get_name() {
+        return _name;
     }
 
     public long get_size() {
