@@ -80,8 +80,8 @@ public class Activity_scan extends AppCompatActivity implements View.OnClickList
 
                 break;
             case R.id.button_show:
-//                startActivity(new Intent(Activity_scan.this, Activity_list_file.class));
-//                finish();
+                startActivity(new Intent(Activity_scan.this, Activity_list_file.class));
+                finish();
                 break;
         }
     }

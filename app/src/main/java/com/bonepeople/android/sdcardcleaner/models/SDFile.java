@@ -1,6 +1,7 @@
 package com.bonepeople.android.sdcardcleaner.models;
 
 import com.bonepeople.android.sdcardcleaner.utils.FileScanUtil;
+import com.bonepeople.android.sdcardcleaner.utils.NumberUtil;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -80,7 +81,31 @@ public class SDFile {
         return _size;
     }
 
+    public int get_sizePercent() {
+        if (_parent != null) {
+            SDFile _largestChild = _parent.get_largestChild();
+            if (_largestChild != null && _largestChild.get_size() != 0) {
+                double _percent = NumberUtil.div(_size, _largestChild.get_size(), 2);
+                return (int) (_percent * 100);
+            } else
+                return 100;
+        } else
+            return 100;
+    }
+
     public ArrayList<SDFile> get_children() {
         return _children;
+    }
+
+    public SDFile get_largestChild() {
+        long _childSize = 0;
+        SDFile _largestChild = null;
+        for (SDFile _child : _children) {
+            if (_child.get_size() > _childSize) {
+                _childSize = _child.get_size();
+                _largestChild = _child;
+            }
+        }
+        return _largestChild;
     }
 }
