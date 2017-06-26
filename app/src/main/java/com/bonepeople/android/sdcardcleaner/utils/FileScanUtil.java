@@ -38,7 +38,7 @@ public class FileScanUtil {
         if (_state != STATE_SCANING)
             return;
         _state = STATE_STOP;
-        update_state("正在停止扫描");
+        update_state("正在停止扫描...", 0);
     }
 
     public static void exit() {
@@ -53,7 +53,7 @@ public class FileScanUtil {
             return;
         _state = STATE_OVER;
         update_number();
-        update_state("扫描已结束");
+        update_state("扫描已结束", 700);
         notify_over();
         _handler = null;
     }
@@ -69,12 +69,12 @@ public class FileScanUtil {
         FileScanUtil._rootFile = _rootFile;
     }
 
-    private static void update_state(String _txt) {
+    private static void update_state(String _txt, long _delay) {
         if (_handler != null) {
             Message _message_state = _handler.obtainMessage();
             _message_state.what = Activity_scan.MSG_STATE;
             _message_state.obj = _txt;
-            _handler.sendMessage(_message_state);
+            _handler.sendMessageDelayed(_message_state, _delay);
         }
     }
 
