@@ -1,12 +1,12 @@
 package com.bonepeople.android.sdcardcleaner.adapter;
 
 import android.content.Context;
+import android.support.percent.PercentRelativeLayout;
 import android.support.v7.widget.RecyclerView;
 import android.text.format.Formatter;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.bonepeople.android.sdcardcleaner.R;
@@ -40,15 +40,12 @@ public class Adapter_list_file extends RecyclerView.Adapter<Adapter_list_file.Vi
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
         SDFile _temp_data = _data.get_children().get(position);
-        int _percent = _temp_data.get_sizePercent();
-        LinearLayout.LayoutParams _params = new LinearLayout.LayoutParams(0, LinearLayout.LayoutParams.MATCH_PARENT, _percent);
-        holder._line_start.setLayoutParams(_params);
-        _params = new LinearLayout.LayoutParams(0, LinearLayout.LayoutParams.MATCH_PARENT, 100 - _percent);
-        holder._line_end.setLayoutParams(_params);
-        float _alpha = (float) NumberUtil.div(_percent, 50, 2);
-        holder._line_start.setAlpha(_alpha > 1 ? 1 : _alpha);
+        float _percent = (float) NumberUtil.div(_temp_data.get_sizePercent(), 100, 2);
+        PercentRelativeLayout.LayoutParams _params = new PercentRelativeLayout.LayoutParams(0, 0);
+        _params.getPercentLayoutInfo().widthPercent = _percent == 0 ? 0.005f : _percent;
+        holder._view_percent.setLayoutParams(_params);
         holder._text_name.setText(_temp_data.get_name());
-        holder._text_size.setText(Formatter.formatFileSize(_context, _temp_data.get_size()) + " | " + _percent + " | " + _alpha);
+        holder._text_size.setText(Formatter.formatFileSize(_context, _temp_data.get_size()) + " | " + _percent);
     }
 
     @Override
@@ -57,15 +54,13 @@ public class Adapter_list_file extends RecyclerView.Adapter<Adapter_list_file.Vi
     }
 
     public static class ViewHolder extends RecyclerView.ViewHolder {
-        public View _line_start;
-        public View _line_end;
+        public View _view_percent;
         public TextView _text_name;
         public TextView _text_size;
 
         public ViewHolder(View itemView) {
             super(itemView);
-            _line_start = itemView.findViewById(R.id.view_line_start);
-            _line_end = itemView.findViewById(R.id.view_line_end);
+            _view_percent = itemView.findViewById(R.id.view_percent);
             _text_name = (TextView) itemView.findViewById(R.id.textview_name);
             _text_size = (TextView) itemView.findViewById(R.id.textview_size);
         }

@@ -5,25 +5,6 @@
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:orientation="horizontal">
-
-        <View
-            android:id="@+id/view_line_start"
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:background="#f2c942" />
-
-        <View
-            android:id="@+id/view_line_end"
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="1" />
-    </LinearLayout>
-
-    <LinearLayout
-        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal">
 
@@ -32,22 +13,39 @@
             android:layout_height="wrap_content"
             android:contentDescription="文件类型图标" />
 
-        <LinearLayout
+        <android.support.percent.PercentRelativeLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical">
+            android:layout_height="45dp">
 
-            <TextView
-                android:id="@+id/textview_name"
+            <View
+                android:id="@+id/view_percent"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:lines="1" />
+                android:layout_height="match_parent"
+                android:background="#f2c942" />
 
-            <TextView
-                android:id="@+id/textview_size"
+            <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:lines="1" />
-        </LinearLayout>
+                android:layout_height="match_parent"
+                android:gravity="center_vertical"
+                android:orientation="vertical">
+
+                <TextView
+                    android:id="@+id/textview_name"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:lines="1" />
+
+                <TextView
+                    android:id="@+id/textview_size"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:lines="1" />
+            </LinearLayout>
+        </android.support.percent.PercentRelativeLayout>
     </LinearLayout>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="?android:attr/selectableItemBackground" />
 </FrameLayout>
