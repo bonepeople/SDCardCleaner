@@ -80,6 +80,10 @@ public class SDFile {
         return _name;
     }
 
+    public String get_path() {
+        return _path;
+    }
+
     public long get_size() {
         return _size;
     }
