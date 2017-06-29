@@ -18,13 +18,15 @@ public class SDFile {
     private String _name;//文件名
     private String _path;//文件路径
     private long _size = 0;//文件大小
-    private boolean _shouldBeDelete = false;//是否需要清理
+    private boolean directory = false;//是否是文件夹
+    private boolean shouldBeDelete = false;//是否需要清理
     private SDFile _parent;//父目录
 
     private ArrayList<SDFile> _children = new ArrayList<>();//子目录
 
     public SDFile(SDFile _parent, File _file) {
         if (_file.isDirectory()) {
+            directory = true;
             File[] _files = sortFile(_file.listFiles());
             if (_files != null)
                 for (File _child : _files) {
@@ -37,6 +39,7 @@ public class SDFile {
             if (_parent != null)
                 _parent.updateSize(_size);
         } else {
+            directory = false;
             FileScanUtil.addFile();
             _size = _file.length();
             if (_parent != null)
@@ -91,6 +94,10 @@ public class SDFile {
                 return 100;
         } else
             return 100;
+    }
+
+    public boolean isDirectory() {
+        return directory;
     }
 
     public ArrayList<SDFile> get_children() {

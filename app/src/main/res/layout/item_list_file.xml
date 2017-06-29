@@ -6,22 +6,26 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal">
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
+        android:paddingLeft="10dp"
+        android:paddingRight="10dp">
 
         <ImageView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:id="@+id/imageview_type"
+            android:layout_width="25dp"
+            android:layout_height="25dp"
             android:contentDescription="文件类型图标" />
 
         <android.support.percent.PercentRelativeLayout
             android:layout_width="match_parent"
-            android:layout_height="45dp">
+            android:layout_height="45dp"
+            android:layout_marginLeft="10dp">
 
             <View
                 android:id="@+id/view_percent"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:background="#f2c942" />
+                android:layout_height="match_parent" />
 
             <LinearLayout
                 android:layout_width="match_parent"
