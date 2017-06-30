@@ -27,13 +27,21 @@ public class Adapter_list_file extends RecyclerView.Adapter<Adapter_list_file.Vi
     private static final ArgbEvaluator _evaluator = new ArgbEvaluator();
     private Context _context;
     private SDFile _data;
+    private View.OnClickListener _listener_click;
+    private View.OnLongClickListener _listener_long;
 
-    public Adapter_list_file(Context _context) {
+    public Adapter_list_file(Context _context, View.OnClickListener _listener_click, View.OnLongClickListener _listener_long) {
         this._context = _context;
+        this._listener_click = _listener_click;
+        this._listener_long = _listener_long;
     }
 
     public void set_data(SDFile _data) {
         this._data = _data;
+    }
+
+    public SDFile get_data() {
+        return _data;
     }
 
     @Override
@@ -49,7 +57,7 @@ public class Adapter_list_file extends RecyclerView.Adapter<Adapter_list_file.Vi
         PercentRelativeLayout.LayoutParams _params = new PercentRelativeLayout.LayoutParams(0, 0);
         _params.getPercentLayoutInfo().widthPercent = _percent;
         holder._view_percent.setLayoutParams(_params);
-        int _color = (int) _evaluator.evaluate(_percent,COLOR_START,COLOR_END);
+        int _color = (int) _evaluator.evaluate(_percent, COLOR_START, COLOR_END);
         holder._view_percent.setBackgroundColor(_color);
         if (_temp_data.isDirectory())
             holder._image_type.setImageResource(R.drawable.icon_directory);
@@ -57,6 +65,7 @@ public class Adapter_list_file extends RecyclerView.Adapter<Adapter_list_file.Vi
             holder._image_type.setImageResource(R.drawable.icon_file);
         holder._text_name.setText(_temp_data.get_name());
         holder._text_size.setText(Formatter.formatFileSize(_context, _temp_data.get_size()));
+        holder._view_click.setTag(position);
     }
 
     @Override
@@ -64,11 +73,12 @@ public class Adapter_list_file extends RecyclerView.Adapter<Adapter_list_file.Vi
         return _data.get_children().size();
     }
 
-    public static class ViewHolder extends RecyclerView.ViewHolder {
+    public class ViewHolder extends RecyclerView.ViewHolder {
         public View _view_percent;
         public ImageView _image_type;
         public TextView _text_name;
         public TextView _text_size;
+        public View _view_click;
 
         public ViewHolder(View itemView) {
             super(itemView);
@@ -76,6 +86,9 @@ public class Adapter_list_file extends RecyclerView.Adapter<Adapter_list_file.Vi
             _image_type = (ImageView) itemView.findViewById(R.id.imageview_type);
             _text_name = (TextView) itemView.findViewById(R.id.textview_name);
             _text_size = (TextView) itemView.findViewById(R.id.textview_size);
+            _view_click = itemView.findViewById(R.id.view_click);
+            _view_click.setOnClickListener(_listener_click);
+            _view_click.setOnLongClickListener(_listener_long);
         }
     }
 }
