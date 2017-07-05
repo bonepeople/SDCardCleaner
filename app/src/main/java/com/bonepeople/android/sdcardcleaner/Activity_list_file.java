@@ -18,11 +18,14 @@ import com.bonepeople.android.sdcardcleaner.utils.FileScanUtil;
 import java.util.Stack;
 
 public class Activity_list_file extends AppCompatActivity implements View.OnClickListener, View.OnLongClickListener {
+    public static final String ACTION_DELETE = "delete";
+    public static final String ACTION_CLEAN = "clean";
+    public static final String ACTION_HOLD = "hold";
+    public static final String ACTION_CLOSE = "close";
     private EditText _text_path;
     private LinearLayoutManager _layoutManager;
     private RecyclerView _list;
     private LinearLayout _buttonbar;
-    private View _button_delete, _button_clean, _button_hold, _button_close;
     private CheckBox _checkbox_all;
     private Adapter_list_file _adapter;
     private Stack<SDFile> _files = new Stack<>();
@@ -39,10 +42,10 @@ public class Activity_list_file extends AppCompatActivity implements View.OnClic
         _text_path = (EditText) findViewById(R.id.edittext_path);
         _list = (RecyclerView) findViewById(R.id.recyclerview);
         _buttonbar = (LinearLayout) findViewById(R.id.linearlayout_buttonbar);
-        _button_delete = findViewById(R.id.textView_delete);
-        _button_clean = findViewById(R.id.textView_clean);
-        _button_hold = findViewById(R.id.textView_hold);
-        _button_close = findViewById(R.id.imageview_close);
+        View _button_delete = findViewById(R.id.textView_delete);
+        View _button_clean = findViewById(R.id.textView_clean);
+        View _button_hold = findViewById(R.id.textView_hold);
+        View _button_close = findViewById(R.id.imageview_close);
         _checkbox_all = (CheckBox) findViewById(R.id.checkbox_all);
 
         _text_path.setText("SD卡\\");
@@ -54,6 +57,10 @@ public class Activity_list_file extends AppCompatActivity implements View.OnClic
         _list.setAdapter(_adapter);
         _list.addItemDecoration(new DividerItemDecoration(this, DividerItemDecoration.VERTICAL));
 
+        _button_delete.setTag(new String[]{ACTION_DELETE});
+        _button_clean.setTag(new String[]{ACTION_CLEAN});
+        _button_hold.setTag(new String[]{ACTION_HOLD});
+        _button_close.setTag(new String[]{ACTION_CLOSE});
         _button_delete.setOnClickListener(this);
         _button_clean.setOnClickListener(this);
         _button_hold.setOnClickListener(this);
@@ -80,24 +87,22 @@ public class Activity_list_file extends AppCompatActivity implements View.OnClic
 
     @Override
     public void onClick(View v) {
-        switch (v.getId()) {
-            case R.id.textView_delete:
+        String[] _tags = (String[]) v.getTag();
+        switch (_tags[0]) {
+            case ACTION_DELETE:
                 _buttonbar.setVisibility(LinearLayout.GONE);
                 break;
-            case R.id.textView_clean:
+            case ACTION_CLEAN:
                 _buttonbar.setVisibility(LinearLayout.GONE);
                 break;
-            case R.id.textView_hold:
+            case ACTION_HOLD:
                 _buttonbar.setVisibility(LinearLayout.GONE);
                 break;
-            case R.id.checkbox_all:
-
-                break;
-            case R.id.imageview_close:
+            case ACTION_CLOSE:
                 _buttonbar.setVisibility(LinearLayout.GONE);
                 break;
-            default:
-                int _position = (int) v.getTag();
+            case Adapter_list_file.ACTION_CLICK_ITEM:
+                int _position = Integer.parseInt(_tags[1]);
                 SDFile _clickFile = _adapter.get_data().get_children().get(_position);
                 if (_clickFile.isDirectory()) {
                     int _firstItemPosition = _layoutManager.findFirstVisibleItemPosition();
@@ -116,12 +121,14 @@ public class Activity_list_file extends AppCompatActivity implements View.OnClic
                     _adapter.notifyDataSetChanged();
                     _layoutManager.scrollToPositionWithOffset(0, 0);
                 }
+                break;
         }
     }
 
     @Override
     public boolean onLongClick(View v) {
-        int _position = (int) v.getTag();
+        String[] _tags = (String[]) v.getTag();
+        int _position = Integer.parseInt(_tags[1]);
         System.out.println("long click - " + _position);
         _buttonbar.setVisibility(LinearLayout.VISIBLE);
         return true;

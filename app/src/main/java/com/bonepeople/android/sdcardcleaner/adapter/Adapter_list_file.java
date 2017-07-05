@@ -22,6 +22,7 @@ import com.bonepeople.android.sdcardcleaner.utils.NumberUtil;
  */
 
 public class Adapter_list_file extends RecyclerView.Adapter<Adapter_list_file.ViewHolder> {
+    public static final String ACTION_CLICK_ITEM = "click_item";
     private static final int COLOR_START = 0xFFEAD799;
     private static final int COLOR_END = 0xFFE96E3E;
     private static final ArgbEvaluator _evaluator = new ArgbEvaluator();
@@ -65,7 +66,7 @@ public class Adapter_list_file extends RecyclerView.Adapter<Adapter_list_file.Vi
             holder._image_type.setImageResource(R.drawable.icon_file);
         holder._text_name.setText(_temp_data.get_name());
         holder._text_size.setText(Formatter.formatFileSize(_context, _temp_data.get_size()));
-        holder._view_click.setTag(position);
+        holder._view_click.setTag(new String[]{ACTION_CLICK_ITEM, String.valueOf(position)});
     }
 
     @Override
