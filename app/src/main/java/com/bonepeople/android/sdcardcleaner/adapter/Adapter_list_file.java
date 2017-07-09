@@ -8,6 +8,7 @@ import android.text.format.Formatter;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.CheckBox;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -30,6 +31,7 @@ public class Adapter_list_file extends RecyclerView.Adapter<Adapter_list_file.Vi
     private SDFile _data;
     private View.OnClickListener _listener_click;
     private View.OnLongClickListener _listener_long;
+    private boolean _multiSelect = false;
 
     public Adapter_list_file(Context _context, View.OnClickListener _listener_click, View.OnLongClickListener _listener_long) {
         this._context = _context;
@@ -45,6 +47,11 @@ public class Adapter_list_file extends RecyclerView.Adapter<Adapter_list_file.Vi
         return _data;
     }
 
+    public void set_multiSelect(boolean _multiSelect) {
+        this._multiSelect = _multiSelect;
+        notifyDataSetChanged();
+    }
+
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View _view = LayoutInflater.from(_context).inflate(R.layout.item_list_file, parent, false);
@@ -54,16 +61,28 @@ public class Adapter_list_file extends RecyclerView.Adapter<Adapter_list_file.Vi
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
         SDFile _temp_data = _data.get_children().get(position);
+        //设置文件大小比例条
         float _percent = (float) NumberUtil.div(_temp_data.get_sizePercent(), 100, 2);
         PercentRelativeLayout.LayoutParams _params = new PercentRelativeLayout.LayoutParams(0, 0);
         _params.getPercentLayoutInfo().widthPercent = _percent;
         holder._view_percent.setLayoutParams(_params);
         int _color = (int) _evaluator.evaluate(_percent, COLOR_START, COLOR_END);
         holder._view_percent.setBackgroundColor(_color);
+        //设置复选框状态
+        if (_multiSelect) {
+            if (holder._checkbox.getVisibility() == CheckBox.GONE)
+                holder._checkbox.setVisibility(CheckBox.VISIBLE);
+        } else {
+            if (holder._checkbox.getVisibility() == CheckBox.VISIBLE)
+                holder._checkbox.setVisibility(CheckBox.GONE);
+        }
+
+        //设置类型图标
         if (_temp_data.isDirectory())
             holder._image_type.setImageResource(R.drawable.icon_directory);
         else
             holder._image_type.setImageResource(R.drawable.icon_file);
+        //设置基本信息
         holder._text_name.setText(_temp_data.get_name());
         holder._text_size.setText(Formatter.formatFileSize(_context, _temp_data.get_size()));
         holder._view_click.setTag(new String[]{ACTION_CLICK_ITEM, String.valueOf(position)});
@@ -76,6 +95,7 @@ public class Adapter_list_file extends RecyclerView.Adapter<Adapter_list_file.Vi
 
     public class ViewHolder extends RecyclerView.ViewHolder {
         public View _view_percent;
+        public CheckBox _checkbox;
         public ImageView _image_type;
         public TextView _text_name;
         public TextView _text_size;
@@ -84,6 +104,7 @@ public class Adapter_list_file extends RecyclerView.Adapter<Adapter_list_file.Vi
         public ViewHolder(View itemView) {
             super(itemView);
             _view_percent = itemView.findViewById(R.id.view_percent);
+            _checkbox = (CheckBox) itemView.findViewById(R.id.checkbox_item);
             _image_type = (ImageView) itemView.findViewById(R.id.imageview_type);
             _text_name = (TextView) itemView.findViewById(R.id.textview_name);
             _text_size = (TextView) itemView.findViewById(R.id.textview_size);

@@ -101,9 +101,10 @@
             android:id="@+id/checkbox_all"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:button="@null"
+            android:drawableRight="?android:attr/listChoiceIndicatorMultiple"
             android:text="全选"
-            android:textColor="#666666"
-            android:textSize="12sp" />
+            android:textColor="#666666" />
 
         <ImageView
             android:id="@+id/imageview_close"

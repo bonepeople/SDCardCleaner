@@ -100,6 +100,7 @@ public class Activity_list_file extends AppCompatActivity implements View.OnClic
                 break;
             case ACTION_CLOSE:
                 _buttonbar.setVisibility(LinearLayout.GONE);
+                _adapter.set_multiSelect(false);
                 break;
             case Adapter_list_file.ACTION_CLICK_ITEM:
                 int _position = Integer.parseInt(_tags[1]);
@@ -130,6 +131,7 @@ public class Activity_list_file extends AppCompatActivity implements View.OnClic
         String[] _tags = (String[]) v.getTag();
         int _position = Integer.parseInt(_tags[1]);
         System.out.println("long click - " + _position);
+        _adapter.set_multiSelect(true);
         _buttonbar.setVisibility(LinearLayout.VISIBLE);
         return true;
     }
