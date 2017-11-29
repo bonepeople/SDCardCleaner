@@ -1,5 +1,6 @@
 package com.bonepeople.android.sdcardcleaner.models;
 
+import com.bonepeople.android.sdcardcleaner.Global;
 import com.bonepeople.android.sdcardcleaner.utils.FileScanUtil;
 import com.bonepeople.android.sdcardcleaner.utils.NumberUtil;
 
@@ -19,12 +20,29 @@ public class SDFile {
     private String _path;//文件路径
     private long _size = 0;//文件大小
     private boolean directory = false;//是否是文件夹
-    private boolean shouldBeDelete = false;//是否需要清理
+    private boolean rubbish = false;//是否需要清理
     private SDFile _parent;//父目录
+    private SDFile _largestChild = null;//文件夹内最大的文件
 
-    private ArrayList<SDFile> _children = new ArrayList<>();//子目录
+    private ArrayList<SDFile> _children = new ArrayList<>();//子文件列表
 
     public SDFile(SDFile _parent, File _file) {
+        this._parent = _parent;
+        _name = _file.getName();
+        _path = _file.getAbsolutePath();
+
+        Global.add_fileCount_all();
+        if (Global.isSave(_path)) {
+            rubbish = false;
+        } else if (Global.isClean(_path)) {
+            rubbish = true;
+            Global.add_fileCount_rubbish();
+        } else if (_parent != null && _parent.isRubbish()) {
+            rubbish = true;
+            Global.add_fileCount_rubbish();
+        } else
+            rubbish = false;
+
         if (_file.isDirectory()) {
             directory = true;
             File[] _files = sortFile(_file.listFiles());
@@ -37,19 +55,21 @@ public class SDFile {
                             break;
                 }
             if (_parent != null)
-                _parent.updateSize(_size);
+                _parent.updateSize(this);
         } else {
             directory = false;
-            FileScanUtil.addFile();
             _size = _file.length();
+            Global.add_fileSize_all(_size);
+            if (rubbish)
+                Global.add_fileSize_rubbish(_size);
             if (_parent != null)
-                _parent.updateSize(_size);
+                _parent.updateSize(this);
         }
-        this._parent = _parent;
-        _name = _file.getName();
-        _path = _file.getAbsolutePath();
     }
 
+    /**
+     * 对文件进行排序
+     */
     private File[] sortFile(File[] _files) {
         if (_files != null) {
             Arrays.sort(_files, new Comparator<File>() {
@@ -57,14 +77,12 @@ public class SDFile {
                 public int compare(File _file1, File _file2) {
                     if (_file1.isDirectory() && _file2.isDirectory()) {
                         return _file1.getName().compareToIgnoreCase(_file2.getName());
+                    } else if (_file1.isDirectory() && _file2.isFile()) {
+                        return -1;
+                    } else if (_file1.isFile() && _file2.isDirectory()) {
+                        return 1;
                     } else {
-                        if (_file1.isDirectory() && _file2.isFile()) {
-                            return -1;
-                        } else if (_file1.isFile() && _file2.isDirectory()) {
-                            return 1;
-                        } else {
-                            return _file1.getName().compareToIgnoreCase(_file2.getName());
-                        }
+                        return _file1.getName().compareToIgnoreCase(_file2.getName());
                     }
                 }
             });
@@ -72,8 +90,20 @@ public class SDFile {
         return _files;
     }
 
-    public void updateSize(long _fileSize) {
-        _size += _fileSize;
+    /**
+     * 更新文件夹大小
+     * <p>
+     * 该函数由子文件调用，用于获取子文件的大小及引用
+     *
+     * @param _file 子文件
+     */
+    public void updateSize(SDFile _file) {
+        _size += _file.get_size();
+        if (_largestChild != null) {
+            if (_file.get_size() > _largestChild.get_size())
+                _largestChild = _file;
+        } else
+            _largestChild = _file;
     }
 
     public String get_name() {
@@ -88,6 +118,27 @@ public class SDFile {
         return _size;
     }
 
+    public SDFile get_largestChild() {
+        return _largestChild;
+    }
+
+    public boolean isDirectory() {
+        return directory;
+    }
+
+    public boolean isRubbish() {
+        return rubbish;
+    }
+
+    public ArrayList<SDFile> get_children() {
+        return _children;
+    }
+
+    /**
+     * 获取本文件在文件夹中所占的比重
+     * <p>
+     * 以文件夹中最大的文件作为100%，按比例计算自身比重
+     */
     public int get_sizePercent() {
         if (_parent != null) {
             SDFile _largestChild = _parent.get_largestChild();
@@ -98,25 +149,5 @@ public class SDFile {
                 return 100;
         } else
             return 100;
-    }
-
-    public boolean isDirectory() {
-        return directory;
-    }
-
-    public ArrayList<SDFile> get_children() {
-        return _children;
-    }
-
-    public SDFile get_largestChild() {
-        long _childSize = 0;
-        SDFile _largestChild = null;
-        for (SDFile _child : _children) {
-            if (_child.get_size() > _childSize) {
-                _childSize = _child.get_size();
-                _largestChild = _child;
-            }
-        }
-        return _largestChild;
     }
 }
