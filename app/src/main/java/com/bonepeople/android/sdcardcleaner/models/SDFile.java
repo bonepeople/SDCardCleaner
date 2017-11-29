@@ -49,7 +49,7 @@ public class SDFile {
             if (_files != null)
                 for (File _child : _files) {
                     if (_child != null)
-                        if (FileScanUtil.get_state() == FileScanUtil.STATE_SCANING)
+                        if (FileScanUtil.get_state() == FileScanUtil.STATE_SCANNING)
                             _children.add(new SDFile(this, _child));
                         else
                             break;

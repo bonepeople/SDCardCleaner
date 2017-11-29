@@ -18,7 +18,7 @@ public class Activity_scan extends AppCompatActivity implements View.OnClickList
     public static final int MSG_NUMBER = 1;
     public static final int MSG_OVER = 2;
     private ProgressBar _progressBar;
-    private TextView _text_state, _text_number;
+    private TextView _text_state, _text_count_all, _text_count_rubbish, _text_size_rubbish;
     private Button _button_stop, _button_clean, _button_show;
     private Handler _handler = new Handler() {
         @Override
@@ -30,7 +30,14 @@ public class Activity_scan extends AppCompatActivity implements View.OnClickList
                     _text_state.setText((String) msg.obj);
                     break;
                 case MSG_NUMBER:
-                    _text_number.setText("文件数量：" + (long) msg.obj);
+                    long _fileCount_all = Global.get_fileCount_all();
+                    long _fileCount_rubbish = Global.get_fileCount_rubbish();
+                    long _fileSize_rubbish = Global.get_fileSize_rubbish();
+                    _text_count_all.setText("已扫描：" + _fileCount_all);
+                    _text_count_rubbish.setText("包含待清理文件：" + _fileCount_rubbish);
+                    _text_size_rubbish.setText("待清理文件大小为：" + Formatter.formatFileSize(Activity_scan.this, _fileSize_rubbish));
+                    if (FileScanUtil.get_state() == FileScanUtil.STATE_SCANNING)
+                        _handler.sendEmptyMessageDelayed(MSG_NUMBER, 350);
                     break;
                 case MSG_OVER:
                     long _size = FileScanUtil.get_rootFile().get_size();
@@ -52,7 +59,9 @@ public class Activity_scan extends AppCompatActivity implements View.OnClickList
 
         _progressBar = (ProgressBar) findViewById(R.id.progressBar);
         _text_state = (TextView) findViewById(R.id.textView_state);
-        _text_number = (TextView) findViewById(R.id.textView_scan_file);
+        _text_count_all = (TextView) findViewById(R.id.textView_count_all);
+        _text_count_rubbish = (TextView) findViewById(R.id.textView_count_rubbish);
+        _text_size_rubbish = (TextView) findViewById(R.id.textView_size_rubbish);
         _button_stop = (Button) findViewById(R.id.button_stop);
         _button_clean = (Button) findViewById(R.id.button_clean);
         _button_show = (Button) findViewById(R.id.button_show);
@@ -61,6 +70,8 @@ public class Activity_scan extends AppCompatActivity implements View.OnClickList
         _button_clean.setOnClickListener(this);
         _button_show.setOnClickListener(this);
 
+        Global.init(this);
+        _handler.sendEmptyMessageDelayed(MSG_NUMBER, 350);
         FileScanUtil.start(_handler);
     }
 
