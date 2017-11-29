@@ -3,7 +3,7 @@ package com.bonepeople.android.sdcardcleaner.utils;
 import android.os.Handler;
 import android.os.Message;
 
-import com.bonepeople.android.sdcardcleaner.Activity_scan;
+import com.bonepeople.android.sdcardcleaner.activity.Activity_scan;
 import com.bonepeople.android.sdcardcleaner.models.SDFile;
 import com.bonepeople.android.sdcardcleaner.thread.Thread_scan;
 

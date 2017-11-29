@@ -1,4 +1,4 @@
-package com.bonepeople.android.sdcardcleaner;
+package com.bonepeople.android.sdcardcleaner.activity;
 
 import android.content.Intent;
 import android.os.Handler;
@@ -11,6 +11,8 @@ import android.widget.Button;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
+import com.bonepeople.android.sdcardcleaner.Global;
+import com.bonepeople.android.sdcardcleaner.R;
 import com.bonepeople.android.sdcardcleaner.utils.FileScanUtil;
 
 public class Activity_scan extends AppCompatActivity implements View.OnClickListener {

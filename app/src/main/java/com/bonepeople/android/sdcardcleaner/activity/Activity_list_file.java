@@ -1,4 +1,4 @@
-package com.bonepeople.android.sdcardcleaner;
+package com.bonepeople.android.sdcardcleaner.activity;
 
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -11,6 +11,7 @@ import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 
+import com.bonepeople.android.sdcardcleaner.R;
 import com.bonepeople.android.sdcardcleaner.adapter.Adapter_list_file;
 import com.bonepeople.android.sdcardcleaner.models.SDFile;
 import com.bonepeople.android.sdcardcleaner.utils.FileScanUtil;

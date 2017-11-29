@@ -1,11 +1,12 @@
-package com.bonepeople.android.sdcardcleaner;
+package com.bonepeople.android.sdcardcleaner.activity;
 
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.CardView;
 import android.view.View;
-import android.widget.Toast;
+
+import com.bonepeople.android.sdcardcleaner.R;
 
 public class Activity_main extends AppCompatActivity implements View.OnClickListener {
     private CardView _card_scan, _card_white, _card_black, _card_set;
@@ -30,7 +31,7 @@ public class Activity_main extends AppCompatActivity implements View.OnClickList
         switch (v.getId()) {
             case R.id.cardview_scan:
 //                Toast.makeText(Activity_main.this, "scan", Toast.LENGTH_SHORT).show();
-                startActivity(new Intent(this,Activity_scan.class));
+                startActivity(new Intent(this, Activity_scan.class));
                 break;
             case R.id.cardview_white:
 
