@@ -22,6 +22,7 @@ public class Activity_list_file extends AppCompatActivity implements View.OnClic
     public static final String ACTION_DELETE = "delete";
     public static final String ACTION_CLEAN = "clean";
     public static final String ACTION_HOLD = "hold";
+    public static final String ACTION_CHECK = "checkAll";
     public static final String ACTION_CLOSE = "close";
     private EditText _text_path;
     private LinearLayoutManager _layoutManager;
@@ -61,22 +62,26 @@ public class Activity_list_file extends AppCompatActivity implements View.OnClic
         _button_delete.setTag(new String[]{ACTION_DELETE});
         _button_clean.setTag(new String[]{ACTION_CLEAN});
         _button_hold.setTag(new String[]{ACTION_HOLD});
+        _checkbox_all.setTag(new String[]{ACTION_CHECK});
         _button_close.setTag(new String[]{ACTION_CLOSE});
         _button_delete.setOnClickListener(this);
         _button_clean.setOnClickListener(this);
         _button_hold.setOnClickListener(this);
+        _checkbox_all.setOnClickListener(this);
         _button_close.setOnClickListener(this);
-        _checkbox_all.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                System.out.println("isChecked = " + isChecked);
-            }
-        });
+    }
+
+    private void exitMultiSelect() {
+        _buttonbar.setVisibility(LinearLayout.GONE);
+        _adapter.set_multiSelect(false);
+        _checkbox_all.setChecked(false);
     }
 
     @Override
     public void onBackPressed() {
-        if (_files.size() > 0) {
+        if (_adapter.is_multiSelect()) {
+            exitMultiSelect();
+        } else if (_files.size() > 0) {
             _text_path.setText(_paths.pop());
             _text_path.setSelection(_text_path.getText().length());
             _adapter.set_data(_files.pop());
@@ -91,37 +96,43 @@ public class Activity_list_file extends AppCompatActivity implements View.OnClic
         String[] _tags = (String[]) v.getTag();
         switch (_tags[0]) {
             case ACTION_DELETE:
-                _buttonbar.setVisibility(LinearLayout.GONE);
+                exitMultiSelect();
                 break;
             case ACTION_CLEAN:
-                _buttonbar.setVisibility(LinearLayout.GONE);
+                exitMultiSelect();
                 break;
             case ACTION_HOLD:
-                _buttonbar.setVisibility(LinearLayout.GONE);
+                exitMultiSelect();
+                break;
+            case ACTION_CHECK:
+                _adapter.set_checkedSet(-1);
                 break;
             case ACTION_CLOSE:
-                _buttonbar.setVisibility(LinearLayout.GONE);
-                _adapter.set_multiSelect(false);
+                exitMultiSelect();
                 break;
             case Adapter_list_file.ACTION_CLICK_ITEM:
                 int _position = Integer.parseInt(_tags[1]);
-                SDFile _clickFile = _adapter.get_data().get_children().get(_position);
-                if (_clickFile.isDirectory()) {
-                    int _firstItemPosition = _layoutManager.findFirstVisibleItemPosition();
-                    _positions.push(_firstItemPosition);
-                    View _firstVisibleView = _layoutManager.getChildAt(0);
-                    if (_firstVisibleView != null) {
-                        int _offset = _firstVisibleView.getTop();
-                        _offsets.push(_offset);
-                    } else
-                        _offsets.push(0);
-                    _paths.push(_text_path.getText().toString());
-                    _text_path.append(_clickFile.get_name() + "\\");
-                    _text_path.setSelection(_text_path.getText().length());
-                    _files.push(_adapter.get_data());
-                    _adapter.set_data(_clickFile);
-                    _adapter.notifyDataSetChanged();
-                    _layoutManager.scrollToPositionWithOffset(0, 0);
+                if (_adapter.is_multiSelect()) {//处于多选状态
+                    _checkbox_all.setChecked(_adapter.set_checkedSet(_position));
+                } else {//处于浏览状态
+                    SDFile _clickFile = _adapter.get_data().get_children().get(_position);
+                    if (_clickFile.isDirectory()) {
+                        int _firstItemPosition = _layoutManager.findFirstVisibleItemPosition();
+                        _positions.push(_firstItemPosition);
+                        View _firstVisibleView = _layoutManager.getChildAt(0);
+                        if (_firstVisibleView != null) {
+                            int _offset = _firstVisibleView.getTop();
+                            _offsets.push(_offset);
+                        } else
+                            _offsets.push(0);
+                        _paths.push(_text_path.getText().toString());
+                        _text_path.append(_clickFile.get_name() + "\\");
+                        _text_path.setSelection(_text_path.getText().length());
+                        _files.push(_adapter.get_data());
+                        _adapter.set_data(_clickFile);
+                        _adapter.notifyDataSetChanged();
+                        _layoutManager.scrollToPositionWithOffset(0, 0);
+                    }
                 }
                 break;
         }
@@ -131,9 +142,13 @@ public class Activity_list_file extends AppCompatActivity implements View.OnClic
     public boolean onLongClick(View v) {
         String[] _tags = (String[]) v.getTag();
         int _position = Integer.parseInt(_tags[1]);
-        System.out.println("long click - " + _position);
-        _adapter.set_multiSelect(true);
-        _buttonbar.setVisibility(LinearLayout.VISIBLE);
+        if (_adapter.is_multiSelect()) {//处于多选状态
+            _checkbox_all.setChecked(_adapter.set_checkedSet(_position));
+        } else {//处于浏览状态
+            _adapter.set_multiSelect(true);
+            _checkbox_all.setChecked(_adapter.set_checkedSet(_position));
+            _buttonbar.setVisibility(LinearLayout.VISIBLE);
+        }
         return true;
     }
 }

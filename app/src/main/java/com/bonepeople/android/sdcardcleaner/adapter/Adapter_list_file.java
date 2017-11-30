@@ -16,6 +16,8 @@ import com.bonepeople.android.sdcardcleaner.R;
 import com.bonepeople.android.sdcardcleaner.models.SDFile;
 import com.bonepeople.android.sdcardcleaner.utils.NumberUtil;
 
+import java.util.HashSet;
+
 /**
  * 文件列表的数据适配器
  * <p>
@@ -31,7 +33,8 @@ public class Adapter_list_file extends RecyclerView.Adapter<Adapter_list_file.Vi
     private SDFile _data;
     private View.OnClickListener _listener_click;
     private View.OnLongClickListener _listener_long;
-    private boolean _multiSelect = false;
+    private boolean _multiSelect = false;//是否处于多选状态中
+    private HashSet<Integer> _checkedSet = new HashSet<>();//已选项目集合
 
     public Adapter_list_file(Context _context, View.OnClickListener _listener_click, View.OnLongClickListener _listener_long) {
         this._context = _context;
@@ -47,9 +50,42 @@ public class Adapter_list_file extends RecyclerView.Adapter<Adapter_list_file.Vi
         return _data;
     }
 
+    /**
+     * 设置多选状态
+     */
     public void set_multiSelect(boolean _multiSelect) {
         this._multiSelect = _multiSelect;
+        _checkedSet.clear();
         notifyDataSetChanged();
+    }
+
+    /**
+     * 设置已选项目
+     *
+     * @param _position 已选项目在集合中的位置，-1为全选
+     * @return 是否已经全选所有项目
+     */
+    public boolean set_checkedSet(int _position) {
+        if (_position == -1) {//全选标记
+            if (_checkedSet.size() == _data.get_children().size()) {//已全选
+                _checkedSet.clear();
+                notifyDataSetChanged();
+                return false;
+            } else {//未全选
+                for (int _temp_i = 0; _temp_i < _data.get_children().size(); _temp_i++)
+                    _checkedSet.add(_temp_i);
+                notifyDataSetChanged();
+                return true;
+            }
+        } else {//普通位置序号
+            if (_checkedSet.contains(_position)) {
+                _checkedSet.remove(_position);
+            } else {
+                _checkedSet.add(_position);
+            }
+            notifyItemChanged(_position);
+            return _checkedSet.size() == _data.get_children().size();
+        }
     }
 
     @Override
@@ -72,6 +108,10 @@ public class Adapter_list_file extends RecyclerView.Adapter<Adapter_list_file.Vi
         if (_multiSelect) {
             if (holder._checkbox.getVisibility() == CheckBox.GONE)
                 holder._checkbox.setVisibility(CheckBox.VISIBLE);
+            if (_checkedSet.contains(position))
+                holder._checkbox.setChecked(true);
+            else
+                holder._checkbox.setChecked(false);
         } else {
             if (holder._checkbox.getVisibility() == CheckBox.VISIBLE)
                 holder._checkbox.setVisibility(CheckBox.GONE);
@@ -91,6 +131,10 @@ public class Adapter_list_file extends RecyclerView.Adapter<Adapter_list_file.Vi
     @Override
     public int getItemCount() {
         return _data.get_children().size();
+    }
+
+    public boolean is_multiSelect() {
+        return _multiSelect;
     }
 
     public class ViewHolder extends RecyclerView.ViewHolder {
