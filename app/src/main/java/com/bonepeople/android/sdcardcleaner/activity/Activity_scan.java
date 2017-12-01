@@ -72,7 +72,7 @@ public class Activity_scan extends AppCompatActivity implements View.OnClickList
         _button_clean.setOnClickListener(this);
         _button_show.setOnClickListener(this);
 
-        Global.init(this);
+        Global.init(getApplicationContext());
         _handler.sendEmptyMessageDelayed(MSG_NUMBER, 350);
         FileScanUtil.start(_handler);
     }

@@ -8,6 +8,7 @@ import com.bonepeople.android.sdcardcleaner.utils.ConfigUtil;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.HashSet;
 import java.util.Set;
 
 /**
@@ -17,6 +18,7 @@ import java.util.Set;
  */
 
 public class Global {
+    private static Context _context;
     private static long _fileCount_all = 0;//所有文件总数，包含文件夹
     private static long _fileSize_all = 0;//所有文件总大小
     private static long _fileCount_rubbish = 0;//待清理文件总数，包含文件夹
@@ -26,8 +28,11 @@ public class Global {
 
     /**
      * 初始化全局变量
+     *
+     * @param _context 该Context会被储存复用，推荐使用ApplicationContext
      */
     public static void init(@NonNull Context _context) {
+        Global._context = _context;
         //重置变量
         _fileCount_all = 0;
         _fileSize_all = 0;
@@ -38,25 +43,27 @@ public class Global {
         _saveList.clear();
         if (_set_save != null) {
             _saveList.addAll(_set_save);
-            Collections.sort(_saveList, new Comparator<String>() {
-                @Override
-                public int compare(String _str1, String _str2) {
-                    return _str1.compareToIgnoreCase(_str2);
-                }
-            });
+            sortList(_saveList);
         }
         //从配置文件中初始化清理列表
         Set<String> _set_clean = ConfigUtil.getCleanList(_context);
         _cleanList.clear();
         if (_set_clean != null) {
             _cleanList.addAll(_set_clean);
-            Collections.sort(_cleanList, new Comparator<String>() {
-                @Override
-                public int compare(String _str1, String _str2) {
-                    return _str1.compareToIgnoreCase(_str2);
-                }
-            });
+            sortList(_cleanList);
         }
+    }
+
+    /**
+     * 对列表进行排序
+     */
+    private static void sortList(@NonNull ArrayList<String> _list) {
+        Collections.sort(_list, new Comparator<String>() {
+            @Override
+            public int compare(String _str1, String _str2) {
+                return _str1.compareToIgnoreCase(_str2);
+            }
+        });
     }
 
     /**
@@ -89,6 +96,60 @@ public class Global {
      */
     public static void add_fileSize_rubbish(long _fileSize) {
         Global._fileSize_rubbish += _fileSize;
+    }
+
+    /**
+     * 向保留列表里添加数据
+     */
+    public static void add_saveList(@NonNull ArrayList<String> _newList) {
+        for (String _path : _newList) {
+            if (!_saveList.contains(_path))
+                _saveList.add(_path);
+        }
+        sortList(_saveList);
+        HashSet<String> _saveSet = new HashSet<>(_saveList.size());
+        _saveSet.addAll(_saveList);
+        ConfigUtil.putSaveList(_context, _saveSet);
+    }
+
+    /**
+     * 向清理列表里添加数据
+     */
+    public static void add_cleanList(@NonNull ArrayList<String> _newList) {
+        for (String _path : _newList) {
+            if (!_cleanList.contains(_path))
+                _cleanList.add(_path);
+        }
+        sortList(_cleanList);
+        HashSet<String> _cleanSet = new HashSet<>(_cleanList.size());
+        _cleanSet.addAll(_cleanList);
+        ConfigUtil.putCleanList(_context, _cleanSet);
+    }
+
+    /**
+     * 移除保留列表中的数据
+     */
+    public static void remove_saveList(@NonNull ArrayList<String> _removeList) {
+        for (String _path : _removeList) {
+            if (_saveList.contains(_path))
+                _saveList.remove(_path);
+        }
+        HashSet<String> _saveSet = new HashSet<>(_saveList.size());
+        _saveSet.addAll(_saveList);
+        ConfigUtil.putSaveList(_context, _saveSet);
+    }
+
+    /**
+     * 移除清理列表中的数据
+     */
+    public static void remove_cleanList(@NonNull ArrayList<String> _removeList) {
+        for (String _path : _removeList) {
+            if (_cleanList.contains(_path))
+                _cleanList.remove(_path);
+        }
+        HashSet<String> _cleanSet = new HashSet<>(_cleanList.size());
+        _cleanSet.addAll(_cleanList);
+        ConfigUtil.putCleanList(_context, _cleanSet);
     }
 
     /**
