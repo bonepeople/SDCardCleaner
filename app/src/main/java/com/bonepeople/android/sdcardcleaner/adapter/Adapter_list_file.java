@@ -12,10 +12,12 @@ import android.widget.CheckBox;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.bonepeople.android.sdcardcleaner.Global;
 import com.bonepeople.android.sdcardcleaner.R;
 import com.bonepeople.android.sdcardcleaner.models.SDFile;
 import com.bonepeople.android.sdcardcleaner.utils.NumberUtil;
 
+import java.util.ArrayList;
 import java.util.HashSet;
 
 /**
@@ -55,7 +57,8 @@ public class Adapter_list_file extends RecyclerView.Adapter<Adapter_list_file.Vi
      */
     public void set_multiSelect(boolean _multiSelect) {
         this._multiSelect = _multiSelect;
-        _checkedSet.clear();
+        if (_multiSelect)
+            _checkedSet.clear();
         notifyDataSetChanged();
     }
 
@@ -86,6 +89,15 @@ public class Adapter_list_file extends RecyclerView.Adapter<Adapter_list_file.Vi
             notifyItemChanged(_position);
             return _checkedSet.size() == _data.get_children().size();
         }
+    }
+
+    public void clean()
+    {
+        ArrayList<String> _cleanList = new ArrayList<>(_checkedSet.size());
+        for(int _position:_checkedSet){
+            _cleanList.add(_data.get_children().get(_position).get_path());
+        }
+        Global.add_cleanList(_cleanList);
     }
 
     @Override

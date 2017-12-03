@@ -103,6 +103,8 @@ public class Global {
      */
     public static void add_saveList(@NonNull ArrayList<String> _newList) {
         for (String _path : _newList) {
+            if (_cleanList.contains(_path))
+                _cleanList.remove(_path);
             if (!_saveList.contains(_path))
                 _saveList.add(_path);
         }
@@ -110,6 +112,9 @@ public class Global {
         HashSet<String> _saveSet = new HashSet<>(_saveList.size());
         _saveSet.addAll(_saveList);
         ConfigUtil.putSaveList(_context, _saveSet);
+        HashSet<String> _cleanSet = new HashSet<>(_cleanList.size());
+        _cleanSet.addAll(_cleanList);
+        ConfigUtil.putCleanList(_context, _cleanSet);
     }
 
     /**
@@ -117,10 +122,15 @@ public class Global {
      */
     public static void add_cleanList(@NonNull ArrayList<String> _newList) {
         for (String _path : _newList) {
+            if (_saveList.contains(_path))
+                _saveList.remove(_path);
             if (!_cleanList.contains(_path))
                 _cleanList.add(_path);
         }
         sortList(_cleanList);
+        HashSet<String> _saveSet = new HashSet<>(_saveList.size());
+        _saveSet.addAll(_saveList);
+        ConfigUtil.putSaveList(_context, _saveSet);
         HashSet<String> _cleanSet = new HashSet<>(_cleanList.size());
         _cleanSet.addAll(_cleanList);
         ConfigUtil.putCleanList(_context, _cleanSet);

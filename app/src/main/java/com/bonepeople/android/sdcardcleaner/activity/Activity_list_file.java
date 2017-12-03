@@ -7,7 +7,6 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.widget.CheckBox;
-import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 
@@ -100,6 +99,7 @@ public class Activity_list_file extends AppCompatActivity implements View.OnClic
                 break;
             case ACTION_CLEAN:
                 exitMultiSelect();
+                _adapter.clean();
                 break;
             case ACTION_HOLD:
                 exitMultiSelect();
