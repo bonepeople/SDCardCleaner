@@ -16,6 +16,9 @@ import java.util.Comparator;
  */
 
 public class SDFile {
+    private static final String FILE_ADD = "add_file";
+    private static final String FILE_DELETE = "delete_file";
+    private static final String FILE_CHANGE = "change_file";
     private String _name;//文件名
     private String _path;//文件路径
     private long _size = 0;//文件大小
@@ -50,12 +53,12 @@ public class SDFile {
                 for (File _child : _files) {
                     if (_child != null)
                         if (FileScanUtil.get_state() == FileScanUtil.STATE_SCANNING)
-                            _children.add(new SDFile(this, _child));
+                            new SDFile(this, _child);
                         else
                             break;
                 }
             if (_parent != null)
-                _parent.updateSize(this);
+                _parent.updateSize(this, FILE_ADD);
         } else {
             directory = false;
             _size = _file.length();
@@ -63,7 +66,7 @@ public class SDFile {
             if (rubbish)
                 Global.add_fileSize_rubbish(_size);
             if (_parent != null)
-                _parent.updateSize(this);
+                _parent.updateSize(this, FILE_ADD);
         }
     }
 
@@ -96,14 +99,43 @@ public class SDFile {
      * 该函数由子文件调用，用于获取子文件的大小及引用
      *
      * @param _file 子文件
+     * @param _type 文件大小变动的原因
      */
-    public void updateSize(SDFile _file) {
-        _size += _file.get_size();
-        if (_largestChild != null) {
-            if (_file.get_size() > _largestChild.get_size())
-                _largestChild = _file;
-        } else
-            _largestChild = _file;
+    public void updateSize(SDFile _file, String _type) {
+        switch (_type) {
+            case FILE_ADD:
+                _size += _file.get_size();
+                if (_largestChild != null) {
+                    if (_file.get_size() > _largestChild.get_size())
+                        _largestChild = _file;
+                } else
+                    _largestChild = _file;
+                _children.add(_file);
+                break;
+            case FILE_DELETE:
+                if (_parent != null)
+                    _parent.updateSize(_file, FILE_CHANGE);
+                _size -= _file.get_size();
+                _children.remove(_file);
+                _largestChild = null;
+                break;
+            case FILE_CHANGE:
+                if (_parent != null)
+                    _parent.updateSize(_file, FILE_CHANGE);
+                _size -= _file.get_size();
+                _largestChild = null;
+                break;
+        }
+    }
+
+    private void findLargestChild() {
+        for (SDFile _child : _children) {
+            if (_largestChild != null) {
+                if (_child.get_size() > _largestChild.get_size())
+                    _largestChild = _child;
+            } else
+                _largestChild = _child;
+        }
     }
 
     public String get_name() {
@@ -119,6 +151,8 @@ public class SDFile {
     }
 
     public SDFile get_largestChild() {
+        if (_largestChild == null)
+            findLargestChild();
         return _largestChild;
     }
 
@@ -149,5 +183,41 @@ public class SDFile {
                 return 100;
         } else
             return 100;
+    }
+
+    /**
+     * 删除自身
+     *
+     * @param _auto 是否由APP自动清理
+     */
+    public void delete(boolean _auto) {
+        if (directory) {
+            ArrayList<SDFile> _deleteList = new ArrayList<>(_children.size());
+            _deleteList.addAll(_children);
+            for (SDFile _item : _deleteList) {
+                _item.delete(_auto);
+            }
+        }
+        if (_children.size() == 0) {
+            if (_auto) {
+                if (rubbish) {
+                    File _file = new File(_path);
+                    if (_file.delete()) {
+                        if (_parent != null)
+                            _parent.updateSize(this, FILE_DELETE);
+                        _largestChild = null;
+                        _parent = null;
+                    }
+                }
+            } else {
+                File _file = new File(_path);
+                if (_file.delete()) {
+                    if (_parent != null)
+                        _parent.updateSize(this, FILE_DELETE);
+                    _largestChild = null;
+                    _parent = null;
+                }
+            }
+        }
     }
 }

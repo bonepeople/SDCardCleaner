@@ -91,10 +91,37 @@ public class Adapter_list_file extends RecyclerView.Adapter<Adapter_list_file.Vi
         }
     }
 
-    public void clean()
-    {
+    /**
+     * 删除所选文件
+     */
+    public void delete() {
+        ArrayList<SDFile> _deleteList = new ArrayList<>(_checkedSet.size());
+        for (int _position : _checkedSet) {
+            _deleteList.add(_data.get_children().get(_position));
+        }
+        for (SDFile _file : _deleteList) {
+            _file.delete(false);
+        }
+        notifyDataSetChanged();
+    }
+
+    /**
+     * 将所选文件添加到保存列表中
+     */
+    public void save() {
+        ArrayList<String> _saveList = new ArrayList<>(_checkedSet.size());
+        for (int _position : _checkedSet) {
+            _saveList.add(_data.get_children().get(_position).get_path());
+        }
+        Global.add_saveList(_saveList);
+    }
+
+    /**
+     * 将所选文件添加到清理列表中
+     */
+    public void clean() {
         ArrayList<String> _cleanList = new ArrayList<>(_checkedSet.size());
-        for(int _position:_checkedSet){
+        for (int _position : _checkedSet) {
             _cleanList.add(_data.get_children().get(_position).get_path());
         }
         Global.add_cleanList(_cleanList);

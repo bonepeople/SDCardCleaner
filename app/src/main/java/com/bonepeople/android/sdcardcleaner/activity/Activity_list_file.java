@@ -96,6 +96,7 @@ public class Activity_list_file extends AppCompatActivity implements View.OnClic
         switch (_tags[0]) {
             case ACTION_DELETE:
                 exitMultiSelect();
+                _adapter.delete();
                 break;
             case ACTION_CLEAN:
                 exitMultiSelect();
@@ -103,6 +104,7 @@ public class Activity_list_file extends AppCompatActivity implements View.OnClic
                 break;
             case ACTION_HOLD:
                 exitMultiSelect();
+                _adapter.save();
                 break;
             case ACTION_CHECK:
                 _adapter.set_checkedSet(-1);
