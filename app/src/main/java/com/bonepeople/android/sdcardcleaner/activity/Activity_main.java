@@ -34,10 +34,10 @@ public class Activity_main extends AppCompatActivity implements View.OnClickList
                 startActivity(new Intent(this, Activity_scan.class));
                 break;
             case R.id.cardview_white:
-
+                startActivity(new Intent(this, Activity_list_path.class).putExtra("mode", Activity_list_path.MODE_SAVE));
                 break;
             case R.id.cardview_black:
-
+                startActivity(new Intent(this, Activity_list_path.class).putExtra("mode", Activity_list_path.MODE_CLEAN));
                 break;
             case R.id.cardview_set:
 

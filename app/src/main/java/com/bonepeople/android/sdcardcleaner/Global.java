@@ -191,4 +191,12 @@ public class Global {
     public static long get_fileSize_rubbish() {
         return _fileSize_rubbish;
     }
+
+    public static ArrayList<String> get_saveList() {
+        return _saveList;
+    }
+
+    public static ArrayList<String> get_cleanList() {
+        return _cleanList;
+    }
 }
