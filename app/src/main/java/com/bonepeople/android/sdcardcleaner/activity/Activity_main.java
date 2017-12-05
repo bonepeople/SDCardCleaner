@@ -6,6 +6,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.CardView;
 import android.view.View;
 
+import com.bonepeople.android.sdcardcleaner.Global;
 import com.bonepeople.android.sdcardcleaner.R;
 
 public class Activity_main extends AppCompatActivity implements View.OnClickListener {
@@ -24,6 +25,8 @@ public class Activity_main extends AppCompatActivity implements View.OnClickList
         _card_white.setOnClickListener(this);
         _card_black.setOnClickListener(this);
         _card_set.setOnClickListener(this);
+
+        Global.init(getApplicationContext());
     }
 
     @Override

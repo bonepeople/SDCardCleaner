@@ -42,7 +42,7 @@ public class Activity_scan extends AppCompatActivity implements View.OnClickList
                         _handler.sendEmptyMessageDelayed(MSG_NUMBER, 350);
                     break;
                 case MSG_OVER:
-                    long _size = FileScanUtil.get_rootFile().get_size();
+                    long _size = Global.get_rootFile().get_size();
                     System.out.println("all files size is " + Formatter.formatFileSize(Activity_scan.this, _size));
                     _progressBar.setVisibility(ProgressBar.GONE);
                     _button_stop.setVisibility(Button.GONE);
@@ -72,7 +72,7 @@ public class Activity_scan extends AppCompatActivity implements View.OnClickList
         _button_clean.setOnClickListener(this);
         _button_show.setOnClickListener(this);
 
-        Global.init(getApplicationContext());
+        Global.reset();
         _handler.sendEmptyMessageDelayed(MSG_NUMBER, 350);
         FileScanUtil.start(_handler);
     }

@@ -2,6 +2,7 @@ package com.bonepeople.android.sdcardcleaner.thread;
 
 import android.os.Environment;
 
+import com.bonepeople.android.sdcardcleaner.Global;
 import com.bonepeople.android.sdcardcleaner.models.SDFile;
 import com.bonepeople.android.sdcardcleaner.utils.FileScanUtil;
 
@@ -19,7 +20,7 @@ public class Thread_scan extends Thread {
     public void run() {
         File _file = Environment.getExternalStorageDirectory();
         SDFile _root = new SDFile(null, _file);
-        FileScanUtil.set_rootFile(_root);
+        Global.set_rootFile(_root);
         FileScanUtil.over();
     }
 }

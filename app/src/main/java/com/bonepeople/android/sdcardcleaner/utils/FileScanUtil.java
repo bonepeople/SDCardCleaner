@@ -18,14 +18,12 @@ public class FileScanUtil {
     public static final int STATE_SCANNING = 1;
     public static final int STATE_STOP = 2;
     public static final int STATE_OVER = 3;
-    private static SDFile _rootFile;
     private static Handler _handler;
     private static int _state = STATE_READY;
 
     public static void start(Handler _handler) {
         if (_state == STATE_SCANNING || _state == STATE_STOP)
             return;
-        _rootFile = null;
         FileScanUtil._handler = _handler;
         _state = STATE_SCANNING;
         new Thread_scan().start();
@@ -54,10 +52,6 @@ public class FileScanUtil {
         _handler = null;
     }
 
-    public static void set_rootFile(SDFile _rootFile) {
-        FileScanUtil._rootFile = _rootFile;
-    }
-
     private static void update_state(String _txt, long _delay) {
         if (_handler != null) {
             Message _message_state = _handler.obtainMessage();
@@ -73,10 +67,6 @@ public class FileScanUtil {
             _message_over.what = Activity_scan.MSG_OVER;
             _handler.sendMessage(_message_over);
         }
-    }
-
-    public static SDFile get_rootFile() {
-        return _rootFile;
     }
 
     public static int get_state() {

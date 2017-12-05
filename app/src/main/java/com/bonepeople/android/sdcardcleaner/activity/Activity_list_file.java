@@ -10,10 +10,10 @@ import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 
+import com.bonepeople.android.sdcardcleaner.Global;
 import com.bonepeople.android.sdcardcleaner.R;
 import com.bonepeople.android.sdcardcleaner.adapter.Adapter_list_file;
 import com.bonepeople.android.sdcardcleaner.models.SDFile;
-import com.bonepeople.android.sdcardcleaner.utils.FileScanUtil;
 
 import java.util.Stack;
 
@@ -54,7 +54,7 @@ public class Activity_list_file extends AppCompatActivity implements View.OnClic
         _layoutManager.setOrientation(LinearLayoutManager.VERTICAL);
         _list.setLayoutManager(_layoutManager);
         _adapter = new Adapter_list_file(this, this, this);
-        _adapter.set_data(FileScanUtil.get_rootFile());
+        _adapter.set_data(Global.get_rootFile());
         _list.setAdapter(_adapter);
         _list.addItemDecoration(new DividerItemDecoration(this, DividerItemDecoration.VERTICAL));
 

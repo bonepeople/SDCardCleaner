@@ -3,6 +3,7 @@ package com.bonepeople.android.sdcardcleaner;
 import android.content.Context;
 import android.support.annotation.NonNull;
 
+import com.bonepeople.android.sdcardcleaner.models.SDFile;
 import com.bonepeople.android.sdcardcleaner.utils.ConfigUtil;
 
 import java.util.ArrayList;
@@ -18,7 +19,8 @@ import java.util.Set;
  */
 
 public class Global {
-    private static Context _context;
+    private static Context _applicationContext;
+    private static SDFile _rootFile;
     private static long _fileCount_all = 0;//所有文件总数，包含文件夹
     private static long _fileSize_all = 0;//所有文件总大小
     private static long _fileCount_rubbish = 0;//待清理文件总数，包含文件夹
@@ -32,21 +34,26 @@ public class Global {
      * @param _context 该Context会被储存复用，推荐使用ApplicationContext
      */
     public static void init(@NonNull Context _context) {
-        Global._context = _context;
+        Global._applicationContext = _context;
+        reset();
+    }
+
+    public static void reset() {
         //重置变量
+        _rootFile = null;
         _fileCount_all = 0;
         _fileSize_all = 0;
         _fileCount_rubbish = 0;
         _fileSize_rubbish = 0;
         //从配置文件中初始化保留列表
-        Set<String> _set_save = ConfigUtil.getSaveList(_context);
+        Set<String> _set_save = ConfigUtil.getSaveList(_applicationContext);
         _saveList.clear();
         if (_set_save != null) {
             _saveList.addAll(_set_save);
             sortList(_saveList);
         }
         //从配置文件中初始化清理列表
-        Set<String> _set_clean = ConfigUtil.getCleanList(_context);
+        Set<String> _set_clean = ConfigUtil.getCleanList(_applicationContext);
         _cleanList.clear();
         if (_set_clean != null) {
             _cleanList.addAll(_set_clean);
@@ -64,6 +71,10 @@ public class Global {
                 return _str1.compareToIgnoreCase(_str2);
             }
         });
+    }
+
+    public static void set_rootFile(SDFile _rootFile) {
+        Global._rootFile = _rootFile;
     }
 
     /**
@@ -111,10 +122,10 @@ public class Global {
         sortList(_saveList);
         HashSet<String> _saveSet = new HashSet<>(_saveList.size());
         _saveSet.addAll(_saveList);
-        ConfigUtil.putSaveList(_context, _saveSet);
+        ConfigUtil.putSaveList(_applicationContext, _saveSet);
         HashSet<String> _cleanSet = new HashSet<>(_cleanList.size());
         _cleanSet.addAll(_cleanList);
-        ConfigUtil.putCleanList(_context, _cleanSet);
+        ConfigUtil.putCleanList(_applicationContext, _cleanSet);
     }
 
     /**
@@ -130,10 +141,10 @@ public class Global {
         sortList(_cleanList);
         HashSet<String> _saveSet = new HashSet<>(_saveList.size());
         _saveSet.addAll(_saveList);
-        ConfigUtil.putSaveList(_context, _saveSet);
+        ConfigUtil.putSaveList(_applicationContext, _saveSet);
         HashSet<String> _cleanSet = new HashSet<>(_cleanList.size());
         _cleanSet.addAll(_cleanList);
-        ConfigUtil.putCleanList(_context, _cleanSet);
+        ConfigUtil.putCleanList(_applicationContext, _cleanSet);
     }
 
     /**
@@ -146,7 +157,7 @@ public class Global {
         }
         HashSet<String> _saveSet = new HashSet<>(_saveList.size());
         _saveSet.addAll(_saveList);
-        ConfigUtil.putSaveList(_context, _saveSet);
+        ConfigUtil.putSaveList(_applicationContext, _saveSet);
     }
 
     /**
@@ -159,7 +170,7 @@ public class Global {
         }
         HashSet<String> _cleanSet = new HashSet<>(_cleanList.size());
         _cleanSet.addAll(_cleanList);
-        ConfigUtil.putCleanList(_context, _cleanSet);
+        ConfigUtil.putCleanList(_applicationContext, _cleanSet);
     }
 
     /**
@@ -174,6 +185,14 @@ public class Global {
      */
     public static boolean isClean(String _path) {
         return _cleanList.contains(_path);
+    }
+
+    public static Context get_applicationContext() {
+        return _applicationContext;
+    }
+
+    public static SDFile get_rootFile() {
+        return _rootFile;
     }
 
     public static long get_fileCount_all() {
