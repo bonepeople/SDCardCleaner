@@ -1,6 +1,5 @@
 package com.bonepeople.android.sdcardcleaner.adapter;
 
-import android.content.Context;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.view.ViewGroup;
@@ -15,12 +14,10 @@ import java.util.ArrayList;
 
 public class Adapter_list_path extends RecyclerView.Adapter<Adapter_list_path.ViewHolder> {
     public static final String ACTION_CLICK_ITEM = "click_item";
-    private Context _context;
     private ArrayList<String> _data;
     private View.OnClickListener _listener_click;
 
-    public Adapter_list_path(Context _context, View.OnClickListener _listener_click) {
-        this._context = _context;
+    public Adapter_list_path(View.OnClickListener _listener_click) {
         this._listener_click = _listener_click;
     }
 
@@ -30,7 +27,7 @@ public class Adapter_list_path extends RecyclerView.Adapter<Adapter_list_path.Vi
 
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        TextView _textView = new TextView(_context);
+        TextView _textView = new TextView(parent.getContext());
         _textView.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
         _textView.setPadding(20, 20, 20, 20);
         return new ViewHolder(_textView);

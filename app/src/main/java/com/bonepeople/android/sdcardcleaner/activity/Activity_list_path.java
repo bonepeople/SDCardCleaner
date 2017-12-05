@@ -35,7 +35,7 @@ public class Activity_list_path extends AppCompatActivity implements View.OnClic
         _layoutManager = new LinearLayoutManager(this);
         _layoutManager.setOrientation(LinearLayoutManager.VERTICAL);
         _list.setLayoutManager(_layoutManager);
-        _adapter = new Adapter_list_path(this, this);
+        _adapter = new Adapter_list_path(this);
         _adapter.set_data(_mode == MODE_SAVE ? Global.get_saveList() : Global.get_cleanList());
         _list.setAdapter(_adapter);
         _list.addItemDecoration(new DividerItemDecoration(this, DividerItemDecoration.VERTICAL));

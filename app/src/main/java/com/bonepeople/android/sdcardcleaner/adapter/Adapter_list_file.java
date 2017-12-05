@@ -1,7 +1,6 @@
 package com.bonepeople.android.sdcardcleaner.adapter;
 
 import android.animation.ArgbEvaluator;
-import android.content.Context;
 import android.support.percent.PercentRelativeLayout;
 import android.support.v7.widget.RecyclerView;
 import android.text.format.Formatter;
@@ -31,15 +30,13 @@ public class Adapter_list_file extends RecyclerView.Adapter<Adapter_list_file.Vi
     private static final int COLOR_START = 0xFFEAD799;
     private static final int COLOR_END = 0xFFE96E3E;
     private static final ArgbEvaluator _evaluator = new ArgbEvaluator();
-    private Context _context;
     private SDFile _data;
     private View.OnClickListener _listener_click;
     private View.OnLongClickListener _listener_long;
     private boolean _multiSelect = false;//是否处于多选状态中
     private HashSet<Integer> _checkedSet = new HashSet<>();//已选项目集合
 
-    public Adapter_list_file(Context _context, View.OnClickListener _listener_click, View.OnLongClickListener _listener_long) {
-        this._context = _context;
+    public Adapter_list_file(View.OnClickListener _listener_click, View.OnLongClickListener _listener_long) {
         this._listener_click = _listener_click;
         this._listener_long = _listener_long;
     }
@@ -129,7 +126,7 @@ public class Adapter_list_file extends RecyclerView.Adapter<Adapter_list_file.Vi
 
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        View _view = LayoutInflater.from(_context).inflate(R.layout.item_list_file, parent, false);
+        View _view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_list_file, parent, false);
         return new ViewHolder(_view);
     }
 
@@ -163,7 +160,7 @@ public class Adapter_list_file extends RecyclerView.Adapter<Adapter_list_file.Vi
             holder._image_type.setImageResource(R.drawable.icon_file);
         //设置基本信息
         holder._text_name.setText(_temp_data.get_name());
-        holder._text_size.setText(Formatter.formatFileSize(_context, _temp_data.get_size()));
+        holder._text_size.setText(Formatter.formatFileSize(Global.get_applicationContext(), _temp_data.get_size()));
         holder._view_click.setTag(new String[]{ACTION_CLICK_ITEM, String.valueOf(position)});
     }
 

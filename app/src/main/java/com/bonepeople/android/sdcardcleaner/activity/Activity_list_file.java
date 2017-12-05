@@ -53,7 +53,7 @@ public class Activity_list_file extends AppCompatActivity implements View.OnClic
         _layoutManager = new LinearLayoutManager(this);
         _layoutManager.setOrientation(LinearLayoutManager.VERTICAL);
         _list.setLayoutManager(_layoutManager);
-        _adapter = new Adapter_list_file(this, this, this);
+        _adapter = new Adapter_list_file(this, this);
         _adapter.set_data(Global.get_rootFile());
         _list.setAdapter(_adapter);
         _list.addItemDecoration(new DividerItemDecoration(this, DividerItemDecoration.VERTICAL));
