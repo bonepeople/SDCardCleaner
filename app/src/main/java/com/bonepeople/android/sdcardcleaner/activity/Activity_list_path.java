@@ -1,5 +1,6 @@
 package com.bonepeople.android.sdcardcleaner.activity;
 
+import android.os.Environment;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.DividerItemDecoration;
@@ -12,6 +13,8 @@ import com.bonepeople.android.sdcardcleaner.Global;
 import com.bonepeople.android.sdcardcleaner.R;
 import com.bonepeople.android.sdcardcleaner.adapter.Adapter_list_path;
 
+import java.util.ArrayList;
+
 /**
  * 保留列表和待清理列表的展示页面
  */
@@ -22,13 +25,27 @@ public class Activity_list_path extends AppCompatActivity implements View.OnClic
     private LinearLayoutManager _layoutManager;
     private RecyclerView _list;
     private Adapter_list_path _adapter;
+    private ArrayList<String> _data;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         _mode = getIntent().getIntExtra("mode", MODE_SAVE);
         setContentView(R.layout.activity_list_path);
-        setTitle(_mode == MODE_SAVE ? "白名单" : "黑名单");
+        String _basic_path = Environment.getExternalStorageDirectory().getPath();
+        if (_mode == MODE_SAVE) {
+            setTitle("白名单");
+            _data = new ArrayList<>(Global.get_saveList().size());
+            for (int _temp_i = 0; _temp_i < Global.get_saveList().size(); _temp_i++) {
+                _data.add(Global.get_saveList().get(_temp_i).replace(_basic_path, "SD卡"));
+            }
+        } else {
+            setTitle("黑名单");
+            _data = new ArrayList<>(Global.get_cleanList().size());
+            for (int _temp_i = 0; _temp_i < Global.get_cleanList().size(); _temp_i++) {
+                _data.add(Global.get_cleanList().get(_temp_i).replace(_basic_path, "SD卡"));
+            }
+        }
 
         _list = (RecyclerView) findViewById(R.id.recyclerview);
 
@@ -36,7 +53,7 @@ public class Activity_list_path extends AppCompatActivity implements View.OnClic
         _layoutManager.setOrientation(LinearLayoutManager.VERTICAL);
         _list.setLayoutManager(_layoutManager);
         _adapter = new Adapter_list_path(this);
-        _adapter.set_data(_mode == MODE_SAVE ? Global.get_saveList() : Global.get_cleanList());
+        _adapter.set_data(_data);
         _list.setAdapter(_adapter);
         _list.addItemDecoration(new DividerItemDecoration(this, DividerItemDecoration.VERTICAL));
     }
