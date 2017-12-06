@@ -20,7 +20,7 @@ import java.util.Set;
 
 public class Global {
     private static Context _applicationContext;
-    private static SDFile _rootFile;
+    private static SDFile _rootFile = null;
     private static long _fileCount_all = 0;//所有文件总数，包含文件夹
     private static long _fileSize_all = 0;//所有文件总大小
     private static long _fileCount_rubbish = 0;//待清理文件总数，包含文件夹
@@ -35,16 +35,6 @@ public class Global {
      */
     public static void init(@NonNull Context _context) {
         Global._applicationContext = _context;
-        reset();
-    }
-
-    public static void reset() {
-        //重置变量
-        _rootFile = null;
-        _fileCount_all = 0;
-        _fileSize_all = 0;
-        _fileCount_rubbish = 0;
-        _fileSize_rubbish = 0;
         //从配置文件中初始化保留列表
         Set<String> _set_save = ConfigUtil.getSaveList(_applicationContext);
         _saveList.clear();
@@ -59,6 +49,15 @@ public class Global {
             _cleanList.addAll(_set_clean);
             sortList(_cleanList);
         }
+    }
+
+    public static void reset() {
+        //重置变量
+        _rootFile = null;
+        _fileCount_all = 0;
+        _fileSize_all = 0;
+        _fileCount_rubbish = 0;
+        _fileSize_rubbish = 0;
     }
 
     /**
@@ -150,11 +149,8 @@ public class Global {
     /**
      * 移除保留列表中的数据
      */
-    public static void remove_saveList(@NonNull ArrayList<String> _removeList) {
-        for (String _path : _removeList) {
-            if (_saveList.contains(_path))
-                _saveList.remove(_path);
-        }
+    public static void remove_saveList(int _index) {
+        _saveList.remove(_index);
         HashSet<String> _saveSet = new HashSet<>(_saveList.size());
         _saveSet.addAll(_saveList);
         ConfigUtil.putSaveList(_applicationContext, _saveSet);
@@ -163,11 +159,8 @@ public class Global {
     /**
      * 移除清理列表中的数据
      */
-    public static void remove_cleanList(@NonNull ArrayList<String> _removeList) {
-        for (String _path : _removeList) {
-            if (_cleanList.contains(_path))
-                _cleanList.remove(_path);
-        }
+    public static void remove_cleanList(int _index) {
+        _cleanList.remove(_index);
         HashSet<String> _cleanSet = new HashSet<>(_cleanList.size());
         _cleanSet.addAll(_cleanList);
         ConfigUtil.putCleanList(_applicationContext, _cleanSet);

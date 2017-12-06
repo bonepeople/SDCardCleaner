@@ -1,3 +1,9 @@
 <resources>
     <string name="app_name">SDCardCleaner</string>
+    <string name="positiveButton">确定</string>
+    <string name="negativeButton">取消</string>
+
+    <!--Activity_list_path-->
+    <string name="dialog_list_path">移除“%1$s”？</string>
+    <string name="toast_list_path">点击项目可以将其移除</string>
 </resources>

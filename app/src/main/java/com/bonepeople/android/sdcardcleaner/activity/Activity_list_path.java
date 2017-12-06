@@ -1,6 +1,8 @@
 package com.bonepeople.android.sdcardcleaner.activity;
 
+import android.content.DialogInterface;
 import android.os.Environment;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.DividerItemDecoration;
@@ -59,12 +61,39 @@ public class Activity_list_path extends AppCompatActivity implements View.OnClic
     }
 
     @Override
+    protected void onResume() {
+        super.onResume();
+        Toast.makeText(this, R.string.toast_list_path, Toast.LENGTH_LONG).show();
+    }
+
+    @Override
     public void onClick(View v) {
         String[] _tags = (String[]) v.getTag();
         switch (_tags[0]) {
             case Adapter_list_path.ACTION_CLICK_ITEM:
-                Toast.makeText(this, _tags[1], Toast.LENGTH_SHORT).show();
+                removeItem(Integer.parseInt(_tags[1]));
                 break;
         }
+    }
+
+    private void removeItem(final int _index) {
+        AlertDialog.Builder _builder = new AlertDialog.Builder(this);
+        String _path = _data.get(_index);
+        _builder.setMessage(getResources().getString(R.string.dialog_list_path, _path));
+        _builder.setPositiveButton(R.string.positiveButton, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                if (_mode == MODE_SAVE) {
+                    Global.remove_saveList(_index);
+                } else {
+                    Global.remove_cleanList(_index);
+                }
+                _data.remove(_index);
+                _adapter.notifyItemRemoved(_index);
+                _adapter.notifyItemRangeChanged(_index, _data.size() - _index);
+            }
+        });
+        _builder.setNegativeButton(R.string.negativeButton, null);
+        _builder.create().show();
     }
 }
