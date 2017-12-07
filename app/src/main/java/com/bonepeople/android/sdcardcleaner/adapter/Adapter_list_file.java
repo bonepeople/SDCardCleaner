@@ -111,6 +111,8 @@ public class Adapter_list_file extends RecyclerView.Adapter<Adapter_list_file.Vi
             _saveList.add(_data.get_children().get(_position).get_path());
         }
         Global.add_saveList(_saveList);
+        _data.updateRubbish();
+        notifyDataSetChanged();
     }
 
     /**
@@ -122,6 +124,8 @@ public class Adapter_list_file extends RecyclerView.Adapter<Adapter_list_file.Vi
             _cleanList.add(_data.get_children().get(_position).get_path());
         }
         Global.add_cleanList(_cleanList);
+        _data.updateRubbish();
+        notifyDataSetChanged();
     }
 
     @Override
@@ -152,7 +156,11 @@ public class Adapter_list_file extends RecyclerView.Adapter<Adapter_list_file.Vi
             if (holder._checkbox.getVisibility() == CheckBox.VISIBLE)
                 holder._checkbox.setVisibility(CheckBox.GONE);
         }
-
+        //设置清理标志
+        if (_temp_data.isRubbish())
+            holder._image_rubbish.setVisibility(ImageView.VISIBLE);
+        else
+            holder._image_rubbish.setVisibility(ImageView.GONE);
         //设置类型图标
         if (_temp_data.isDirectory())
             holder._image_type.setImageResource(R.drawable.icon_directory);
@@ -176,6 +184,7 @@ public class Adapter_list_file extends RecyclerView.Adapter<Adapter_list_file.Vi
     public class ViewHolder extends RecyclerView.ViewHolder {
         public View _view_percent;
         public CheckBox _checkbox;
+        public ImageView _image_rubbish;
         public ImageView _image_type;
         public TextView _text_name;
         public TextView _text_size;
@@ -185,6 +194,7 @@ public class Adapter_list_file extends RecyclerView.Adapter<Adapter_list_file.Vi
             super(itemView);
             _view_percent = itemView.findViewById(R.id.view_percent);
             _checkbox = (CheckBox) itemView.findViewById(R.id.checkbox_item);
+            _image_rubbish = (ImageView) itemView.findViewById(R.id.imageview_rubbish);
             _image_type = (ImageView) itemView.findViewById(R.id.imageview_type);
             _text_name = (TextView) itemView.findViewById(R.id.textview_name);
             _text_size = (TextView) itemView.findViewById(R.id.textview_size);

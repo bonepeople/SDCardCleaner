@@ -186,6 +186,23 @@ public class SDFile {
     }
 
     /**
+     * 更新该文件及子文件的待清理状态
+     */
+    public void updateRubbish() {
+        if (Global.isSave(_path)) {
+            rubbish = false;
+        } else if (Global.isClean(_path)) {
+            rubbish = true;
+        } else if (_parent != null && _parent.isRubbish()) {
+            rubbish = true;
+        } else
+            rubbish = false;
+        for (SDFile _child : _children) {
+            _child.updateRubbish();
+        }
+    }
+
+    /**
      * 删除自身
      *
      * @param _auto 是否由APP自动清理
