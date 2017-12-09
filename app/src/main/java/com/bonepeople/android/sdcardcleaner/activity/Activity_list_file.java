@@ -1,5 +1,7 @@
 package com.bonepeople.android.sdcardcleaner.activity;
 
+import android.content.DialogInterface;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.DividerItemDecoration;
@@ -88,18 +90,28 @@ public class Activity_list_file extends AppCompatActivity implements View.OnClic
      * 删除所选文件
      */
     private void deleteFiles() {
-        ArrayList<Integer> _checkList = _adapter.get_checkList();
-        Collections.sort(_checkList);
-        ArrayList<SDFile> _deleteList = new ArrayList<>(_checkList.size());
-        for (int _position : _checkList) {
-            _deleteList.add(_adapter.get_data().get_children().get(_position));
-        }
-        for (SDFile _file : _deleteList) {
-            int _index = _adapter.get_data().get_children().indexOf(_file);
-            _file.delete(false);
-            _adapter.notifyItemRemoved(_index);
-            _adapter.notifyItemRangeChanged(_index, _adapter.get_data().get_children().size() - _index);
-        }
+        AlertDialog.Builder _builder = new AlertDialog.Builder(this);
+        _builder.setTitle("确认删除？");
+        _builder.setMessage("该操作会删除当前指定文件夹下的所有文件，无论它是否存在于白名单中");
+        _builder.setPositiveButton(R.string.positiveButton, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                ArrayList<Integer> _checkList = _adapter.get_checkList();
+                Collections.sort(_checkList);
+                ArrayList<SDFile> _deleteList = new ArrayList<>(_checkList.size());
+                for (int _position : _checkList) {
+                    _deleteList.add(_adapter.get_data().get_children().get(_position));
+                }
+                for (SDFile _file : _deleteList) {
+                    int _index = _adapter.get_data().get_children().indexOf(_file);
+                    _file.delete(false);
+                    _adapter.notifyItemRemoved(_index);
+                    _adapter.notifyItemRangeChanged(_index, _adapter.get_data().get_children().size() - _index);
+                }
+            }
+        });
+        _builder.setNegativeButton(R.string.negativeButton, null);
+        _builder.create().show();
     }
 
     /**
