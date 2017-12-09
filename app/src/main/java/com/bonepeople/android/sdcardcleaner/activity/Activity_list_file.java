@@ -15,6 +15,8 @@ import com.bonepeople.android.sdcardcleaner.R;
 import com.bonepeople.android.sdcardcleaner.adapter.Adapter_list_file;
 import com.bonepeople.android.sdcardcleaner.models.SDFile;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Stack;
 
 public class Activity_list_file extends AppCompatActivity implements View.OnClickListener, View.OnLongClickListener {
@@ -70,16 +72,68 @@ public class Activity_list_file extends AppCompatActivity implements View.OnClic
         _button_close.setOnClickListener(this);
     }
 
-    private void exitMultiSelect() {
-        _buttonbar.setVisibility(LinearLayout.GONE);
-        _adapter.set_multiSelect(false);
-        _checkbox_all.setChecked(false);
+    private void setMultiSelect(boolean _selecting) {
+        _adapter.set_multiSelect(_selecting);
+        //经测试，只刷新部分条目会出现bug
+        _adapter.notifyItemRangeChanged(0, _adapter.getItemCount(), Adapter_list_file.PART_CHECKBOX);
+        if (_selecting) {
+            _buttonbar.setVisibility(LinearLayout.VISIBLE);
+        } else {
+            _buttonbar.setVisibility(LinearLayout.GONE);
+            _checkbox_all.setChecked(false);
+        }
+    }
+
+    /**
+     * 删除所选文件
+     */
+    private void deleteFiles() {
+        ArrayList<Integer> _checkList = _adapter.get_checkList();
+        Collections.sort(_checkList);
+        ArrayList<SDFile> _deleteList = new ArrayList<>(_checkList.size());
+        for (int _position : _checkList) {
+            _deleteList.add(_adapter.get_data().get_children().get(_position));
+        }
+        for (SDFile _file : _deleteList) {
+            int _index = _adapter.get_data().get_children().indexOf(_file);
+            _file.delete(false);
+            _adapter.notifyItemRemoved(_index);
+            _adapter.notifyItemRangeChanged(_index, _adapter.get_data().get_children().size() - _index);
+        }
+    }
+
+    /**
+     * 将所选文件添加到清理列表中
+     */
+    private void cleanFiles() {
+        ArrayList<Integer> _checkList = _adapter.get_checkList();
+        ArrayList<String> _cleanList = new ArrayList<>(_checkList.size());
+        for (int _position : _checkList) {
+            _cleanList.add(_adapter.get_data().get_children().get(_position).get_path());
+        }
+        Global.add_cleanList(_cleanList);
+        _adapter.get_data().updateRubbish();
+        _adapter.notifyDataSetChanged();
+    }
+
+    /**
+     * 将所选文件添加到保存列表中
+     */
+    private void saveFiles() {
+        ArrayList<Integer> _checkList = _adapter.get_checkList();
+        ArrayList<String> _saveList = new ArrayList<>(_checkList.size());
+        for (int _position : _checkList) {
+            _saveList.add(_adapter.get_data().get_children().get(_position).get_path());
+        }
+        Global.add_saveList(_saveList);
+        _adapter.get_data().updateRubbish();
+        _adapter.notifyDataSetChanged();
     }
 
     @Override
     public void onBackPressed() {
         if (_adapter.is_multiSelect()) {
-            exitMultiSelect();
+            setMultiSelect(false);
         } else if (_files.size() > 0) {
             _text_path.setText(_paths.pop());
             _text_path.setSelection(_text_path.getText().length());
@@ -95,27 +149,30 @@ public class Activity_list_file extends AppCompatActivity implements View.OnClic
         String[] _tags = (String[]) v.getTag();
         switch (_tags[0]) {
             case ACTION_DELETE:
-                exitMultiSelect();
-                _adapter.delete();
+                setMultiSelect(false);
+                deleteFiles();
                 break;
             case ACTION_CLEAN:
-                exitMultiSelect();
-                _adapter.clean();
+                setMultiSelect(false);
+                cleanFiles();
                 break;
             case ACTION_HOLD:
-                exitMultiSelect();
-                _adapter.save();
+                setMultiSelect(false);
+                saveFiles();
                 break;
             case ACTION_CHECK:
-                _adapter.set_checkedSet(-1);
+                _adapter.set_checkList(-1);
+                //经测试，只刷新部分条目会出现bug
+                _adapter.notifyItemRangeChanged(0, _adapter.getItemCount(), Adapter_list_file.PART_CHECKBOX);
                 break;
             case ACTION_CLOSE:
-                exitMultiSelect();
+                setMultiSelect(false);
                 break;
             case Adapter_list_file.ACTION_CLICK_ITEM:
                 int _position = Integer.parseInt(_tags[1]);
                 if (_adapter.is_multiSelect()) {//处于多选状态
-                    _checkbox_all.setChecked(_adapter.set_checkedSet(_position));
+                    _checkbox_all.setChecked(_adapter.set_checkList(_position));
+                    _adapter.notifyItemChanged(_position, Adapter_list_file.PART_CHECKBOX);
                 } else {//处于浏览状态
                     SDFile _clickFile = _adapter.get_data().get_children().get(_position);
                     if (_clickFile.isDirectory()) {
@@ -145,11 +202,12 @@ public class Activity_list_file extends AppCompatActivity implements View.OnClic
         String[] _tags = (String[]) v.getTag();
         int _position = Integer.parseInt(_tags[1]);
         if (_adapter.is_multiSelect()) {//处于多选状态
-            _checkbox_all.setChecked(_adapter.set_checkedSet(_position));
+            _checkbox_all.setChecked(_adapter.set_checkList(_position));
+            _adapter.notifyItemChanged(_position, Adapter_list_file.PART_CHECKBOX);
         } else {//处于浏览状态
-            _adapter.set_multiSelect(true);
-            _checkbox_all.setChecked(_adapter.set_checkedSet(_position));
-            _buttonbar.setVisibility(LinearLayout.VISIBLE);
+            setMultiSelect(true);
+            _checkbox_all.setChecked(_adapter.set_checkList(_position));
+            _adapter.notifyItemChanged(_position, Adapter_list_file.PART_CHECKBOX);
         }
         return true;
     }

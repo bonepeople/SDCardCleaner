@@ -11,13 +11,12 @@ import android.widget.CheckBox;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.bonepeople.android.sdcardcleaner.Global;
 import com.bonepeople.android.sdcardcleaner.R;
 import com.bonepeople.android.sdcardcleaner.models.SDFile;
 import com.bonepeople.android.sdcardcleaner.utils.NumberUtil;
 
 import java.util.ArrayList;
-import java.util.HashSet;
+import java.util.List;
 
 /**
  * 文件列表的数据适配器
@@ -26,6 +25,7 @@ import java.util.HashSet;
  */
 
 public class Adapter_list_file extends RecyclerView.Adapter<Adapter_list_file.ViewHolder> {
+    public static final String PART_CHECKBOX = "checkBox";
     public static final String ACTION_CLICK_ITEM = "click_item";
     private static final int COLOR_START = 0xFFEAD799;
     private static final int COLOR_END = 0xFFE96E3E;
@@ -34,7 +34,7 @@ public class Adapter_list_file extends RecyclerView.Adapter<Adapter_list_file.Vi
     private View.OnClickListener _listener_click;
     private View.OnLongClickListener _listener_long;
     private boolean _multiSelect = false;//是否处于多选状态中
-    private HashSet<Integer> _checkedSet = new HashSet<>();//已选项目集合
+    private ArrayList<Integer> _checkList = new ArrayList<>();//已选项目集合
 
     public Adapter_list_file(View.OnClickListener _listener_click, View.OnLongClickListener _listener_long) {
         this._listener_click = _listener_click;
@@ -49,14 +49,17 @@ public class Adapter_list_file extends RecyclerView.Adapter<Adapter_list_file.Vi
         return _data;
     }
 
+    public ArrayList<Integer> get_checkList() {
+        return _checkList;
+    }
+
     /**
      * 设置多选状态
      */
     public void set_multiSelect(boolean _multiSelect) {
         this._multiSelect = _multiSelect;
         if (_multiSelect)
-            _checkedSet.clear();
-        notifyDataSetChanged();
+            _checkList.clear();
     }
 
     /**
@@ -65,73 +68,50 @@ public class Adapter_list_file extends RecyclerView.Adapter<Adapter_list_file.Vi
      * @param _position 已选项目在集合中的位置，-1为全选
      * @return 是否已经全选所有项目
      */
-    public boolean set_checkedSet(int _position) {
+    public boolean set_checkList(int _position) {
         if (_position == -1) {//全选标记
-            if (_checkedSet.size() == _data.get_children().size()) {//已全选
-                _checkedSet.clear();
-                notifyDataSetChanged();
-                return false;
+            if (_checkList.size() == _data.get_children().size()) {//已全选
+                _checkList.clear();
             } else {//未全选
+                _checkList.clear();
                 for (int _temp_i = 0; _temp_i < _data.get_children().size(); _temp_i++)
-                    _checkedSet.add(_temp_i);
-                notifyDataSetChanged();
-                return true;
+                    _checkList.add(_temp_i);
             }
         } else {//普通位置序号
-            if (_checkedSet.contains(_position)) {
-                _checkedSet.remove(_position);
+            if (_checkList.contains(_position)) {
+                _checkList.remove(Integer.valueOf(_position));
             } else {
-                _checkedSet.add(_position);
+                _checkList.add(_position);
             }
-            notifyItemChanged(_position);
-            return _checkedSet.size() == _data.get_children().size();
         }
-    }
-
-    /**
-     * 删除所选文件
-     */
-    public void delete() {
-        ArrayList<SDFile> _deleteList = new ArrayList<>(_checkedSet.size());
-        for (int _position : _checkedSet) {
-            _deleteList.add(_data.get_children().get(_position));
-        }
-        for (SDFile _file : _deleteList) {
-            _file.delete(false);
-        }
-        notifyDataSetChanged();
-    }
-
-    /**
-     * 将所选文件添加到保存列表中
-     */
-    public void save() {
-        ArrayList<String> _saveList = new ArrayList<>(_checkedSet.size());
-        for (int _position : _checkedSet) {
-            _saveList.add(_data.get_children().get(_position).get_path());
-        }
-        Global.add_saveList(_saveList);
-        _data.updateRubbish();
-        notifyDataSetChanged();
-    }
-
-    /**
-     * 将所选文件添加到清理列表中
-     */
-    public void clean() {
-        ArrayList<String> _cleanList = new ArrayList<>(_checkedSet.size());
-        for (int _position : _checkedSet) {
-            _cleanList.add(_data.get_children().get(_position).get_path());
-        }
-        Global.add_cleanList(_cleanList);
-        _data.updateRubbish();
-        notifyDataSetChanged();
+        return _checkList.size() == _data.get_children().size();
     }
 
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View _view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_list_file, parent, false);
         return new ViewHolder(_view);
+    }
+
+    @Override
+    public void onBindViewHolder(ViewHolder holder, int position, List<Object> payloads) {
+        if (payloads.size() == 0) {
+            onBindViewHolder(holder, position);
+        }
+        //设置复选框状态
+        if (_multiSelect) {
+            if (holder._checkbox.getVisibility() == CheckBox.GONE)
+                holder._checkbox.setVisibility(CheckBox.VISIBLE);
+            if (_checkList.contains(position))
+                holder._checkbox.setChecked(true);
+            else
+                holder._checkbox.setChecked(false);
+        } else {
+            if (holder._checkbox.getVisibility() == CheckBox.VISIBLE) {
+                holder._checkbox.setVisibility(CheckBox.GONE);
+                holder._checkbox.setChecked(false);
+            }
+        }
     }
 
     @Override
@@ -144,18 +124,6 @@ public class Adapter_list_file extends RecyclerView.Adapter<Adapter_list_file.Vi
         holder._view_percent.setLayoutParams(_params);
         int _color = (int) _evaluator.evaluate(_percent, COLOR_START, COLOR_END);
         holder._view_percent.setBackgroundColor(_color);
-        //设置复选框状态
-        if (_multiSelect) {
-            if (holder._checkbox.getVisibility() == CheckBox.GONE)
-                holder._checkbox.setVisibility(CheckBox.VISIBLE);
-            if (_checkedSet.contains(position))
-                holder._checkbox.setChecked(true);
-            else
-                holder._checkbox.setChecked(false);
-        } else {
-            if (holder._checkbox.getVisibility() == CheckBox.VISIBLE)
-                holder._checkbox.setVisibility(CheckBox.GONE);
-        }
         //设置清理标志
         if (_temp_data.isRubbish())
             holder._image_rubbish.setVisibility(ImageView.VISIBLE);
@@ -168,7 +136,7 @@ public class Adapter_list_file extends RecyclerView.Adapter<Adapter_list_file.Vi
             holder._image_type.setImageResource(R.drawable.icon_file);
         //设置基本信息
         holder._text_name.setText(_temp_data.get_name());
-        holder._text_size.setText(Formatter.formatFileSize(Global.get_applicationContext(), _temp_data.get_size()));
+        holder._text_size.setText(Formatter.formatFileSize(holder._view_click.getContext(), _temp_data.get_size()));
         holder._view_click.setTag(new String[]{ACTION_CLICK_ITEM, String.valueOf(position)});
     }
 
