@@ -4,6 +4,7 @@ import android.content.Context;
 import android.support.annotation.NonNull;
 
 import com.bonepeople.android.sdcardcleaner.models.SDFile;
+import com.bonepeople.android.sdcardcleaner.utils.CommonUtil;
 import com.bonepeople.android.sdcardcleaner.utils.ConfigUtil;
 
 import java.util.ArrayList;
@@ -67,7 +68,7 @@ public class Global {
         Collections.sort(_list, new Comparator<String>() {
             @Override
             public int compare(String _str1, String _str2) {
-                return _str1.compareToIgnoreCase(_str2);
+                return CommonUtil.comparePath(_str1, _str2);
             }
         });
     }

@@ -1,6 +1,7 @@
 package com.bonepeople.android.sdcardcleaner.models;
 
 import com.bonepeople.android.sdcardcleaner.Global;
+import com.bonepeople.android.sdcardcleaner.utils.CommonUtil;
 import com.bonepeople.android.sdcardcleaner.utils.FileScanUtil;
 import com.bonepeople.android.sdcardcleaner.utils.NumberUtil;
 
@@ -79,13 +80,13 @@ public class SDFile {
                 @Override
                 public int compare(File _file1, File _file2) {
                     if (_file1.isDirectory() && _file2.isDirectory()) {
-                        return _file1.getName().compareToIgnoreCase(_file2.getName());
+                        return CommonUtil.comparePath(_file1.getName(), _file2.getName());
                     } else if (_file1.isDirectory() && _file2.isFile()) {
                         return -1;
                     } else if (_file1.isFile() && _file2.isDirectory()) {
                         return 1;
                     } else {
-                        return _file1.getName().compareToIgnoreCase(_file2.getName());
+                        return CommonUtil.comparePath(_file1.getName(), _file2.getName());
                     }
                 }
             });
