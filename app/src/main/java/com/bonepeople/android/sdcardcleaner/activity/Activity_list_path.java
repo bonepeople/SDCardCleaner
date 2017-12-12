@@ -19,6 +19,8 @@ import java.util.ArrayList;
 
 /**
  * 保留列表和待清理列表的展示页面
+ * <p>
+ * <b>intent:</b>"mode"-当前页面的类型(MODE_SAVE/MODE_CLEAN)
  */
 public class Activity_list_path extends AppCompatActivity implements View.OnClickListener {
     public static final int MODE_SAVE = 0;//保留列表

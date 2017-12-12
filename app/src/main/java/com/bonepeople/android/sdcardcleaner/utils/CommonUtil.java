@@ -8,6 +8,10 @@ import java.math.BigInteger;
  */
 
 public class CommonUtil {
+
+    /**
+     * 对比两个路径（用于排序）
+     */
     public static int comparePath(String _path1, String _path2) {
         int _mark1 = 0, _mark2 = 0;
         char _char1, _char2;
