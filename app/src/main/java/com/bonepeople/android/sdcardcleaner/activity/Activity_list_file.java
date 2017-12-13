@@ -33,8 +33,8 @@ public class Activity_list_file extends AppCompatActivity implements View.OnClic
     private LinearLayout _buttonbar;
     private CheckBox _checkbox_all;
     private Adapter_list_file _adapter;
+    private String _basic_path = Global.get_rootFile().get_path();
     private Stack<SDFile> _files = new Stack<>();
-    private Stack<String> _paths = new Stack<>();
     private Stack<Integer> _positions = new Stack<>();
     private Stack<Integer> _offsets = new Stack<>();
 
@@ -53,7 +53,7 @@ public class Activity_list_file extends AppCompatActivity implements View.OnClic
         View _button_close = findViewById(R.id.imageview_close);
         _checkbox_all = (CheckBox) findViewById(R.id.checkbox_all);
 
-        _text_path.setText("SD卡\\");
+        _text_path.setText(Global.get_rootFile().get_path().replace(_basic_path, "SD卡"));
         _layoutManager = new LinearLayoutManager(this);
         _layoutManager.setOrientation(LinearLayoutManager.VERTICAL);
         _list.setLayoutManager(_layoutManager);
@@ -147,7 +147,7 @@ public class Activity_list_file extends AppCompatActivity implements View.OnClic
         if (_adapter.is_multiSelect()) {
             setMultiSelect(false);
         } else if (_files.size() > 0) {
-            _text_path.setText(_paths.pop());
+            _text_path.setText(_files.peek().get_path().replace(_basic_path, "SD卡"));
             _text_path.setSelection(_text_path.getText().length());
             _adapter.set_data(_files.pop());
             _adapter.notifyDataSetChanged();
@@ -196,8 +196,7 @@ public class Activity_list_file extends AppCompatActivity implements View.OnClic
                             _offsets.push(_offset);
                         } else
                             _offsets.push(0);
-                        _paths.push(_text_path.getText().toString());
-                        _text_path.append(_clickFile.get_name() + "\\");
+                        _text_path.setText(_clickFile.get_path().replace(_basic_path, "SD卡"));
                         _text_path.setSelection(_text_path.getText().length());
                         _files.push(_adapter.get_data());
                         _adapter.set_data(_clickFile);
