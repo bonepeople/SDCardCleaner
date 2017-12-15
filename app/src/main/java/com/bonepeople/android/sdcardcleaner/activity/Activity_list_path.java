@@ -14,6 +14,7 @@ import android.widget.Toast;
 import com.bonepeople.android.sdcardcleaner.Global;
 import com.bonepeople.android.sdcardcleaner.R;
 import com.bonepeople.android.sdcardcleaner.adapter.Adapter_list_path;
+import com.bonepeople.android.sdcardcleaner.thread.Service_fileManager;
 
 import java.util.ArrayList;
 
@@ -60,12 +61,10 @@ public class Activity_list_path extends AppCompatActivity implements View.OnClic
         _adapter.set_data(_data);
         _list.setAdapter(_adapter);
         _list.addItemDecoration(new DividerItemDecoration(this, DividerItemDecoration.VERTICAL));
-    }
-
-    @Override
-    protected void onResume() {
-        super.onResume();
-        Toast.makeText(this, R.string.toast_list_path, Toast.LENGTH_LONG).show();
+        if (Service_fileManager.get_scanState() == Service_fileManager.STATE_SCAN_EXECUTING)
+            Toast.makeText(this, "扫描过程中无法修改", Toast.LENGTH_LONG).show();
+        else
+            Toast.makeText(this, R.string.toast_list_path, Toast.LENGTH_LONG).show();
     }
 
     @Override
@@ -73,7 +72,8 @@ public class Activity_list_path extends AppCompatActivity implements View.OnClic
         String[] _tags = (String[]) v.getTag();
         switch (_tags[0]) {
             case Adapter_list_path.ACTION_CLICK_ITEM:
-                removeItem(Integer.parseInt(_tags[1]));
+                if (Service_fileManager.get_scanState() == Service_fileManager.STATE_SCAN_FINISH)
+                    removeItem(Integer.parseInt(_tags[1]));
                 break;
         }
     }

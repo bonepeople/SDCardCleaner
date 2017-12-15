@@ -1,8 +1,8 @@
 package com.bonepeople.android.sdcardcleaner.models;
 
 import com.bonepeople.android.sdcardcleaner.Global;
+import com.bonepeople.android.sdcardcleaner.thread.Service_fileManager;
 import com.bonepeople.android.sdcardcleaner.utils.CommonUtil;
-import com.bonepeople.android.sdcardcleaner.utils.FileScanUtil;
 import com.bonepeople.android.sdcardcleaner.utils.NumberUtil;
 
 import java.io.File;
@@ -53,7 +53,7 @@ public class SDFile {
             if (_files != null)
                 for (File _child : _files) {
                     if (_child != null)
-                        if (FileScanUtil.get_state() == FileScanUtil.STATE_SCANNING)
+                        if (Service_fileManager.get_scanState() == Service_fileManager.STATE_SCAN_EXECUTING)
                             new SDFile(this, _child);
                         else
                             break;

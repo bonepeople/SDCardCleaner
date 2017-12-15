@@ -22,6 +22,11 @@
         <activity android:name=".activity.Activity_scan" />
         <activity android:name=".activity.Activity_list_file" />
         <activity android:name=".activity.Activity_list_path" />
+
+        <service
+            android:name=".thread.Service_fileManager"
+            android:enabled="true"
+            android:exported="false" />
     </application>
 
 </manifest>
