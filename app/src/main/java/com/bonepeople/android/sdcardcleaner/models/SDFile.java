@@ -35,15 +35,15 @@ public class SDFile {
         _name = _file.getName();
         _path = _file.getAbsolutePath();
 
-        Global.add_fileCount_all();
+        Global.set_fileCount_all(1);
         if (Global.isSave(_path)) {
             rubbish = false;
         } else if (Global.isClean(_path)) {
             rubbish = true;
-            Global.add_fileCount_rubbish();
+            Global.set_fileCount_rubbish(1);
         } else if (_parent != null && _parent.isRubbish()) {
             rubbish = true;
-            Global.add_fileCount_rubbish();
+            Global.set_fileCount_rubbish(1);
         } else
             rubbish = false;
 
@@ -63,9 +63,9 @@ public class SDFile {
         } else {
             directory = false;
             _size = _file.length();
-            Global.add_fileSize_all(_size);
+            Global.set_fileSize_all(_size);
             if (rubbish)
-                Global.add_fileSize_rubbish(_size);
+                Global.set_fileSize_rubbish(_size);
             if (_parent != null)
                 _parent.updateSize(this, FILE_ADD);
         }

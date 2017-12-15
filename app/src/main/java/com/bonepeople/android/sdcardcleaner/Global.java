@@ -78,35 +78,35 @@ public class Global {
     }
 
     /**
-     * 统计一个已扫描文件
+     * 统计已扫描文件个数
      */
-    public static void add_fileCount_all() {
-        _fileCount_all++;
+    public static void set_fileCount_all(int _count) {
+        _fileCount_all += _count;
     }
 
     /**
-     * 添加一个已统计文件的大小
+     * 统计总文件大小
      *
      * @param _fileSize 文件大小
      */
-    public static void add_fileSize_all(long _fileSize) {
-        Global._fileSize_all += _fileSize;
+    public static void set_fileSize_all(long _fileSize) {
+        _fileSize_all += _fileSize;
     }
 
     /**
-     * 统计一个待清理文件
+     * 统计待清理文件个数
      */
-    public static void add_fileCount_rubbish() {
-        _fileCount_rubbish++;
+    public static void set_fileCount_rubbish(int _count) {
+        _fileCount_rubbish += _count;
     }
 
     /**
-     * 添加一个待清理文件的大小
+     * 统计待清理文件的大小
      *
      * @param _fileSize 文件大小
      */
-    public static void add_fileSize_rubbish(long _fileSize) {
-        Global._fileSize_rubbish += _fileSize;
+    public static void set_fileSize_rubbish(long _fileSize) {
+        _fileSize_rubbish += _fileSize;
     }
 
     /**
