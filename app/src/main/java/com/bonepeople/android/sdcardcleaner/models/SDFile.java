@@ -218,9 +218,13 @@ public class SDFile {
         }
         if (_children.size() == 0) {
             if (_auto) {
-                if (rubbish) {
+                if (rubbish && Service_fileManager.get_cleanState() == Service_fileManager.STATE_CLEAN_EXECUTING) {
                     File _file = new File(_path);
                     if (_file.delete()) {
+                        Global.set_fileCount_all(-1);
+                        Global.set_fileSize_all(-_size);
+                        Global.set_fileCount_rubbish(-1);
+                        Global.set_fileSize_rubbish(-_size);
                         if (_parent != null)
                             _parent.updateSize(this, FILE_DELETE);
                         _largestChild = null;
@@ -230,6 +234,12 @@ public class SDFile {
             } else {
                 File _file = new File(_path);
                 if (_file.delete()) {
+                    Global.set_fileCount_all(-1);
+                    Global.set_fileSize_all(-_size);
+                    if (rubbish) {
+                        Global.set_fileCount_rubbish(-1);
+                        Global.set_fileSize_rubbish(-_size);
+                    }
                     if (_parent != null)
                         _parent.updateSize(this, FILE_DELETE);
                     _largestChild = null;

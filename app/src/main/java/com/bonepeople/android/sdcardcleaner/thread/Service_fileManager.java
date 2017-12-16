@@ -10,7 +10,11 @@ public class Service_fileManager extends Service {
     public static final int STATE_SCAN_EXECUTING = 1;
     public static final int STATE_SCAN_STOP = 2;
     public static final int STATE_SCAN_FINISH = 3;
+    public static final int STATE_CLEAN_EXECUTING = 4;
+    public static final int STATE_CLEAN_STOP = 5;
+    public static final int STATE_CLEAN_FINISH = 6;
     private static int _scanState = STATE_SCAN_FINISH;
+    private static int _cleanState = STATE_CLEAN_FINISH;
 
     /**
      * 开始扫描文件
@@ -39,6 +43,32 @@ public class Service_fileManager extends Service {
         _scanState = STATE_SCAN_FINISH;
     }
 
+    /**
+     * 开始清理文件
+     */
+    public static void startClean() {
+        if (_cleanState == STATE_CLEAN_FINISH) {
+            _cleanState = STATE_CLEAN_EXECUTING;
+            new Thread_clean().start();
+        }
+    }
+
+    /**
+     * 停止清理文件
+     */
+    public static void stopClean() {
+        if (_cleanState == STATE_CLEAN_EXECUTING) {
+            _cleanState = STATE_CLEAN_STOP;
+        }
+    }
+
+    /**
+     * 清理文件结束，该方法仅由清理的线程调用
+     */
+    public static void finishClean() {
+        _cleanState = STATE_CLEAN_FINISH;
+    }
+
     @Override
     public IBinder onBind(Intent intent) {
         // TODO: Return the communication channel to the service.
@@ -52,5 +82,9 @@ public class Service_fileManager extends Service {
 
     public static int get_scanState() {
         return _scanState;
+    }
+
+    public static int get_cleanState() {
+        return _cleanState;
     }
 }

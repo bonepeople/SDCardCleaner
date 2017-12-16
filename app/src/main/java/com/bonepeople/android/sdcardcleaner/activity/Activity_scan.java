@@ -16,7 +16,8 @@ import com.bonepeople.android.sdcardcleaner.R;
 import com.bonepeople.android.sdcardcleaner.thread.Service_fileManager;
 
 public class Activity_scan extends AppCompatActivity implements View.OnClickListener {
-    public static final int MSG_NUMBER = 1;
+    public static final int MSG_SCAN = 1;
+    public static final int MSG_CLEAN = 2;
     private ProgressBar _progressBar;
     private TextView _text_state, _text_count_all, _text_count_rubbish, _text_size_rubbish;
     private Button _button_stop, _button_clean, _button_show;
@@ -25,33 +26,64 @@ public class Activity_scan extends AppCompatActivity implements View.OnClickList
         public void handleMessage(Message msg) {
             if (Activity_scan.this.isDestroyed())
                 return;
+            long _fileCount_all, _fileCount_rubbish, _fileSize_rubbish;
             switch (msg.what) {
-                case MSG_NUMBER:
-                    int _state = Service_fileManager.get_scanState();
-                    String _stateStr = "";
-                    switch (_state) {
+                case MSG_SCAN:
+                    int _scanState = Service_fileManager.get_scanState();
+                    String _scanStateStr = "";
+                    switch (_scanState) {
                         case Service_fileManager.STATE_SCAN_EXECUTING:
-                            _stateStr = "正在扫描";
+                            _scanStateStr = "正在扫描";
                             break;
                         case Service_fileManager.STATE_SCAN_STOP:
-                            _stateStr = "正在停止扫描...";
+                            _scanStateStr = "正在停止扫描...";
                             break;
                         case Service_fileManager.STATE_SCAN_FINISH:
-                            _stateStr = "扫描已结束";
+                            _scanStateStr = "扫描已结束";
                             break;
                     }
-                    _text_state.setText(_stateStr);
-                    long _fileCount_all = Global.get_fileCount_all();
-                    long _fileCount_rubbish = Global.get_fileCount_rubbish();
-                    long _fileSize_rubbish = Global.get_fileSize_rubbish();
+                    _text_state.setText(_scanStateStr);
+                    _fileCount_all = Global.get_fileCount_all();
+                    _fileCount_rubbish = Global.get_fileCount_rubbish();
+                    _fileSize_rubbish = Global.get_fileSize_rubbish();
                     _text_count_all.setText("已扫描：" + _fileCount_all);
                     _text_count_rubbish.setText("包含待清理文件：" + _fileCount_rubbish);
                     _text_size_rubbish.setText("待清理文件大小为：" + Formatter.formatFileSize(Activity_scan.this, _fileSize_rubbish));
-                    if (_state != Service_fileManager.STATE_SCAN_FINISH)
-                        _handler.sendEmptyMessageDelayed(MSG_NUMBER, 350);
+                    if (_scanState != Service_fileManager.STATE_SCAN_FINISH)
+                        _handler.sendEmptyMessageDelayed(MSG_SCAN, 350);
                     else {
                         long _size = Global.get_rootFile().get_size();
                         System.out.println("all files size is " + Formatter.formatFileSize(Activity_scan.this, _size));
+                        _progressBar.setVisibility(ProgressBar.GONE);
+                        _button_stop.setVisibility(Button.GONE);
+                        _button_clean.setVisibility(Button.VISIBLE);
+                        _button_show.setVisibility(Button.VISIBLE);
+                    }
+                    break;
+                case MSG_CLEAN:
+                    int _cleanState = Service_fileManager.get_cleanState();
+                    String _cleanStateStr = "";
+                    switch (_cleanState) {
+                        case Service_fileManager.STATE_CLEAN_EXECUTING:
+                            _cleanStateStr = "正在清理";
+                            break;
+                        case Service_fileManager.STATE_CLEAN_STOP:
+                            _cleanStateStr = "正在停止清理";
+                            break;
+                        case Service_fileManager.STATE_CLEAN_FINISH:
+                            _cleanStateStr = "清理已结束";
+                            break;
+                    }
+                    _text_state.setText(_cleanStateStr);
+                    _fileCount_all = Global.get_fileCount_all();
+                    _fileCount_rubbish = Global.get_fileCount_rubbish();
+                    _fileSize_rubbish = Global.get_fileSize_rubbish();
+                    _text_count_all.setText("已扫描：" + _fileCount_all);
+                    _text_count_rubbish.setText("包含待清理文件：" + _fileCount_rubbish);
+                    _text_size_rubbish.setText("待清理文件大小为：" + Formatter.formatFileSize(Activity_scan.this, _fileSize_rubbish));
+                    if (_cleanState != Service_fileManager.STATE_CLEAN_FINISH)
+                        _handler.sendEmptyMessageDelayed(MSG_CLEAN, 350);
+                    else {
                         _progressBar.setVisibility(ProgressBar.GONE);
                         _button_stop.setVisibility(Button.GONE);
                         _button_clean.setVisibility(Button.VISIBLE);
@@ -81,7 +113,7 @@ public class Activity_scan extends AppCompatActivity implements View.OnClickList
         _button_clean.setOnClickListener(this);
         _button_show.setOnClickListener(this);
 
-        _handler.sendEmptyMessageDelayed(MSG_NUMBER, 150);
+        _handler.sendEmptyMessageDelayed(MSG_SCAN, 150);
         Service_fileManager.startScan();
     }
 
@@ -92,7 +124,12 @@ public class Activity_scan extends AppCompatActivity implements View.OnClickList
                 Service_fileManager.stopScan();
                 break;
             case R.id.button_clean:
-
+                _progressBar.setVisibility(ProgressBar.VISIBLE);
+                _button_stop.setVisibility(Button.VISIBLE);
+                _button_clean.setVisibility(Button.GONE);
+                _button_show.setVisibility(Button.GONE);
+                _handler.sendEmptyMessageDelayed(MSG_CLEAN, 150);
+                Service_fileManager.startClean();
                 break;
             case R.id.button_show:
                 startActivity(new Intent(Activity_scan.this, Activity_list_file.class));
