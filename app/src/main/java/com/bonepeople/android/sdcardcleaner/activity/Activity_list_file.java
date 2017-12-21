@@ -1,12 +1,19 @@
 package com.bonepeople.android.sdcardcleaner.activity;
 
+import android.app.ProgressDialog;
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
+import android.content.IntentFilter;
+import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.SparseArray;
 import android.view.View;
 import android.widget.CheckBox;
 import android.widget.EditText;
@@ -16,9 +23,10 @@ import com.bonepeople.android.sdcardcleaner.Global;
 import com.bonepeople.android.sdcardcleaner.R;
 import com.bonepeople.android.sdcardcleaner.adapter.Adapter_list_file;
 import com.bonepeople.android.sdcardcleaner.models.SDFile;
+import com.bonepeople.android.sdcardcleaner.thread.Service_fileManager;
+import com.bonepeople.android.sdcardcleaner.thread.Thread_delete;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Stack;
 
 public class Activity_list_file extends AppCompatActivity implements View.OnClickListener, View.OnLongClickListener {
@@ -32,6 +40,8 @@ public class Activity_list_file extends AppCompatActivity implements View.OnClic
     private RecyclerView _list;
     private LinearLayout _buttonbar;
     private CheckBox _checkbox_all;
+    private ProgressDialog _progressDialog;
+    private LocalBroadcastManager _broadcastManager;
     private Adapter_list_file _adapter;
     private String _basic_path = Global.get_rootFile().get_path();
     private Stack<SDFile> _files = new Stack<>();
@@ -61,6 +71,7 @@ public class Activity_list_file extends AppCompatActivity implements View.OnClic
         _adapter.set_data(Global.get_rootFile());
         _list.setAdapter(_adapter);
         _list.addItemDecoration(new DividerItemDecoration(this, DividerItemDecoration.VERTICAL));
+        _broadcastManager = LocalBroadcastManager.getInstance(getApplicationContext());
 
         _button_delete.setTag(new String[]{ACTION_DELETE});
         _button_clean.setTag(new String[]{ACTION_CLEAN});
@@ -96,18 +107,12 @@ public class Activity_list_file extends AppCompatActivity implements View.OnClic
         _builder.setPositiveButton(R.string.positiveButton, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
-                ArrayList<Integer> _checkList = _adapter.get_checkList();
-                Collections.sort(_checkList);
-                ArrayList<SDFile> _deleteList = new ArrayList<>(_checkList.size());
-                for (int _position : _checkList) {
-                    _deleteList.add(_adapter.get_data().get_children().get(_position));
+                SparseArray<SDFile> _deleteFiles = new SparseArray<>(_adapter.get_checkList().size());
+                for (int _position : _adapter.get_checkList()) {
+                    _deleteFiles.put(_position, _adapter.get_data().get_children().get(_position));
                 }
-                for (SDFile _file : _deleteList) {
-                    int _index = _adapter.get_data().get_children().indexOf(_file);
-                    _file.delete(false);
-                    _adapter.notifyItemRemoved(_index);
-                    _adapter.notifyItemRangeChanged(_index, _adapter.get_data().get_children().size() - _index);
-                }
+                showDeleteProgress(_deleteFiles.size());
+                Service_fileManager.startDelete(_deleteFiles);
             }
         });
         _builder.setNegativeButton(R.string.negativeButton, null);
@@ -144,6 +149,51 @@ public class Activity_list_file extends AppCompatActivity implements View.OnClic
             _adapter.get_data().get_children().get(_position).updateRubbish();
         }
         _adapter.notifyDataSetChanged();
+    }
+
+    private void showDeleteProgress(int _count) {
+        if (_progressDialog == null) {
+            _progressDialog = new ProgressDialog(this, R.style.DialogTheme);
+            _progressDialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
+            _progressDialog.setCancelable(false);
+            _progressDialog.setMessage("正在删除文件");
+            _progressDialog.setButton(ProgressDialog.BUTTON_NEGATIVE, getResources().getString(R.string.negativeButton), new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    Service_fileManager.stopDelete();
+                }
+            });
+        }
+        _progressDialog.setMax(_count);
+        _progressDialog.show();
+        _progressDialog.setProgress(0);
+
+        BroadcastReceiver _receiver = new BroadcastReceiver() {
+            @Override
+            public void onReceive(Context context, Intent intent) {
+                String _action = intent.getAction();
+                if (_action == null)
+                    return;
+                switch (_action) {
+                    case Thread_delete.ACTION_DELETE:
+                        int _index = intent.getIntExtra("index", -1);
+                        if (_index != -1) {
+                            _adapter.notifyItemRemoved(_index - _progressDialog.getProgress());
+                            _progressDialog.incrementProgressBy(1);
+                        }
+                        break;
+                    case Thread_delete.ACTION_FINISH:
+                        _progressDialog.dismiss();
+                        _broadcastManager.unregisterReceiver(this);
+                        _adapter.notifyItemRangeChanged(0, _adapter.getItemCount());
+                        break;
+                }
+            }
+        };
+        IntentFilter _filter = new IntentFilter();
+        _filter.addAction(Thread_delete.ACTION_DELETE);
+        _filter.addAction(Thread_delete.ACTION_FINISH);
+        _broadcastManager.registerReceiver(_receiver, _filter);
     }
 
     @Override

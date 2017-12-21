@@ -232,18 +232,20 @@ public class SDFile {
                     }
                 }
             } else {
-                File _file = new File(_path);
-                if (_file.delete()) {
-                    Global.set_fileCount_all(-1);
-                    Global.set_fileSize_all(-_size);
-                    if (rubbish) {
-                        Global.set_fileCount_rubbish(-1);
-                        Global.set_fileSize_rubbish(-_size);
+                if (Service_fileManager.get_deleteState() == Service_fileManager.STATE_DELETE_EXECUTING) {
+                    File _file = new File(_path);
+                    if (_file.delete()) {
+                        Global.set_fileCount_all(-1);
+                        Global.set_fileSize_all(-_size);
+                        if (rubbish) {
+                            Global.set_fileCount_rubbish(-1);
+                            Global.set_fileSize_rubbish(-_size);
+                        }
+                        if (_parent != null)
+                            _parent.updateSize(this, FILE_DELETE);
+                        _largestChild = null;
+                        _parent = null;
                     }
-                    if (_parent != null)
-                        _parent.updateSize(this, FILE_DELETE);
-                    _largestChild = null;
-                    _parent = null;
                 }
             }
         }
