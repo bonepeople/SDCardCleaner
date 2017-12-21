@@ -124,7 +124,9 @@ public class Activity_list_file extends AppCompatActivity implements View.OnClic
             _cleanList.add(_adapter.get_data().get_children().get(_position).get_path());
         }
         Global.add_cleanList(_cleanList);
-        _adapter.get_data().updateRubbish();
+        for (int _position : _checkList) {
+            _adapter.get_data().get_children().get(_position).updateRubbish();
+        }
         _adapter.notifyDataSetChanged();
     }
 
@@ -138,7 +140,9 @@ public class Activity_list_file extends AppCompatActivity implements View.OnClic
             _saveList.add(_adapter.get_data().get_children().get(_position).get_path());
         }
         Global.add_saveList(_saveList);
-        _adapter.get_data().updateRubbish();
+        for (int _position : _checkList) {
+            _adapter.get_data().get_children().get(_position).updateRubbish();
+        }
         _adapter.notifyDataSetChanged();
     }
 
