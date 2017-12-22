@@ -37,7 +37,6 @@ public class Activity_list_file extends AppCompatActivity implements View.OnClic
     public static final String ACTION_CLOSE = "close";
     private EditText _text_path;
     private LinearLayoutManager _layoutManager;
-    private RecyclerView _list;
     private LinearLayout _buttonbar;
     private CheckBox _checkbox_all;
     private ProgressDialog _progressDialog;
@@ -47,6 +46,7 @@ public class Activity_list_file extends AppCompatActivity implements View.OnClic
     private Stack<SDFile> _files = new Stack<>();
     private Stack<Integer> _positions = new Stack<>();
     private Stack<Integer> _offsets = new Stack<>();
+    private ArrayList<Integer> _notifyItems = new ArrayList<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -55,7 +55,7 @@ public class Activity_list_file extends AppCompatActivity implements View.OnClic
         setTitle("文件列表");
 
         _text_path = (EditText) findViewById(R.id.edittext_path);
-        _list = (RecyclerView) findViewById(R.id.recyclerview);
+        RecyclerView _list = (RecyclerView) findViewById(R.id.recyclerview);
         _buttonbar = (LinearLayout) findViewById(R.id.linearlayout_buttonbar);
         View _button_delete = findViewById(R.id.textView_delete);
         View _button_clean = findViewById(R.id.textView_clean);
@@ -104,6 +104,7 @@ public class Activity_list_file extends AppCompatActivity implements View.OnClic
         AlertDialog.Builder _builder = new AlertDialog.Builder(this);
         _builder.setTitle("确认删除？");
         _builder.setMessage("该操作会删除当前指定文件夹下的所有文件，无论它是否存在于白名单中");
+        _builder.setCancelable(false);
         _builder.setPositiveButton(R.string.positiveButton, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
@@ -167,6 +168,7 @@ public class Activity_list_file extends AppCompatActivity implements View.OnClic
         _progressDialog.setMax(_count);
         _progressDialog.show();
         _progressDialog.setProgress(0);
+        _notifyItems.clear();
 
         BroadcastReceiver _receiver = new BroadcastReceiver() {
             @Override
@@ -178,13 +180,16 @@ public class Activity_list_file extends AppCompatActivity implements View.OnClic
                     case Thread_delete.ACTION_DELETE:
                         int _index = intent.getIntExtra("index", -1);
                         if (_index != -1) {
-                            _adapter.notifyItemRemoved(_index - _progressDialog.getProgress());
+                            _notifyItems.add(_index - _progressDialog.getProgress());
                             _progressDialog.incrementProgressBy(1);
                         }
                         break;
                     case Thread_delete.ACTION_FINISH:
                         _progressDialog.dismiss();
                         _broadcastManager.unregisterReceiver(this);
+                        for (int _index_change : _notifyItems) {
+                            _adapter.notifyItemRemoved(_index_change);
+                        }
                         _adapter.notifyItemRangeChanged(0, _adapter.getItemCount());
                         break;
                 }

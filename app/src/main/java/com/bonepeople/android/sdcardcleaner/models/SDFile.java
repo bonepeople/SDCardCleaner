@@ -102,7 +102,7 @@ public class SDFile {
      * @param _file 子文件
      * @param _type 文件大小变动的原因
      */
-    public void updateSize(SDFile _file, String _type) {
+    private void updateSize(SDFile _file, String _type) {
         switch (_type) {
             case FILE_ADD:
                 _size += _file.get_size();
@@ -151,7 +151,7 @@ public class SDFile {
         return _size;
     }
 
-    public SDFile get_largestChild() {
+    private SDFile get_largestChild() {
         if (_largestChild == null)
             findLargestChild();
         return _largestChild;
@@ -181,7 +181,7 @@ public class SDFile {
                 double _percent = NumberUtil.div(_size, _largestChild.get_size(), 2);
                 return (int) (_percent * 100);
             } else
-                return 100;
+                return 0;
         } else
             return 100;
     }
