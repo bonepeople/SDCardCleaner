@@ -190,14 +190,38 @@ public class SDFile {
      * 更新该文件及子文件的待清理状态
      */
     public void updateRubbish() {
-        if (Global.isSave(_path)) {
-            rubbish = false;
-        } else if (Global.isClean(_path)) {
-            rubbish = true;
-        } else if (_parent != null && _parent.isRubbish()) {
-            rubbish = true;
-        } else
-            rubbish = false;
+        if (rubbish) {//之前需要被清理-true
+            if (Global.isSave(_path)) {
+                rubbish = false;
+                Global.set_fileCount_rubbish(-1);
+                if (!directory)
+                    Global.set_fileSize_rubbish(-_size);
+            } else if (Global.isClean(_path)) {
+                rubbish = true;
+            } else if (_parent != null && _parent.isRubbish()) {
+                rubbish = true;
+            } else {
+                rubbish = false;
+                Global.set_fileCount_rubbish(-1);
+                if (!directory)
+                    Global.set_fileSize_rubbish(-_size);
+            }
+        } else {//之前需要被保留-false
+            if (Global.isSave(_path)) {
+                rubbish = false;
+            } else if (Global.isClean(_path)) {
+                rubbish = true;
+                Global.set_fileCount_rubbish(1);
+                if (!directory)
+                    Global.set_fileSize_rubbish(_size);
+            } else if (_parent != null && _parent.isRubbish()) {
+                rubbish = true;
+                Global.set_fileCount_rubbish(1);
+                if (!directory)
+                    Global.set_fileSize_rubbish(_size);
+            } else
+                rubbish = false;
+        }
         for (SDFile _child : _children) {
             _child.updateRubbish();
         }
