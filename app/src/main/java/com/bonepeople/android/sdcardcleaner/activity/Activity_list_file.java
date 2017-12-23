@@ -25,6 +25,7 @@ import com.bonepeople.android.sdcardcleaner.adapter.Adapter_list_file;
 import com.bonepeople.android.sdcardcleaner.models.SDFile;
 import com.bonepeople.android.sdcardcleaner.thread.Service_fileManager;
 import com.bonepeople.android.sdcardcleaner.thread.Thread_delete;
+import com.bonepeople.android.sdcardcleaner.thread.Thread_updateRubbish;
 
 import java.util.ArrayList;
 import java.util.Stack;
@@ -112,7 +113,7 @@ public class Activity_list_file extends AppCompatActivity implements View.OnClic
                 for (int _position : _adapter.get_checkList()) {
                     _deleteFiles.put(_position, _adapter.get_data().get_children().get(_position));
                 }
-                showDeleteProgress(_deleteFiles.size());
+                showProgress(ACTION_DELETE, _deleteFiles.size());
                 Service_fileManager.startDelete(_deleteFiles);
             }
         });
@@ -124,50 +125,55 @@ public class Activity_list_file extends AppCompatActivity implements View.OnClic
      * 将所选文件添加到清理列表中
      */
     private void cleanFiles() {
-        ArrayList<Integer> _checkList = _adapter.get_checkList();
-        ArrayList<String> _cleanList = new ArrayList<>(_checkList.size());
-        for (int _position : _checkList) {
-            _cleanList.add(_adapter.get_data().get_children().get(_position).get_path());
+        ArrayList<String> _cleanPathList = new ArrayList<>(_adapter.get_checkList().size());
+        SparseArray<SDFile> _cleanFiles = new SparseArray<>(_adapter.get_checkList().size());
+        for (int _position : _adapter.get_checkList()) {
+            _cleanPathList.add(_adapter.get_data().get_children().get(_position).get_path());
+            _cleanFiles.put(_position, _adapter.get_data().get_children().get(_position));
         }
-        Global.add_cleanList(_cleanList);
-        for (int _position : _checkList) {
-            _adapter.get_data().get_children().get(_position).updateRubbish();
-        }
-        _adapter.notifyDataSetChanged();
+        Global.add_cleanList(_cleanPathList);
+        showProgress(ACTION_CLEAN, _cleanFiles.size());
+        new Thread_updateRubbish(_cleanFiles).start();
     }
 
     /**
      * 将所选文件添加到保存列表中
      */
     private void saveFiles() {
-        ArrayList<Integer> _checkList = _adapter.get_checkList();
-        ArrayList<String> _saveList = new ArrayList<>(_checkList.size());
-        for (int _position : _checkList) {
-            _saveList.add(_adapter.get_data().get_children().get(_position).get_path());
+        ArrayList<String> _savePathList = new ArrayList<>(_adapter.get_checkList().size());
+        SparseArray<SDFile> _saveFiles = new SparseArray<>(_adapter.get_checkList().size());
+        for (int _position : _adapter.get_checkList()) {
+            _savePathList.add(_adapter.get_data().get_children().get(_position).get_path());
+            _saveFiles.put(_position, _adapter.get_data().get_children().get(_position));
         }
-        Global.add_saveList(_saveList);
-        for (int _position : _checkList) {
-            _adapter.get_data().get_children().get(_position).updateRubbish();
-        }
-        _adapter.notifyDataSetChanged();
+        Global.add_saveList(_savePathList);
+        showProgress(ACTION_HOLD, _saveFiles.size());
+        new Thread_updateRubbish(_saveFiles).start();
     }
 
-    private void showDeleteProgress(int _count) {
-        if (_progressDialog == null) {
-            _progressDialog = new ProgressDialog(this, R.style.DialogTheme);
-            _progressDialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
-            _progressDialog.setCancelable(false);
-            _progressDialog.setMessage("正在删除文件");
-            _progressDialog.setButton(ProgressDialog.BUTTON_NEGATIVE, getResources().getString(R.string.negativeButton), new DialogInterface.OnClickListener() {
-                @Override
-                public void onClick(DialogInterface dialog, int which) {
-                    Service_fileManager.stopDelete();
-                }
-            });
+    private void showProgress(String _action, int _count) {
+        _progressDialog = new ProgressDialog(this, R.style.DialogTheme);
+        _progressDialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
+        _progressDialog.setCancelable(false);
+        switch (_action) {
+            case ACTION_DELETE:
+                _progressDialog.setMessage("正在删除文件");
+                _progressDialog.setButton(ProgressDialog.BUTTON_NEGATIVE, getResources().getString(R.string.negativeButton), new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        Service_fileManager.stopDelete();
+                    }
+                });
+                break;
+            case ACTION_CLEAN:
+                _progressDialog.setMessage("正在更新待清理的文件");
+                break;
+            case ACTION_HOLD:
+                _progressDialog.setMessage("正在更新保留的文件");
+                break;
         }
         _progressDialog.setMax(_count);
         _progressDialog.show();
-        _progressDialog.setProgress(0);
         _notifyItems.clear();
 
         BroadcastReceiver _receiver = new BroadcastReceiver() {
@@ -176,9 +182,10 @@ public class Activity_list_file extends AppCompatActivity implements View.OnClic
                 String _action = intent.getAction();
                 if (_action == null)
                     return;
+                int _index;
                 switch (_action) {
                     case Thread_delete.ACTION_DELETE:
-                        int _index = intent.getIntExtra("index", -1);
+                        _index = intent.getIntExtra("index", -1);
                         if (_index != -1) {
                             _notifyItems.add(_index - _progressDialog.getProgress());
                             _progressDialog.incrementProgressBy(1);
@@ -186,11 +193,27 @@ public class Activity_list_file extends AppCompatActivity implements View.OnClic
                         break;
                     case Thread_delete.ACTION_FINISH:
                         _progressDialog.dismiss();
+                        _progressDialog = null;
                         _broadcastManager.unregisterReceiver(this);
                         for (int _index_change : _notifyItems) {
                             _adapter.notifyItemRemoved(_index_change);
                         }
                         _adapter.notifyItemRangeChanged(0, _adapter.getItemCount());
+                        break;
+                    case Thread_updateRubbish.ACTION_UPDATE:
+                        _index = intent.getIntExtra("index", -1);
+                        if (_index != -1) {
+                            _notifyItems.add(_index);
+                            _progressDialog.incrementProgressBy(1);
+                        }
+                        break;
+                    case Thread_updateRubbish.ACTION_FINISH:
+                        _progressDialog.dismiss();
+                        _progressDialog = null;
+                        _broadcastManager.unregisterReceiver(this);
+                        for (int _index_change : _notifyItems) {
+                            _adapter.notifyItemChanged(_index_change);
+                        }
                         break;
                 }
             }
@@ -198,6 +221,8 @@ public class Activity_list_file extends AppCompatActivity implements View.OnClic
         IntentFilter _filter = new IntentFilter();
         _filter.addAction(Thread_delete.ACTION_DELETE);
         _filter.addAction(Thread_delete.ACTION_FINISH);
+        _filter.addAction(Thread_updateRubbish.ACTION_UPDATE);
+        _filter.addAction(Thread_updateRubbish.ACTION_FINISH);
         _broadcastManager.registerReceiver(_receiver, _filter);
     }
 
