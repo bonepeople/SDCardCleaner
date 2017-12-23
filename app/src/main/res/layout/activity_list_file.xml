@@ -60,7 +60,7 @@
             android:gravity="center"
             android:paddingLeft="20dp"
             android:paddingRight="20dp"
-            android:text="删除"
+            android:text="@string/caption_button_delete"
             android:textColor="#666666"
             android:textSize="12sp" />
 
@@ -74,7 +74,7 @@
             android:gravity="center"
             android:paddingLeft="20dp"
             android:paddingRight="20dp"
-            android:text="待清理"
+            android:text="@string/caption_button_clean"
             android:textColor="#666666"
             android:textSize="12sp" />
 
@@ -88,7 +88,7 @@
             android:gravity="center"
             android:paddingLeft="20dp"
             android:paddingRight="20dp"
-            android:text="保留"
+            android:text="@string/caption_button_save"
             android:textColor="#666666"
             android:textSize="12sp" />
 
@@ -103,7 +103,7 @@
             android:layout_height="wrap_content"
             android:button="@null"
             android:drawableRight="?android:attr/listChoiceIndicatorMultiple"
-            android:text="全选"
+            android:text="@string/caption_button_checkAll"
             android:textColor="#666666" />
 
         <ImageView
@@ -112,7 +112,7 @@
             android:layout_height="22dp"
             android:layout_gravity="top"
             android:background="?android:attr/selectableItemBackgroundBorderless"
-            android:contentDescription="关闭按钮"
+            android:contentDescription="@string/contentDescription_close"
             android:padding="5dp"
             android:src="@drawable/buttonbar_close" />
 

@@ -27,7 +27,7 @@
                 android:layout_width="70dp"
                 android:layout_height="70dp"
                 android:layout_marginRight="5dp"
-                android:contentDescription="扫描" />
+                android:contentDescription="@string/contentDescription_mine" />
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -38,7 +38,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:maxLines="1"
-                    android:text="扫描SD卡"
+                    android:text="@string/caption_text_mine"
                     android:textColor="#333333"
                     android:textSize="25sp" />
 
@@ -46,7 +46,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:paddingTop="5dp"
-                    android:text="汇总SD卡中的文件信息"
+                    android:text="@string/caption_explain_mine"
                     android:textColor="#666666"
                     android:textSize="14sp" />
             </LinearLayout>
@@ -73,7 +73,7 @@
                 android:layout_width="70dp"
                 android:layout_height="70dp"
                 android:layout_marginRight="5dp"
-                android:contentDescription="白名单" />
+                android:contentDescription="@string/contentDescription_white" />
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -84,7 +84,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:maxLines="1"
-                    android:text="白名单"
+                    android:text="@string/caption_text_white"
                     android:textColor="#333333"
                     android:textSize="25sp" />
 
@@ -92,7 +92,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:paddingTop="5dp"
-                    android:text="单独指定不被清理的文件或文件夹"
+                    android:text="@string/caption_explain_white"
                     android:textColor="#666666"
                     android:textSize="14sp" />
             </LinearLayout>
@@ -119,7 +119,7 @@
                 android:layout_width="70dp"
                 android:layout_height="70dp"
                 android:layout_marginRight="5dp"
-                android:contentDescription="黑名单" />
+                android:contentDescription="@string/contentDescription_black" />
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -130,7 +130,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:maxLines="1"
-                    android:text="黑名单"
+                    android:text="@string/caption_text_black"
                     android:textColor="#333333"
                     android:textSize="25sp" />
 
@@ -138,7 +138,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:paddingTop="5dp"
-                    android:text="单独指定需要被清理的文件或文件夹"
+                    android:text="@string/caption_explain_black"
                     android:textColor="#666666"
                     android:textSize="14sp" />
             </LinearLayout>
@@ -165,7 +165,7 @@
                 android:layout_width="70dp"
                 android:layout_height="70dp"
                 android:layout_marginRight="5dp"
-                android:contentDescription="设置" />
+                android:contentDescription="@string/contentDescription_set" />
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -176,7 +176,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:maxLines="1"
-                    android:text="设置"
+                    android:text="@string/caption_text_set"
                     android:textColor="#333333"
                     android:textSize="25sp" />
 
@@ -184,7 +184,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:paddingTop="5dp"
-                    android:text="进行一些基本设置"
+                    android:text="@string/caption_explain_set"
                     android:textColor="#666666"
                     android:textSize="14sp" />
             </LinearLayout>
