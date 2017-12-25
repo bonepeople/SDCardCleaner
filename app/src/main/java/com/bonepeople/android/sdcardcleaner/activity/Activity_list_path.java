@@ -3,7 +3,6 @@ package com.bonepeople.android.sdcardcleaner.activity;
 import android.content.DialogInterface;
 import android.os.Environment;
 import android.support.v7.app.AlertDialog;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
@@ -14,6 +13,7 @@ import android.widget.Toast;
 import com.bonepeople.android.sdcardcleaner.Global;
 import com.bonepeople.android.sdcardcleaner.R;
 import com.bonepeople.android.sdcardcleaner.adapter.Adapter_list_path;
+import com.bonepeople.android.sdcardcleaner.basic.Basic_appCompatActivity;
 import com.bonepeople.android.sdcardcleaner.thread.Service_fileManager;
 
 import java.util.ArrayList;
@@ -23,7 +23,7 @@ import java.util.ArrayList;
  * <p>
  * <b>intent:</b>"mode"-当前页面的类型(MODE_SAVE/MODE_CLEAN)
  */
-public class Activity_list_path extends AppCompatActivity implements View.OnClickListener {
+public class Activity_list_path extends Basic_appCompatActivity implements View.OnClickListener {
     public static final int MODE_SAVE = 0;//保留列表
     public static final int MODE_CLEAN = 1;//待清理列表
     private int _mode;

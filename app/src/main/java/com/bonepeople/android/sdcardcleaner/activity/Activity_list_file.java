@@ -8,7 +8,6 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.AlertDialog;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
@@ -22,6 +21,7 @@ import android.widget.LinearLayout;
 import com.bonepeople.android.sdcardcleaner.Global;
 import com.bonepeople.android.sdcardcleaner.R;
 import com.bonepeople.android.sdcardcleaner.adapter.Adapter_list_file;
+import com.bonepeople.android.sdcardcleaner.basic.Basic_appCompatActivity;
 import com.bonepeople.android.sdcardcleaner.models.SDFile;
 import com.bonepeople.android.sdcardcleaner.thread.Service_fileManager;
 import com.bonepeople.android.sdcardcleaner.thread.Thread_delete;
@@ -30,7 +30,7 @@ import com.bonepeople.android.sdcardcleaner.thread.Thread_updateRubbish;
 import java.util.ArrayList;
 import java.util.Stack;
 
-public class Activity_list_file extends AppCompatActivity implements View.OnClickListener, View.OnLongClickListener {
+public class Activity_list_file extends Basic_appCompatActivity implements View.OnClickListener, View.OnLongClickListener {
     public static final String ACTION_DELETE = "delete";
     public static final String ACTION_CLEAN = "clean";
     public static final String ACTION_HOLD = "hold";

@@ -2,14 +2,14 @@ package com.bonepeople.android.sdcardcleaner.activity;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.CardView;
 import android.view.View;
 
 import com.bonepeople.android.sdcardcleaner.Global;
 import com.bonepeople.android.sdcardcleaner.R;
+import com.bonepeople.android.sdcardcleaner.basic.Basic_appCompatActivity;
 
-public class Activity_main extends AppCompatActivity implements View.OnClickListener {
+public class Activity_main extends Basic_appCompatActivity implements View.OnClickListener {
     private CardView _card_scan, _card_white, _card_black, _card_set;
 
     @Override
@@ -33,13 +33,13 @@ public class Activity_main extends AppCompatActivity implements View.OnClickList
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.cardview_scan:
-                startActivity(new Intent(this, Activity_scan.class));
+                startActivity(new Intent(getApplicationContext(), Activity_scan.class));
                 break;
             case R.id.cardview_white:
-                startActivity(new Intent(this, Activity_list_path.class).putExtra("mode", Activity_list_path.MODE_SAVE));
+                startActivity(new Intent(getApplicationContext(), Activity_list_path.class).putExtra("mode", Activity_list_path.MODE_SAVE));
                 break;
             case R.id.cardview_black:
-                startActivity(new Intent(this, Activity_list_path.class).putExtra("mode", Activity_list_path.MODE_CLEAN));
+                startActivity(new Intent(getApplicationContext(), Activity_list_path.class).putExtra("mode", Activity_list_path.MODE_CLEAN));
                 break;
             case R.id.cardview_set:
 
