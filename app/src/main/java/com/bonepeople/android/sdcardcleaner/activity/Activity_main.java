@@ -33,7 +33,6 @@ public class Activity_main extends AppCompatActivity implements View.OnClickList
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.cardview_scan:
-//                Toast.makeText(Activity_main.this, "scan", Toast.LENGTH_SHORT).show();
                 startActivity(new Intent(this, Activity_scan.class));
                 break;
             case R.id.cardview_white:

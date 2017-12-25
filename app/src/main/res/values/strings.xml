@@ -1,11 +1,10 @@
 <resources>
     <string name="app_name">SDCardCleaner</string>
-    <string name="positiveButton">确定</string>
-    <string name="negativeButton">取消</string>
+    <string name="str_path_rootFile">SD卡</string>
 
-    <!--Activity_list_path-->
-    <string name="dialog_list_path">移除“%1$s”？</string>
-    <string name="toast_list_path">点击项目可以将其移除</string>
+    <!--Toast展示的信息-->
+    <string name="toast_list_path_remove">点击项目可以将其移除</string>
+    <string name="toast_list_path_lock">扫描过程中无法修改</string>
 
     <!--用于控件内容的描述-->
     <string name="contentDescription_fileIcon">文件类型图标</string>
@@ -17,6 +16,8 @@
     <string name="contentDescription_close">关闭按钮</string>
 
     <!--各种控件的名称-->
+    <string name="caption_button_positive">确定</string>
+    <string name="caption_button_negative">取消</string>
     <string name="caption_button_startScan">开始扫描</string>
     <string name="caption_button_stopScan">停止扫描</string>
     <string name="caption_button_startClean">开始清理</string>
@@ -36,5 +37,26 @@
     <string name="caption_explain_white">单独指定不被清理的文件或文件夹</string>
     <string name="caption_explain_black">单独指定需要被清理的文件或文件夹</string>
     <string name="caption_explain_set">进行一些基本设置</string>
+
+    <!--对话框中的文字提示信息-->
+    <string name="dialog_list_path_remove">移除“%1$s”？</string>
+
+    <string name="dialog_list_file_delete_title">确认删除？</string>
+    <string name="dialog_list_file_delete_message">该操作会删除当前指定文件夹下的所有文件，无论它是否存在于白名单中</string>
+    <string name="dialog_list_file_deleting">正在删除文件</string>
+    <string name="dialog_list_file_cleaning">正在更新待清理的文件</string>
+    <string name="dialog_list_file_saving">正在更新保留的文件</string>
+
+    <!--用于显示各种状态的描述-->
+    <string name="state_emptyView">空空如也</string>
+    <string name="state_scan_executing">正在扫描文件…</string>
+    <string name="state_scan_stopping">正在停止扫描</string>
+    <string name="state_scan_finish">扫描已结束</string>
+    <string name="state_clean_executing">正在清理文件…</string>
+    <string name="state_clean_stopping">正在停止清理</string>
+    <string name="state_clean_finish">清理已完成</string>
+    <string name="state_fileCount_all">已扫描：%1$d</string>
+    <string name="state_fileCount_rubbish">待清理文件：%1$d</string>
+    <string name="state_fileSize_rubbish">待清理文件大小为：%1$s</string>
 
 </resources>

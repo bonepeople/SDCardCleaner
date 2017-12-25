@@ -6,6 +6,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import com.bonepeople.android.sdcardcleaner.R;
+
 import java.util.ArrayList;
 
 /**
@@ -32,6 +34,7 @@ public class Adapter_list_path extends RecyclerView.Adapter<RecyclerView.ViewHol
             TextView _textView = new TextView(parent.getContext());
             _textView.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
             _textView.setGravity(Gravity.CENTER);
+            _textView.setText(parent.getContext().getString(R.string.state_emptyView));
             return new ViewHolder_empty(_textView);
         } else {
             TextView _textView = new TextView(parent.getContext());
@@ -47,9 +50,6 @@ public class Adapter_list_path extends RecyclerView.Adapter<RecyclerView.ViewHol
             ViewHolder_data _viewHolder = (ViewHolder_data) holder;
             _viewHolder._text_name.setText(_data.get(position));
             _viewHolder._text_name.setTag(new String[]{ACTION_CLICK_ITEM, String.valueOf(position)});
-        } else {
-            ViewHolder_empty _viewHolder = (ViewHolder_empty) holder;
-            _viewHolder._text_title.setText("空空如也");
         }
     }
 

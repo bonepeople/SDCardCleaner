@@ -39,16 +39,16 @@ public class Activity_list_path extends AppCompatActivity implements View.OnClic
         setContentView(R.layout.activity_list_path);
         String _basic_path = Environment.getExternalStorageDirectory().getPath();
         if (_mode == MODE_SAVE) {
-            setTitle("白名单");
+            setTitle(getString(R.string.caption_text_white));
             _data = new ArrayList<>(Global.get_saveList().size());
             for (int _temp_i = 0; _temp_i < Global.get_saveList().size(); _temp_i++) {
-                _data.add(Global.get_saveList().get(_temp_i).replace(_basic_path, "SD卡"));
+                _data.add(Global.get_saveList().get(_temp_i).replace(_basic_path, getString(R.string.str_path_rootFile)));
             }
         } else {
-            setTitle("黑名单");
+            setTitle(getString(R.string.caption_text_black));
             _data = new ArrayList<>(Global.get_cleanList().size());
             for (int _temp_i = 0; _temp_i < Global.get_cleanList().size(); _temp_i++) {
-                _data.add(Global.get_cleanList().get(_temp_i).replace(_basic_path, "SD卡"));
+                _data.add(Global.get_cleanList().get(_temp_i).replace(_basic_path, getString(R.string.str_path_rootFile)));
             }
         }
 
@@ -62,9 +62,9 @@ public class Activity_list_path extends AppCompatActivity implements View.OnClic
         _list.setAdapter(_adapter);
         _list.addItemDecoration(new DividerItemDecoration(this, DividerItemDecoration.VERTICAL));
         if (Service_fileManager.get_scanState() == Service_fileManager.STATE_SCAN_EXECUTING)
-            Toast.makeText(this, "扫描过程中无法修改", Toast.LENGTH_LONG).show();
+            Toast.makeText(this, R.string.toast_list_path_lock, Toast.LENGTH_LONG).show();
         else
-            Toast.makeText(this, R.string.toast_list_path, Toast.LENGTH_LONG).show();
+            Toast.makeText(this, R.string.toast_list_path_remove, Toast.LENGTH_LONG).show();
     }
 
     @Override
@@ -81,8 +81,8 @@ public class Activity_list_path extends AppCompatActivity implements View.OnClic
     private void removeItem(final int _index) {
         AlertDialog.Builder _builder = new AlertDialog.Builder(this);
         String _path = _data.get(_index);
-        _builder.setMessage(getResources().getString(R.string.dialog_list_path, _path));
-        _builder.setPositiveButton(R.string.positiveButton, new DialogInterface.OnClickListener() {
+        _builder.setMessage(getString(R.string.dialog_list_path_remove, _path));
+        _builder.setPositiveButton(R.string.caption_button_positive, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 if (_mode == MODE_SAVE) {
@@ -95,7 +95,7 @@ public class Activity_list_path extends AppCompatActivity implements View.OnClic
                 _adapter.notifyItemRangeChanged(_index, _data.size() - _index);
             }
         });
-        _builder.setNegativeButton(R.string.negativeButton, null);
+        _builder.setNegativeButton(R.string.caption_button_negative, null);
         _builder.create().show();
     }
 }

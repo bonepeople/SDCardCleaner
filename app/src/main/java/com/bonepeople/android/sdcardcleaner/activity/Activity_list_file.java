@@ -53,7 +53,7 @@ public class Activity_list_file extends AppCompatActivity implements View.OnClic
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_list_file);
-        setTitle("文件列表");
+        setTitle(getString(R.string.caption_text_mine));
 
         _text_path = (EditText) findViewById(R.id.edittext_path);
         RecyclerView _list = (RecyclerView) findViewById(R.id.recyclerview);
@@ -64,7 +64,7 @@ public class Activity_list_file extends AppCompatActivity implements View.OnClic
         View _button_close = findViewById(R.id.imageview_close);
         _checkbox_all = (CheckBox) findViewById(R.id.checkbox_all);
 
-        _text_path.setText(Global.get_rootFile().get_path().replace(_basic_path, "SD卡"));
+        _text_path.setText(Global.get_rootFile().get_path().replace(_basic_path, getString(R.string.str_path_rootFile)));
         _layoutManager = new LinearLayoutManager(this);
         _layoutManager.setOrientation(LinearLayoutManager.VERTICAL);
         _list.setLayoutManager(_layoutManager);
@@ -103,10 +103,10 @@ public class Activity_list_file extends AppCompatActivity implements View.OnClic
      */
     private void deleteFiles() {
         AlertDialog.Builder _builder = new AlertDialog.Builder(this);
-        _builder.setTitle("确认删除？");
-        _builder.setMessage("该操作会删除当前指定文件夹下的所有文件，无论它是否存在于白名单中");
+        _builder.setTitle(getString(R.string.dialog_list_file_delete_title));
+        _builder.setMessage(getString(R.string.dialog_list_file_delete_message));
         _builder.setCancelable(false);
-        _builder.setPositiveButton(R.string.positiveButton, new DialogInterface.OnClickListener() {
+        _builder.setPositiveButton(R.string.caption_button_positive, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 SparseArray<SDFile> _deleteFiles = new SparseArray<>(_adapter.get_checkList().size());
@@ -117,7 +117,7 @@ public class Activity_list_file extends AppCompatActivity implements View.OnClic
                 Service_fileManager.startDelete(_deleteFiles);
             }
         });
-        _builder.setNegativeButton(R.string.negativeButton, null);
+        _builder.setNegativeButton(R.string.caption_button_negative, null);
         _builder.create().show();
     }
 
@@ -157,8 +157,8 @@ public class Activity_list_file extends AppCompatActivity implements View.OnClic
         _progressDialog.setCancelable(false);
         switch (_action) {
             case ACTION_DELETE:
-                _progressDialog.setMessage("正在删除文件");
-                _progressDialog.setButton(ProgressDialog.BUTTON_NEGATIVE, getResources().getString(R.string.negativeButton), new DialogInterface.OnClickListener() {
+                _progressDialog.setMessage(getString(R.string.dialog_list_file_deleting));
+                _progressDialog.setButton(ProgressDialog.BUTTON_NEGATIVE, getString(R.string.caption_button_negative), new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         Service_fileManager.stopDelete();
@@ -166,10 +166,10 @@ public class Activity_list_file extends AppCompatActivity implements View.OnClic
                 });
                 break;
             case ACTION_CLEAN:
-                _progressDialog.setMessage("正在更新待清理的文件");
+                _progressDialog.setMessage(getString(R.string.dialog_list_file_cleaning));
                 break;
             case ACTION_HOLD:
-                _progressDialog.setMessage("正在更新保留的文件");
+                _progressDialog.setMessage(getString(R.string.dialog_list_file_saving));
                 break;
         }
         _progressDialog.setMax(_count);
@@ -231,7 +231,7 @@ public class Activity_list_file extends AppCompatActivity implements View.OnClic
         if (_adapter.is_multiSelect()) {
             setMultiSelect(false);
         } else if (_files.size() > 0) {
-            _text_path.setText(_files.peek().get_path().replace(_basic_path, "SD卡"));
+            _text_path.setText(_files.peek().get_path().replace(_basic_path, getString(R.string.str_path_rootFile)));
             _text_path.setSelection(_text_path.getText().length());
             _adapter.set_data(_files.pop());
             _adapter.notifyDataSetChanged();
@@ -280,7 +280,7 @@ public class Activity_list_file extends AppCompatActivity implements View.OnClic
                             _offsets.push(_offset);
                         } else
                             _offsets.push(0);
-                        _text_path.setText(_clickFile.get_path().replace(_basic_path, "SD卡"));
+                        _text_path.setText(_clickFile.get_path().replace(_basic_path, getString(R.string.str_path_rootFile)));
                         _text_path.setSelection(_text_path.getText().length());
                         _files.push(_adapter.get_data());
                         _adapter.set_data(_clickFile);
