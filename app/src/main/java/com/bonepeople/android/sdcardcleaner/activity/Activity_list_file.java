@@ -246,15 +246,18 @@ public class Activity_list_file extends AppCompatActivity implements View.OnClic
         switch (_tags[0]) {
             case ACTION_DELETE:
                 setMultiSelect(false);
-                deleteFiles();
+                if (_adapter.get_checkList().size() > 0)
+                    deleteFiles();
                 break;
             case ACTION_CLEAN:
                 setMultiSelect(false);
-                cleanFiles();
+                if (_adapter.get_checkList().size() > 0)
+                    cleanFiles();
                 break;
             case ACTION_HOLD:
                 setMultiSelect(false);
-                saveFiles();
+                if (_adapter.get_checkList().size() > 0)
+                    saveFiles();
                 break;
             case ACTION_CHECK:
                 _adapter.set_checkList(-1);
