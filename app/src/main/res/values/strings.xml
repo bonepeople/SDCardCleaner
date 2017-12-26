@@ -20,6 +20,7 @@
     <string name="caption_button_negative">取消</string>
     <string name="caption_button_startScan">开始扫描</string>
     <string name="caption_button_stopScan">停止扫描</string>
+    <string name="caption_button_reScan">重新扫描</string>
     <string name="caption_button_startClean">开始清理</string>
     <string name="caption_button_stopClean">停止清理</string>
     <string name="caption_button_viewFiles">查看文件</string>
@@ -49,6 +50,7 @@
 
     <!--用于显示各种状态的描述-->
     <string name="state_emptyView">空空如也</string>
+    <string name="state_ready">还未对您的SD卡进行扫描</string>
     <string name="state_scan_executing">正在扫描文件…</string>
     <string name="state_scan_stopping">正在停止扫描</string>
     <string name="state_scan_finish">扫描已结束</string>

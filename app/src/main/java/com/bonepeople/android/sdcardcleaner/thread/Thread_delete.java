@@ -31,7 +31,7 @@ public class Thread_delete extends Thread {
         for (int _temp_i = 0; _temp_i < _files.size(); _temp_i++) {
             _file = _files.valueAt(_temp_i);
             _file.delete(false);
-            if (Service_fileManager.get_deleteState() == Service_fileManager.STATE_DELETE_EXECUTING) {
+            if (Service_fileManager.get_state() == Service_fileManager.STATE_DELETE_EXECUTING) {
                 Intent _delete = new Intent(ACTION_DELETE);
                 _delete.putExtra("index", _files.keyAt(_temp_i));
                 _manager.sendBroadcast(_delete);

@@ -53,7 +53,7 @@ public class SDFile {
             if (_files != null)
                 for (File _child : _files) {
                     if (_child != null)
-                        if (Service_fileManager.get_scanState() == Service_fileManager.STATE_SCAN_EXECUTING)
+                        if (Service_fileManager.get_state() == Service_fileManager.STATE_SCAN_EXECUTING)
                             new SDFile(this, _child);
                         else
                             break;
@@ -242,7 +242,7 @@ public class SDFile {
         }
         if (_children.size() == 0) {
             if (_auto) {
-                if (rubbish && Service_fileManager.get_cleanState() == Service_fileManager.STATE_CLEAN_EXECUTING) {
+                if (rubbish && Service_fileManager.get_state() == Service_fileManager.STATE_CLEAN_EXECUTING) {
                     File _file = new File(_path);
                     if (_file.delete()) {
                         Global.set_fileCount_all(-1);
@@ -256,7 +256,7 @@ public class SDFile {
                     }
                 }
             } else {
-                if (Service_fileManager.get_deleteState() == Service_fileManager.STATE_DELETE_EXECUTING) {
+                if (Service_fileManager.get_state() == Service_fileManager.STATE_DELETE_EXECUTING) {
                     File _file = new File(_path);
                     if (_file.delete()) {
                         Global.set_fileCount_all(-1);

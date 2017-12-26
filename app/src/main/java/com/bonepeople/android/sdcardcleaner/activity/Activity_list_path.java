@@ -61,7 +61,7 @@ public class Activity_list_path extends Basic_appCompatActivity implements View.
         _adapter.set_data(_data);
         _list.setAdapter(_adapter);
         _list.addItemDecoration(new DividerItemDecoration(this, DividerItemDecoration.VERTICAL));
-        if (Service_fileManager.get_scanState() == Service_fileManager.STATE_SCAN_EXECUTING)
+        if (Service_fileManager.get_state() == Service_fileManager.STATE_SCAN_EXECUTING)
             Toast.makeText(this, R.string.toast_list_path_lock, Toast.LENGTH_LONG).show();
         else
             Toast.makeText(this, R.string.toast_list_path_remove, Toast.LENGTH_LONG).show();
@@ -72,7 +72,7 @@ public class Activity_list_path extends Basic_appCompatActivity implements View.
         String[] _tags = (String[]) v.getTag();
         switch (_tags[0]) {
             case Adapter_list_path.ACTION_CLICK_ITEM:
-                if (Service_fileManager.get_scanState() == Service_fileManager.STATE_SCAN_FINISH)
+                if (Service_fileManager.get_state() != Service_fileManager.STATE_SCAN_EXECUTING)
                     removeItem(Integer.parseInt(_tags[1]));
                 break;
         }
