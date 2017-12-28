@@ -61,6 +61,13 @@ public class Global {
         _fileSize_rubbish = 0;
     }
 
+    public static void destroy() {
+        _applicationContext = null;
+        _rootFile = null;
+        _saveList.clear();
+        _cleanList.clear();
+    }
+
     /**
      * 对列表进行排序
      */
@@ -74,7 +81,8 @@ public class Global {
     }
 
     public static void set_rootFile(SDFile _rootFile) {
-        Global._rootFile = _rootFile;
+        if (_applicationContext != null)
+            Global._rootFile = _rootFile;
     }
 
     /**

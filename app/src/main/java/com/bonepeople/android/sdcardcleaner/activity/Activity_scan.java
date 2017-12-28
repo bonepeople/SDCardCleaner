@@ -61,6 +61,7 @@ public class Activity_scan extends Basic_appCompatActivity implements View.OnCli
 
     @Override
     protected void handleMessage(Message _msg) {
+        super.handleMessage(_msg);
         switch (_msg.what) {
             case MSG_REFRESH:
                 if (_state != Service_fileManager.get_state()) {

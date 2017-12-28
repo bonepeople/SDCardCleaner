@@ -3,8 +3,10 @@
     <string name="str_path_rootFile">SD卡</string>
 
     <!--Toast展示的信息-->
+    <string name="toast_quitConfirm">再按一次退出应用</string>
     <string name="toast_list_path_remove">点击项目可以将其移除</string>
     <string name="toast_list_path_lock">扫描过程中无法修改</string>
+    <string name="toast_comingSoon">敬请期待</string>
 
     <!--用于控件内容的描述-->
     <string name="contentDescription_fileIcon">文件类型图标</string>
