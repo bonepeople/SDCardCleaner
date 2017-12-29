@@ -244,7 +244,7 @@ public class SDFile {
             if (_auto) {
                 if (rubbish && Service_fileManager.get_state() == Service_fileManager.STATE_CLEAN_EXECUTING) {
                     File _file = new File(_path);
-                    if (_file.delete()) {
+                    if (!_file.exists() || _file.delete()) {
                         Global.set_fileCount_all(-1);
                         Global.set_fileSize_all(-_size);
                         Global.set_fileCount_rubbish(-1);
@@ -258,7 +258,7 @@ public class SDFile {
             } else {
                 if (Service_fileManager.get_state() == Service_fileManager.STATE_DELETE_EXECUTING) {
                     File _file = new File(_path);
-                    if (_file.delete()) {
+                    if (!_file.exists() || _file.delete()) {
                         Global.set_fileCount_all(-1);
                         Global.set_fileSize_all(-_size);
                         if (rubbish) {

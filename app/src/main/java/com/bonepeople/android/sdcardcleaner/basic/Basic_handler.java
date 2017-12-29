@@ -13,7 +13,6 @@ public class Basic_handler extends Handler {
     private Basic_appCompatActivity _activity;
 
     Basic_handler(Basic_appCompatActivity _activity) {
-        super();
         this._activity = _activity;
     }
 
