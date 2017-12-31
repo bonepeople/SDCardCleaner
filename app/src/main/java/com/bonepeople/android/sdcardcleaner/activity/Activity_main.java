@@ -3,6 +3,7 @@ package com.bonepeople.android.sdcardcleaner.activity;
 import android.content.Intent;
 import android.graphics.Point;
 import android.os.Bundle;
+import android.os.Environment;
 import android.os.Handler;
 import android.os.Message;
 import android.support.v7.widget.CardView;
@@ -158,7 +159,10 @@ public class Activity_main extends Basic_appCompatActivity implements View.OnCli
         if (_state == STATE_SHOWN || _state == STATE_QUIT)
             switch (v.getId()) {
                 case R.id.cardview_scan:
-                    startActivity(new Intent(getApplicationContext(), Activity_scan.class));
+                    if (Environment.getExternalStorageState().equals(Environment.MEDIA_MOUNTED))
+                        startActivity(new Intent(getApplicationContext(), Activity_scan.class));
+                    else
+                        Toast.makeText(this, R.string.toast_sdcard_error, Toast.LENGTH_SHORT).show();
                     break;
                 case R.id.cardview_white:
                     startActivity(new Intent(getApplicationContext(), Activity_list_path.class).putExtra("mode", Activity_list_path.MODE_SAVE));

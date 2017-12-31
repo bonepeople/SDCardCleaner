@@ -3,4 +3,11 @@
     <color name="colorPrimary">#3F51B5</color>
     <color name="colorPrimaryDark">#303F9F</color>
     <color name="colorAccent">#FF4081</color>
+
+    <color name="line_gray">#999999</color>
+
+    <color name="block_rubbish">#FFF23B</color>
+    <color name="block_file">#ABE18D</color>
+    <color name="block_system">#A7A3A3</color>
+    <color name="block_blank">#FFFFFF</color>
 </resources>

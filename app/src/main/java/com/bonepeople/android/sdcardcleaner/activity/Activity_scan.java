@@ -3,17 +3,16 @@ package com.bonepeople.android.sdcardcleaner.activity;
 import android.content.Intent;
 import android.os.Message;
 import android.os.Bundle;
-import android.text.format.Formatter;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
-import com.bonepeople.android.sdcardcleaner.Global;
 import com.bonepeople.android.sdcardcleaner.R;
 import com.bonepeople.android.sdcardcleaner.basic.Basic_appCompatActivity;
 import com.bonepeople.android.sdcardcleaner.basic.Basic_handler;
 import com.bonepeople.android.sdcardcleaner.thread.Service_fileManager;
+import com.bonepeople.android.sdcardcleaner.widget.SDCardPercent;
 
 public class Activity_scan extends Basic_appCompatActivity implements View.OnClickListener {
     private static final String ACTION_START_SCAN = "startScan";
@@ -24,7 +23,8 @@ public class Activity_scan extends Basic_appCompatActivity implements View.OnCli
     private static final int MSG_REFRESH = 1;
     private static final int REQUEST_FILE = 0;
     private ProgressBar _progressBar;
-    private TextView _text_state, _text_count_all, _text_count_rubbish, _text_size_rubbish;
+    private TextView _text_state;
+    private SDCardPercent _percent;
     private Button _button_middle, _button_left, _button_right;
     private Basic_handler _handler = createHandler();
     private int _state = -1;
@@ -37,9 +37,7 @@ public class Activity_scan extends Basic_appCompatActivity implements View.OnCli
 
         _progressBar = (ProgressBar) findViewById(R.id.progressBar);
         _text_state = (TextView) findViewById(R.id.textView_state);
-        _text_count_all = (TextView) findViewById(R.id.textView_count_all);
-        _text_count_rubbish = (TextView) findViewById(R.id.textView_count_rubbish);
-        _text_size_rubbish = (TextView) findViewById(R.id.textView_size_rubbish);
+        _percent = (SDCardPercent) findViewById(R.id.SDCardPercent);
         _button_middle = (Button) findViewById(R.id.button_stop);
         _button_left = (Button) findViewById(R.id.button_clean);
         _button_right = (Button) findViewById(R.id.button_show);
@@ -68,7 +66,7 @@ public class Activity_scan extends Basic_appCompatActivity implements View.OnCli
                     _state = Service_fileManager.get_state();
                     updateState();
                 }
-                updateData();
+                _percent.refresh();
                 if (_state == Service_fileManager.STATE_READY)
                     return;
                 if (_state == Service_fileManager.STATE_SCAN_FINISH)
@@ -77,7 +75,7 @@ public class Activity_scan extends Basic_appCompatActivity implements View.OnCli
                     return;
                 if (_state == Service_fileManager.STATE_DELETE_FINISH)
                     return;
-                _handler.sendEmptyMessageDelayed(MSG_REFRESH, 350);
+                _handler.sendEmptyMessageDelayed(MSG_REFRESH, 500);
                 break;
         }
     }
@@ -164,15 +162,6 @@ public class Activity_scan extends Basic_appCompatActivity implements View.OnCli
                 _button_right.setVisibility(Button.VISIBLE);
                 break;
         }
-    }
-
-    private void updateData() {
-        long _fileCount_all = Global.get_fileCount_all();
-        long _fileCount_rubbish = Global.get_fileCount_rubbish();
-        long _fileSize_rubbish = Global.get_fileSize_rubbish();
-        _text_count_all.setText(getString(R.string.state_fileCount_all, _fileCount_all));
-        _text_count_rubbish.setText(getString(R.string.state_fileCount_rubbish, _fileCount_rubbish));
-        _text_size_rubbish.setText(getString(R.string.state_fileSize_rubbish, Formatter.formatFileSize(this, _fileSize_rubbish)));
     }
 
     @Override

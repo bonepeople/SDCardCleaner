@@ -9,9 +9,7 @@ public class NumberUtil {
 
     public static int get_px(Context context, double _dp) {
         float scale = context.getResources().getDisplayMetrics().density;
-        int _px = (int) (_dp * scale + 0.5f);
-
-        return _px;
+        return (int) (_dp * scale + 0.5f);
     }
 
     /**
