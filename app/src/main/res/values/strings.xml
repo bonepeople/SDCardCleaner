@@ -64,5 +64,6 @@
     <string name="state_fileCount_blank">剩余空间：%1$s</string>
     <string name="state_fileCount_file">已扫描文件：%1$s (%2$d项)</string>
     <string name="state_fileCount_rubbish">待清理文件：%1$s (%2$d项)</string>
+    <string name="state_directory_size">%1$s | %2$d项</string>
 
 </resources>

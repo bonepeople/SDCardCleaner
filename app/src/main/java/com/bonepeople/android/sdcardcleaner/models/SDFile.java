@@ -23,6 +23,7 @@ public class SDFile {
     private String _name;//文件名
     private String _path;//文件路径
     private long _size = 0;//文件大小
+    private int _fileCount = 0;//文件夹内文件的数量
     private boolean directory = false;//是否是文件夹
     private boolean rubbish = false;//是否需要清理
     private SDFile _parent;//父目录
@@ -106,6 +107,9 @@ public class SDFile {
         switch (_type) {
             case FILE_ADD:
                 _size += _file.get_size();
+                if (_file.isDirectory())
+                    _fileCount += _file.get_fileCount();
+                _fileCount += 1;
                 if (_largestChild != null) {
                     if (_file.get_size() > _largestChild.get_size())
                         _largestChild = _file;
@@ -117,13 +121,15 @@ public class SDFile {
                 if (_parent != null)
                     _parent.updateSize(_file, FILE_CHANGE);
                 _size -= _file.get_size();
-                _children.remove(_file);
+                _fileCount -= 1;
                 _largestChild = null;
+                _children.remove(_file);
                 break;
             case FILE_CHANGE:
                 if (_parent != null)
                     _parent.updateSize(_file, FILE_CHANGE);
                 _size -= _file.get_size();
+                _fileCount -= 1;
                 _largestChild = null;
                 break;
         }
@@ -149,6 +155,10 @@ public class SDFile {
 
     public long get_size() {
         return _size;
+    }
+
+    public int get_fileCount() {
+        return _fileCount;
     }
 
     private SDFile get_largestChild() {

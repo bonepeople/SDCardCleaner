@@ -136,7 +136,12 @@ public class Adapter_list_file extends RecyclerView.Adapter<Adapter_list_file.Vi
             holder._image_type.setImageResource(R.drawable.icon_file);
         //设置基本信息
         holder._text_name.setText(_temp_data.get_name());
-        holder._text_size.setText(Formatter.formatFileSize(holder._view_click.getContext(), _temp_data.get_size()));
+        String _str_size;
+        if (_temp_data.isDirectory())
+            _str_size = holder._view_click.getContext().getString(R.string.state_directory_size, Formatter.formatFileSize(holder._view_click.getContext(), _temp_data.get_size()), _temp_data.get_fileCount());
+        else
+            _str_size = Formatter.formatFileSize(holder._view_click.getContext(), _temp_data.get_size());
+        holder._text_size.setText(_str_size);
         holder._view_click.setTag(new String[]{ACTION_CLICK_ITEM, String.valueOf(position)});
     }
 
