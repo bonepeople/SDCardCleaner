@@ -31,11 +31,11 @@ import java.util.ArrayList;
 import java.util.Stack;
 
 public class Activity_list_file extends Basic_appCompatActivity implements View.OnClickListener, View.OnLongClickListener {
-    public static final String ACTION_DELETE = "delete";
-    public static final String ACTION_CLEAN = "clean";
-    public static final String ACTION_HOLD = "hold";
-    public static final String ACTION_CHECK = "checkAll";
-    public static final String ACTION_CLOSE = "close";
+    private static final String ACTION_DELETE = "delete";
+    private static final String ACTION_CLEAN = "clean";
+    private static final String ACTION_HOLD = "hold";
+    private static final String ACTION_CHECK = "checkAll";
+    private static final String ACTION_CLOSE = "close";
     private EditText _text_path;
     private LinearLayoutManager _layoutManager;
     private LinearLayout _buttonbar;

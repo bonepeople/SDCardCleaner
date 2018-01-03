@@ -154,16 +154,16 @@ public class Adapter_list_file extends RecyclerView.Adapter<Adapter_list_file.Vi
         return _multiSelect;
     }
 
-    public class ViewHolder extends RecyclerView.ViewHolder {
-        public View _view_percent;
-        public CheckBox _checkbox;
-        public ImageView _image_rubbish;
-        public ImageView _image_type;
-        public TextView _text_name;
-        public TextView _text_size;
-        public View _view_click;
+    class ViewHolder extends RecyclerView.ViewHolder {
+        View _view_percent;
+        CheckBox _checkbox;
+        ImageView _image_rubbish;
+        ImageView _image_type;
+        TextView _text_name;
+        TextView _text_size;
+        View _view_click;
 
-        public ViewHolder(View itemView) {
+        ViewHolder(View itemView) {
             super(itemView);
             _view_percent = itemView.findViewById(R.id.view_percent);
             _checkbox = (CheckBox) itemView.findViewById(R.id.checkbox_item);

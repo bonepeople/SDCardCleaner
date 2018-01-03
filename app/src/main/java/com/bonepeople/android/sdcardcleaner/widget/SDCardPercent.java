@@ -20,10 +20,10 @@ import com.bonepeople.android.sdcardcleaner.utils.NumberUtil;
  */
 
 public class SDCardPercent extends ConstraintLayout {
-    ConstraintLayout _line;
-    ConstraintSet _set_line = new ConstraintSet();
-    TextView _text_system, _text_blank, _text_file, _text_rubbish;
-    long _space_total = Environment.getExternalStorageDirectory().getTotalSpace();
+    private ConstraintLayout _line;
+    private ConstraintSet _set_line = new ConstraintSet();
+    private TextView _text_system, _text_blank, _text_file, _text_rubbish;
+    private long _space_total = Environment.getExternalStorageDirectory().getTotalSpace();
 
     public SDCardPercent(Context context) {
         this(context, null);

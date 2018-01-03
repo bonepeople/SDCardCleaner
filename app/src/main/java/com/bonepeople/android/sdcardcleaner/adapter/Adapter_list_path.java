@@ -69,20 +69,20 @@ public class Adapter_list_path extends RecyclerView.Adapter<RecyclerView.ViewHol
             return super.getItemViewType(position);
     }
 
-    public class ViewHolder_data extends RecyclerView.ViewHolder {
-        public TextView _text_name;
+    class ViewHolder_data extends RecyclerView.ViewHolder {
+        TextView _text_name;
 
-        public ViewHolder_data(TextView itemView) {
+        ViewHolder_data(TextView itemView) {
             super(itemView);
             _text_name = itemView;
             _text_name.setOnClickListener(_listener_click);
         }
     }
 
-    public class ViewHolder_empty extends RecyclerView.ViewHolder {
-        public TextView _text_title;
+    class ViewHolder_empty extends RecyclerView.ViewHolder {
+        TextView _text_title;
 
-        public ViewHolder_empty(TextView itemView) {
+        ViewHolder_empty(TextView itemView) {
             super(itemView);
             _text_title = itemView;
         }
