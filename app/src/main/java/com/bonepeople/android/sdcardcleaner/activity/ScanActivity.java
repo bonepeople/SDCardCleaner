@@ -14,7 +14,7 @@ import com.bonepeople.android.sdcardcleaner.basic.Basic_handler;
 import com.bonepeople.android.sdcardcleaner.thread.Service_fileManager;
 import com.bonepeople.android.sdcardcleaner.widget.SDCardPercent;
 
-public class Activity_scan extends Basic_appCompatActivity implements View.OnClickListener {
+public class ScanActivity extends Basic_appCompatActivity implements View.OnClickListener {
     private static final String ACTION_START_SCAN = "startScan";
     private static final String ACTION_STOP_SCAN = "stopScan";
     private static final String ACTION_START_CLEAN = "startClean";
@@ -183,7 +183,7 @@ public class Activity_scan extends Basic_appCompatActivity implements View.OnCli
                 Service_fileManager.stopClean();
                 break;
             case ACTION_VIEW_FILE:
-                startActivityForResult(new Intent(getApplicationContext(), Activity_list_file.class), REQUEST_FILE);
+                startActivityForResult(new Intent(getApplicationContext(), FileListActivity.class), REQUEST_FILE);
                 break;
         }
     }

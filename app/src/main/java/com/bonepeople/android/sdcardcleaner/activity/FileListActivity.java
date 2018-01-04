@@ -30,7 +30,7 @@ import com.bonepeople.android.sdcardcleaner.thread.Thread_updateRubbish;
 import java.util.ArrayList;
 import java.util.Stack;
 
-public class Activity_list_file extends Basic_appCompatActivity implements View.OnClickListener, View.OnLongClickListener {
+public class FileListActivity extends Basic_appCompatActivity implements View.OnClickListener, View.OnLongClickListener {
     private static final String ACTION_DELETE = "delete";
     private static final String ACTION_CLEAN = "clean";
     private static final String ACTION_HOLD = "hold";

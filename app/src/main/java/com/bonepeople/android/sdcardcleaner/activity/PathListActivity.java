@@ -23,7 +23,7 @@ import java.util.ArrayList;
  * <p>
  * <b>intent:</b>"mode"-当前页面的类型(MODE_SAVE/MODE_CLEAN)
  */
-public class Activity_list_path extends Basic_appCompatActivity implements View.OnClickListener {
+public class PathListActivity extends Basic_appCompatActivity implements View.OnClickListener {
     public static final int MODE_SAVE = 0;//保留列表
     public static final int MODE_CLEAN = 1;//待清理列表
     private int _mode;

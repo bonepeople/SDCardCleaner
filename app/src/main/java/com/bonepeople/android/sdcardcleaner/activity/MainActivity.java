@@ -20,7 +20,7 @@ import com.bonepeople.android.sdcardcleaner.R;
 import com.bonepeople.android.sdcardcleaner.basic.Basic_appCompatActivity;
 import com.bonepeople.android.sdcardcleaner.thread.Service_fileManager;
 
-public class Activity_main extends Basic_appCompatActivity implements View.OnClickListener {
+public class MainActivity extends Basic_appCompatActivity implements View.OnClickListener {
     private static final int STATE_READY = 0, STATE_SHOWING = 1, STATE_SHOWN = 2, STATE_QUIT = 3, STATE_LIVING = 4;
     private static final int MSG_CANCEL = 0;
     private CardView _card_scan, _card_white, _card_black, _card_set;
@@ -160,15 +160,15 @@ public class Activity_main extends Basic_appCompatActivity implements View.OnCli
             switch (v.getId()) {
                 case R.id.cardview_scan:
                     if (Environment.getExternalStorageState().equals(Environment.MEDIA_MOUNTED))
-                        startActivity(new Intent(getApplicationContext(), Activity_scan.class));
+                        startActivity(new Intent(getApplicationContext(), ScanActivity.class));
                     else
                         Toast.makeText(this, R.string.toast_sdcard_error, Toast.LENGTH_SHORT).show();
                     break;
                 case R.id.cardview_white:
-                    startActivity(new Intent(getApplicationContext(), Activity_list_path.class).putExtra("mode", Activity_list_path.MODE_SAVE));
+                    startActivity(new Intent(getApplicationContext(), PathListActivity.class).putExtra("mode", PathListActivity.MODE_SAVE));
                     break;
                 case R.id.cardview_black:
-                    startActivity(new Intent(getApplicationContext(), Activity_list_path.class).putExtra("mode", Activity_list_path.MODE_CLEAN));
+                    startActivity(new Intent(getApplicationContext(), PathListActivity.class).putExtra("mode", PathListActivity.MODE_CLEAN));
                     break;
                 case R.id.cardview_set:
                     Toast.makeText(this, R.string.toast_comingSoon, Toast.LENGTH_SHORT).show();
