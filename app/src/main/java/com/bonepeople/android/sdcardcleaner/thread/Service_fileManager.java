@@ -28,7 +28,7 @@ public class Service_fileManager extends Service {
         if (_state == STATE_READY || _state == STATE_SCAN_FINISH || _state == STATE_CLEAN_FINISH || _state == STATE_DELETE_FINISH) {
             _state = STATE_SCAN_EXECUTING;
             Global.reset();
-            new Thread_scan().start();
+            new ScanFileThread().start();
         }
     }
 
@@ -54,7 +54,7 @@ public class Service_fileManager extends Service {
     public static void startClean() {
         if (_state == STATE_SCAN_FINISH || _state == STATE_CLEAN_FINISH || _state == STATE_DELETE_FINISH) {
             _state = STATE_CLEAN_EXECUTING;
-            new Thread_clean().start();
+            new CleanFileThread().start();
         }
     }
 
@@ -80,7 +80,7 @@ public class Service_fileManager extends Service {
     public static void startDelete(SparseArray<SDFile> _files) {
         if (_state == STATE_SCAN_FINISH || _state == STATE_CLEAN_FINISH || _state == STATE_DELETE_FINISH) {
             _state = STATE_DELETE_EXECUTING;
-            new Thread_delete(_files).start();
+            new DeleteFileThread(_files).start();
         }
     }
 

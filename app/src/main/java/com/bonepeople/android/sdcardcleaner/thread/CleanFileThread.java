@@ -8,7 +8,7 @@ import com.bonepeople.android.sdcardcleaner.Global;
  * Created by bonepeople on 2017/12/6.
  */
 
-public class Thread_clean extends Thread {
+public class CleanFileThread extends Thread {
 
     @Override
     public void run() {

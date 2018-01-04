@@ -8,18 +8,19 @@ import android.util.SparseArray;
 import com.bonepeople.android.sdcardcleaner.Global;
 import com.bonepeople.android.sdcardcleaner.models.SDFile;
 
+
 /**
- * 更新文件清理标记的线程
+ * 删除文件的线程
  * <p>
- * Created by bonepeople on 2017/12/23.
+ * Created by bonepeople on 2017/12/21.
  */
 
-public class Thread_updateRubbish extends Thread {
-    public static final String ACTION_UPDATE = "Thread_updateRubbish:update successful";
-    public static final String ACTION_FINISH = "Thread_updateRubbish:update finish";
+public class DeleteFileThread extends Thread {
+    public static final String ACTION_DELETE = "DeleteFileThread:delete successful";
+    public static final String ACTION_FINISH = "DeleteFileThread:delete finish";
     private SparseArray<SDFile> _files;
 
-    public Thread_updateRubbish(@NonNull SparseArray<SDFile> _files) {
+    DeleteFileThread(@NonNull SparseArray<SDFile> _files) {
         this._files = _files;
     }
 
@@ -29,11 +30,15 @@ public class Thread_updateRubbish extends Thread {
         SDFile _file;
         for (int _temp_i = 0; _temp_i < _files.size(); _temp_i++) {
             _file = _files.valueAt(_temp_i);
-            _file.updateRubbish();
-            Intent _update = new Intent(ACTION_UPDATE);
-            _update.putExtra("index", _files.keyAt(_temp_i));
-            _manager.sendBroadcast(_update);
+            _file.delete(false);
+            if (Service_fileManager.get_state() == Service_fileManager.STATE_DELETE_EXECUTING) {
+                Intent _delete = new Intent(ACTION_DELETE);
+                _delete.putExtra("index", _files.keyAt(_temp_i));
+                _manager.sendBroadcast(_delete);
+            } else
+                break;
         }
+        Service_fileManager.finishDelete();
         Intent _finish = new Intent(ACTION_FINISH);
         _manager.sendBroadcast(_finish);
     }

@@ -13,7 +13,7 @@ import java.io.File;
  * Created by bonepeople on 2017/6/9.
  */
 
-public class Thread_scan extends Thread {
+public class ScanFileThread extends Thread {
 
     @Override
     public void run() {

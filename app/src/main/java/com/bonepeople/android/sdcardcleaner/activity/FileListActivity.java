@@ -23,9 +23,9 @@ import com.bonepeople.android.sdcardcleaner.R;
 import com.bonepeople.android.sdcardcleaner.adapter.FileListAdapter;
 import com.bonepeople.android.sdcardcleaner.basic.BaseAppCompatActivity;
 import com.bonepeople.android.sdcardcleaner.models.SDFile;
+import com.bonepeople.android.sdcardcleaner.thread.DeleteFileThread;
 import com.bonepeople.android.sdcardcleaner.thread.Service_fileManager;
-import com.bonepeople.android.sdcardcleaner.thread.Thread_delete;
-import com.bonepeople.android.sdcardcleaner.thread.Thread_updateRubbish;
+import com.bonepeople.android.sdcardcleaner.thread.UpdateRubbishThread;
 
 import java.util.ArrayList;
 import java.util.Stack;
@@ -133,7 +133,7 @@ public class FileListActivity extends BaseAppCompatActivity implements View.OnCl
         }
         Global.add_cleanList(_cleanPathList);
         showProgress(ACTION_CLEAN, _cleanFiles.size());
-        new Thread_updateRubbish(_cleanFiles).start();
+        new UpdateRubbishThread(_cleanFiles).start();
     }
 
     /**
@@ -148,7 +148,7 @@ public class FileListActivity extends BaseAppCompatActivity implements View.OnCl
         }
         Global.add_saveList(_savePathList);
         showProgress(ACTION_HOLD, _saveFiles.size());
-        new Thread_updateRubbish(_saveFiles).start();
+        new UpdateRubbishThread(_saveFiles).start();
     }
 
     private void showProgress(String _action, int _count) {
@@ -184,14 +184,14 @@ public class FileListActivity extends BaseAppCompatActivity implements View.OnCl
                     return;
                 int _index;
                 switch (_action) {
-                    case Thread_delete.ACTION_DELETE:
+                    case DeleteFileThread.ACTION_DELETE:
                         _index = intent.getIntExtra("index", -1);
                         if (_index != -1) {
                             _notifyItems.add(_index - _progressDialog.getProgress());
                             _progressDialog.incrementProgressBy(1);
                         }
                         break;
-                    case Thread_delete.ACTION_FINISH:
+                    case DeleteFileThread.ACTION_FINISH:
                         _progressDialog.dismiss();
                         _progressDialog = null;
                         _broadcastManager.unregisterReceiver(this);
@@ -200,14 +200,14 @@ public class FileListActivity extends BaseAppCompatActivity implements View.OnCl
                         }
                         _adapter.notifyItemRangeChanged(0, _adapter.getItemCount());
                         break;
-                    case Thread_updateRubbish.ACTION_UPDATE:
+                    case UpdateRubbishThread.ACTION_UPDATE:
                         _index = intent.getIntExtra("index", -1);
                         if (_index != -1) {
                             _notifyItems.add(_index);
                             _progressDialog.incrementProgressBy(1);
                         }
                         break;
-                    case Thread_updateRubbish.ACTION_FINISH:
+                    case UpdateRubbishThread.ACTION_FINISH:
                         _progressDialog.dismiss();
                         _progressDialog = null;
                         _broadcastManager.unregisterReceiver(this);
@@ -219,10 +219,10 @@ public class FileListActivity extends BaseAppCompatActivity implements View.OnCl
             }
         };
         IntentFilter _filter = new IntentFilter();
-        _filter.addAction(Thread_delete.ACTION_DELETE);
-        _filter.addAction(Thread_delete.ACTION_FINISH);
-        _filter.addAction(Thread_updateRubbish.ACTION_UPDATE);
-        _filter.addAction(Thread_updateRubbish.ACTION_FINISH);
+        _filter.addAction(DeleteFileThread.ACTION_DELETE);
+        _filter.addAction(DeleteFileThread.ACTION_FINISH);
+        _filter.addAction(UpdateRubbishThread.ACTION_UPDATE);
+        _filter.addAction(UpdateRubbishThread.ACTION_FINISH);
         _broadcastManager.registerReceiver(_receiver, _filter);
     }
 
