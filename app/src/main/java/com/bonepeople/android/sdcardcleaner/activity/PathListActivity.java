@@ -36,7 +36,7 @@ public class PathListActivity extends BaseAppCompatActivity implements View.OnCl
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         _mode = getIntent().getIntExtra("mode", MODE_SAVE);
-        setContentView(R.layout.activity_list_path);
+        setContentView(R.layout.activity_path_list);
         String _basic_path = Environment.getExternalStorageDirectory().getPath();
         if (_mode == MODE_SAVE) {
             setTitle(getString(R.string.caption_text_white));

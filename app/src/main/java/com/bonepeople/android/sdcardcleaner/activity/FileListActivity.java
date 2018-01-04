@@ -52,7 +52,7 @@ public class FileListActivity extends BaseAppCompatActivity implements View.OnCl
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_list_file);
+        setContentView(R.layout.activity_file_list);
         setTitle(getString(R.string.caption_text_mine));
 
         _text_path = (EditText) findViewById(R.id.edittext_path);
