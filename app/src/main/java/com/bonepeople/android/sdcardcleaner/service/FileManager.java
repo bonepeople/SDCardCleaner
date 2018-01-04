@@ -1,4 +1,4 @@
-package com.bonepeople.android.sdcardcleaner.thread;
+package com.bonepeople.android.sdcardcleaner.service;
 
 import android.app.Service;
 import android.content.Intent;
@@ -7,8 +7,11 @@ import android.util.SparseArray;
 
 import com.bonepeople.android.sdcardcleaner.Global;
 import com.bonepeople.android.sdcardcleaner.models.SDFile;
+import com.bonepeople.android.sdcardcleaner.thread.CleanFileThread;
+import com.bonepeople.android.sdcardcleaner.thread.DeleteFileThread;
+import com.bonepeople.android.sdcardcleaner.thread.ScanFileThread;
 
-public class Service_fileManager extends Service {
+public class FileManager extends Service {
     public static final int STATE_READY = 0;
     public static final int STATE_SCAN_EXECUTING = 1;
     public static final int STATE_SCAN_STOP = 2;

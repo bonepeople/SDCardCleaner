@@ -1,7 +1,7 @@
 package com.bonepeople.android.sdcardcleaner.models;
 
 import com.bonepeople.android.sdcardcleaner.Global;
-import com.bonepeople.android.sdcardcleaner.thread.Service_fileManager;
+import com.bonepeople.android.sdcardcleaner.service.FileManager;
 import com.bonepeople.android.sdcardcleaner.utils.CommonUtil;
 import com.bonepeople.android.sdcardcleaner.utils.NumberUtil;
 
@@ -54,7 +54,7 @@ public class SDFile {
             if (_files != null)
                 for (File _child : _files) {
                     if (_child != null)
-                        if (Service_fileManager.get_state() == Service_fileManager.STATE_SCAN_EXECUTING)
+                        if (FileManager.get_state() == FileManager.STATE_SCAN_EXECUTING)
                             new SDFile(this, _child);
                         else
                             break;
@@ -252,7 +252,7 @@ public class SDFile {
         }
         if (_children.size() == 0) {
             if (_auto) {
-                if (rubbish && Service_fileManager.get_state() == Service_fileManager.STATE_CLEAN_EXECUTING) {
+                if (rubbish && FileManager.get_state() == FileManager.STATE_CLEAN_EXECUTING) {
                     File _file = new File(_path);
                     if (!_file.exists() || _file.delete()) {
                         Global.set_fileCount_all(-1);
@@ -266,7 +266,7 @@ public class SDFile {
                     }
                 }
             } else {
-                if (Service_fileManager.get_state() == Service_fileManager.STATE_DELETE_EXECUTING) {
+                if (FileManager.get_state() == FileManager.STATE_DELETE_EXECUTING) {
                     File _file = new File(_path);
                     if (!_file.exists() || _file.delete()) {
                         Global.set_fileCount_all(-1);

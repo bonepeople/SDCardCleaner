@@ -18,7 +18,7 @@ import android.widget.Toast;
 import com.bonepeople.android.sdcardcleaner.Global;
 import com.bonepeople.android.sdcardcleaner.R;
 import com.bonepeople.android.sdcardcleaner.basic.BaseAppCompatActivity;
-import com.bonepeople.android.sdcardcleaner.thread.Service_fileManager;
+import com.bonepeople.android.sdcardcleaner.service.FileManager;
 
 public class MainActivity extends BaseAppCompatActivity implements View.OnClickListener {
     private static final int STATE_READY = 0, STATE_SHOWING = 1, STATE_SHOWN = 2, STATE_QUIT = 3, STATE_LIVING = 4;
@@ -149,8 +149,8 @@ public class MainActivity extends BaseAppCompatActivity implements View.OnClickL
     }
 
     private void finishApp() {
-        Service_fileManager.stopScan();
-        Service_fileManager.stopClean();
+        FileManager.stopScan();
+        FileManager.stopClean();
         Global.destroy();
     }
 

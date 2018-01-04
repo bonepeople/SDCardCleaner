@@ -24,7 +24,7 @@ import com.bonepeople.android.sdcardcleaner.adapter.FileListAdapter;
 import com.bonepeople.android.sdcardcleaner.basic.BaseAppCompatActivity;
 import com.bonepeople.android.sdcardcleaner.models.SDFile;
 import com.bonepeople.android.sdcardcleaner.thread.DeleteFileThread;
-import com.bonepeople.android.sdcardcleaner.thread.Service_fileManager;
+import com.bonepeople.android.sdcardcleaner.service.FileManager;
 import com.bonepeople.android.sdcardcleaner.thread.UpdateRubbishThread;
 
 import java.util.ArrayList;
@@ -114,7 +114,7 @@ public class FileListActivity extends BaseAppCompatActivity implements View.OnCl
                     _deleteFiles.put(_position, _adapter.get_data().get_children().get(_position));
                 }
                 showProgress(ACTION_DELETE, _deleteFiles.size());
-                Service_fileManager.startDelete(_deleteFiles);
+                FileManager.startDelete(_deleteFiles);
             }
         });
         _builder.setNegativeButton(R.string.caption_button_negative, null);
@@ -161,7 +161,7 @@ public class FileListActivity extends BaseAppCompatActivity implements View.OnCl
                 _progressDialog.setButton(ProgressDialog.BUTTON_NEGATIVE, getString(R.string.caption_button_negative), new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        Service_fileManager.stopDelete();
+                        FileManager.stopDelete();
                     }
                 });
                 break;

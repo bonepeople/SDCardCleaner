@@ -24,7 +24,7 @@
         <activity android:name=".activity.PathListActivity" />
 
         <service
-            android:name=".thread.Service_fileManager"
+            android:name=".service.FileManager"
             android:enabled="true"
             android:exported="false" />
     </application>

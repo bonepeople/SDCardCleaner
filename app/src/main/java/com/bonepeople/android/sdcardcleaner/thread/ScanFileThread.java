@@ -4,6 +4,7 @@ import android.os.Environment;
 
 import com.bonepeople.android.sdcardcleaner.Global;
 import com.bonepeople.android.sdcardcleaner.models.SDFile;
+import com.bonepeople.android.sdcardcleaner.service.FileManager;
 
 import java.io.File;
 
@@ -20,6 +21,6 @@ public class ScanFileThread extends Thread {
         File _file = Environment.getExternalStorageDirectory();
         SDFile _root = new SDFile(null, _file);
         Global.set_rootFile(_root);
-        Service_fileManager.finishScan();
+        FileManager.finishScan();
     }
 }

@@ -14,7 +14,7 @@ import com.bonepeople.android.sdcardcleaner.Global;
 import com.bonepeople.android.sdcardcleaner.R;
 import com.bonepeople.android.sdcardcleaner.adapter.PathListAdapter;
 import com.bonepeople.android.sdcardcleaner.basic.BaseAppCompatActivity;
-import com.bonepeople.android.sdcardcleaner.thread.Service_fileManager;
+import com.bonepeople.android.sdcardcleaner.service.FileManager;
 
 import java.util.ArrayList;
 
@@ -61,7 +61,7 @@ public class PathListActivity extends BaseAppCompatActivity implements View.OnCl
         _adapter.set_data(_data);
         _list.setAdapter(_adapter);
         _list.addItemDecoration(new DividerItemDecoration(this, DividerItemDecoration.VERTICAL));
-        if (Service_fileManager.get_state() == Service_fileManager.STATE_SCAN_EXECUTING)
+        if (FileManager.get_state() == FileManager.STATE_SCAN_EXECUTING)
             Toast.makeText(this, R.string.toast_list_path_lock, Toast.LENGTH_LONG).show();
         else
             Toast.makeText(this, R.string.toast_list_path_remove, Toast.LENGTH_LONG).show();
@@ -72,7 +72,7 @@ public class PathListActivity extends BaseAppCompatActivity implements View.OnCl
         String[] _tags = (String[]) v.getTag();
         switch (_tags[0]) {
             case PathListAdapter.ACTION_CLICK_ITEM:
-                if (Service_fileManager.get_state() != Service_fileManager.STATE_SCAN_EXECUTING)
+                if (FileManager.get_state() != FileManager.STATE_SCAN_EXECUTING)
                     removeItem(Integer.parseInt(_tags[1]));
                 break;
         }

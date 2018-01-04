@@ -7,6 +7,7 @@ import android.util.SparseArray;
 
 import com.bonepeople.android.sdcardcleaner.Global;
 import com.bonepeople.android.sdcardcleaner.models.SDFile;
+import com.bonepeople.android.sdcardcleaner.service.FileManager;
 
 
 /**
@@ -20,7 +21,7 @@ public class DeleteFileThread extends Thread {
     public static final String ACTION_FINISH = "DeleteFileThread:delete finish";
     private SparseArray<SDFile> _files;
 
-    DeleteFileThread(@NonNull SparseArray<SDFile> _files) {
+    public DeleteFileThread(@NonNull SparseArray<SDFile> _files) {
         this._files = _files;
     }
 
@@ -31,14 +32,14 @@ public class DeleteFileThread extends Thread {
         for (int _temp_i = 0; _temp_i < _files.size(); _temp_i++) {
             _file = _files.valueAt(_temp_i);
             _file.delete(false);
-            if (Service_fileManager.get_state() == Service_fileManager.STATE_DELETE_EXECUTING) {
+            if (FileManager.get_state() == FileManager.STATE_DELETE_EXECUTING) {
                 Intent _delete = new Intent(ACTION_DELETE);
                 _delete.putExtra("index", _files.keyAt(_temp_i));
                 _manager.sendBroadcast(_delete);
             } else
                 break;
         }
-        Service_fileManager.finishDelete();
+        FileManager.finishDelete();
         Intent _finish = new Intent(ACTION_FINISH);
         _manager.sendBroadcast(_finish);
     }

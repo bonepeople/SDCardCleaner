@@ -11,7 +11,7 @@ import android.widget.TextView;
 import com.bonepeople.android.sdcardcleaner.R;
 import com.bonepeople.android.sdcardcleaner.basic.BaseAppCompatActivity;
 import com.bonepeople.android.sdcardcleaner.basic.BaseHandler;
-import com.bonepeople.android.sdcardcleaner.thread.Service_fileManager;
+import com.bonepeople.android.sdcardcleaner.service.FileManager;
 import com.bonepeople.android.sdcardcleaner.widget.SDCardPercent;
 
 public class ScanActivity extends BaseAppCompatActivity implements View.OnClickListener {
@@ -62,18 +62,18 @@ public class ScanActivity extends BaseAppCompatActivity implements View.OnClickL
         super.handleMessage(_msg);
         switch (_msg.what) {
             case MSG_REFRESH:
-                if (_state != Service_fileManager.get_state()) {
-                    _state = Service_fileManager.get_state();
+                if (_state != FileManager.get_state()) {
+                    _state = FileManager.get_state();
                     updateState();
                 }
                 _percent.refresh();
-                if (_state == Service_fileManager.STATE_READY)
+                if (_state == FileManager.STATE_READY)
                     return;
-                if (_state == Service_fileManager.STATE_SCAN_FINISH)
+                if (_state == FileManager.STATE_SCAN_FINISH)
                     return;
-                if (_state == Service_fileManager.STATE_CLEAN_FINISH)
+                if (_state == FileManager.STATE_CLEAN_FINISH)
                     return;
-                if (_state == Service_fileManager.STATE_DELETE_FINISH)
+                if (_state == FileManager.STATE_DELETE_FINISH)
                     return;
                 _handler.sendEmptyMessageDelayed(MSG_REFRESH, 500);
                 break;
@@ -82,7 +82,7 @@ public class ScanActivity extends BaseAppCompatActivity implements View.OnClickL
 
     private void updateState() {
         switch (_state) {
-            case Service_fileManager.STATE_READY:
+            case FileManager.STATE_READY:
                 _text_state.setText(R.string.state_ready);
                 _button_middle.setText(R.string.caption_button_startScan);
                 _button_middle.setTag(new String[]{ACTION_START_SCAN});
@@ -90,7 +90,7 @@ public class ScanActivity extends BaseAppCompatActivity implements View.OnClickL
                 _button_left.setVisibility(Button.GONE);
                 _button_right.setVisibility(Button.GONE);
                 break;
-            case Service_fileManager.STATE_SCAN_EXECUTING:
+            case FileManager.STATE_SCAN_EXECUTING:
                 _progressBar.setVisibility(ProgressBar.VISIBLE);
                 _text_state.setText(getString(R.string.state_scan_executing));
                 _button_middle.setText(R.string.caption_button_stopScan);
@@ -99,14 +99,14 @@ public class ScanActivity extends BaseAppCompatActivity implements View.OnClickL
                 _button_left.setVisibility(Button.GONE);
                 _button_right.setVisibility(Button.GONE);
                 break;
-            case Service_fileManager.STATE_SCAN_STOP:
+            case FileManager.STATE_SCAN_STOP:
                 _progressBar.setVisibility(ProgressBar.VISIBLE);
                 _text_state.setText(getString(R.string.state_scan_stopping));
                 _button_middle.setVisibility(Button.GONE);
                 _button_left.setVisibility(Button.GONE);
                 _button_right.setVisibility(Button.GONE);
                 break;
-            case Service_fileManager.STATE_SCAN_FINISH:
+            case FileManager.STATE_SCAN_FINISH:
                 _progressBar.setVisibility(ProgressBar.GONE);
                 _text_state.setText(getString(R.string.state_scan_finish));
                 _button_middle.setText(R.string.caption_button_reScan);
@@ -119,7 +119,7 @@ public class ScanActivity extends BaseAppCompatActivity implements View.OnClickL
                 _button_left.setVisibility(Button.VISIBLE);
                 _button_right.setVisibility(Button.VISIBLE);
                 break;
-            case Service_fileManager.STATE_CLEAN_EXECUTING:
+            case FileManager.STATE_CLEAN_EXECUTING:
                 _progressBar.setVisibility(ProgressBar.VISIBLE);
                 _text_state.setText(getString(R.string.state_clean_executing));
                 _button_middle.setText(R.string.caption_button_stopClean);
@@ -128,14 +128,14 @@ public class ScanActivity extends BaseAppCompatActivity implements View.OnClickL
                 _button_left.setVisibility(Button.GONE);
                 _button_right.setVisibility(Button.GONE);
                 break;
-            case Service_fileManager.STATE_CLEAN_STOP:
+            case FileManager.STATE_CLEAN_STOP:
                 _progressBar.setVisibility(ProgressBar.VISIBLE);
                 _text_state.setText(getString(R.string.state_clean_stopping));
                 _button_middle.setVisibility(Button.GONE);
                 _button_left.setVisibility(Button.GONE);
                 _button_right.setVisibility(Button.GONE);
                 break;
-            case Service_fileManager.STATE_CLEAN_FINISH:
+            case FileManager.STATE_CLEAN_FINISH:
                 _progressBar.setVisibility(ProgressBar.GONE);
                 _text_state.setText(getString(R.string.state_clean_finish));
                 _button_middle.setText(R.string.caption_button_reScan);
@@ -169,18 +169,18 @@ public class ScanActivity extends BaseAppCompatActivity implements View.OnClickL
         String[] _tag = (String[]) v.getTag();
         switch (_tag[0]) {
             case ACTION_START_SCAN:
-                Service_fileManager.startScan();
+                FileManager.startScan();
                 _handler.sendEmptyMessageDelayed(MSG_REFRESH, 150);
                 break;
             case ACTION_STOP_SCAN:
-                Service_fileManager.stopScan();
+                FileManager.stopScan();
                 break;
             case ACTION_START_CLEAN:
-                Service_fileManager.startClean();
+                FileManager.startClean();
                 _handler.sendEmptyMessageDelayed(MSG_REFRESH, 150);
                 break;
             case ACTION_STOP_CLEAN:
-                Service_fileManager.stopClean();
+                FileManager.stopClean();
                 break;
             case ACTION_VIEW_FILE:
                 startActivityForResult(new Intent(getApplicationContext(), FileListActivity.class), REQUEST_FILE);

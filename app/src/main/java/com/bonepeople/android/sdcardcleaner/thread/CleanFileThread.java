@@ -1,6 +1,7 @@
 package com.bonepeople.android.sdcardcleaner.thread;
 
 import com.bonepeople.android.sdcardcleaner.Global;
+import com.bonepeople.android.sdcardcleaner.service.FileManager;
 
 /**
  * 清理文件的线程
@@ -14,6 +15,6 @@ public class CleanFileThread extends Thread {
     public void run() {
         if (Global.get_rootFile() != null)
             Global.get_rootFile().delete(true);
-        Service_fileManager.finishClean();
+        FileManager.finishClean();
     }
 }
