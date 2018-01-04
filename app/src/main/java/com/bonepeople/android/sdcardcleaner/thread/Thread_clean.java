@@ -2,8 +2,6 @@ package com.bonepeople.android.sdcardcleaner.thread;
 
 import com.bonepeople.android.sdcardcleaner.Global;
 
-import java.io.File;
-
 /**
  * 清理文件的线程
  * <p>

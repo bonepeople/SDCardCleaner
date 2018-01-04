@@ -15,12 +15,12 @@ import java.util.ArrayList;
  * Created by bonepeople on 2017/12/5.
  */
 
-public class Adapter_list_path extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
+public class PathListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     public static final String ACTION_CLICK_ITEM = "click_item";
     private ArrayList<String> _data;
     private View.OnClickListener _listener_click;
 
-    public Adapter_list_path(View.OnClickListener _listener_click) {
+    public PathListAdapter(View.OnClickListener _listener_click) {
         this._listener_click = _listener_click;
     }
 

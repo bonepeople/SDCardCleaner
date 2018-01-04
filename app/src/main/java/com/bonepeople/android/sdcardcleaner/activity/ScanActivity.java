@@ -9,12 +9,12 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.bonepeople.android.sdcardcleaner.R;
-import com.bonepeople.android.sdcardcleaner.basic.Basic_appCompatActivity;
-import com.bonepeople.android.sdcardcleaner.basic.Basic_handler;
+import com.bonepeople.android.sdcardcleaner.basic.BaseAppCompatActivity;
+import com.bonepeople.android.sdcardcleaner.basic.BaseHandler;
 import com.bonepeople.android.sdcardcleaner.thread.Service_fileManager;
 import com.bonepeople.android.sdcardcleaner.widget.SDCardPercent;
 
-public class ScanActivity extends Basic_appCompatActivity implements View.OnClickListener {
+public class ScanActivity extends BaseAppCompatActivity implements View.OnClickListener {
     private static final String ACTION_START_SCAN = "startScan";
     private static final String ACTION_STOP_SCAN = "stopScan";
     private static final String ACTION_START_CLEAN = "startClean";
@@ -26,7 +26,7 @@ public class ScanActivity extends Basic_appCompatActivity implements View.OnClic
     private TextView _text_state;
     private SDCardPercent _percent;
     private Button _button_middle, _button_left, _button_right;
-    private Basic_handler _handler = createHandler();
+    private BaseHandler _handler = createHandler();
     private int _state = -1;
 
     @Override

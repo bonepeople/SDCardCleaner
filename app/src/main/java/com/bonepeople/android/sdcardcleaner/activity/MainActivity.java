@@ -17,10 +17,10 @@ import android.widget.Toast;
 
 import com.bonepeople.android.sdcardcleaner.Global;
 import com.bonepeople.android.sdcardcleaner.R;
-import com.bonepeople.android.sdcardcleaner.basic.Basic_appCompatActivity;
+import com.bonepeople.android.sdcardcleaner.basic.BaseAppCompatActivity;
 import com.bonepeople.android.sdcardcleaner.thread.Service_fileManager;
 
-public class MainActivity extends Basic_appCompatActivity implements View.OnClickListener {
+public class MainActivity extends BaseAppCompatActivity implements View.OnClickListener {
     private static final int STATE_READY = 0, STATE_SHOWING = 1, STATE_SHOWN = 2, STATE_QUIT = 3, STATE_LIVING = 4;
     private static final int MSG_CANCEL = 0;
     private CardView _card_scan, _card_white, _card_black, _card_set;

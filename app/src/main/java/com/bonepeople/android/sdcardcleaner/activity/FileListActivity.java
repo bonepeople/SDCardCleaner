@@ -20,8 +20,8 @@ import android.widget.LinearLayout;
 
 import com.bonepeople.android.sdcardcleaner.Global;
 import com.bonepeople.android.sdcardcleaner.R;
-import com.bonepeople.android.sdcardcleaner.adapter.Adapter_list_file;
-import com.bonepeople.android.sdcardcleaner.basic.Basic_appCompatActivity;
+import com.bonepeople.android.sdcardcleaner.adapter.FileListAdapter;
+import com.bonepeople.android.sdcardcleaner.basic.BaseAppCompatActivity;
 import com.bonepeople.android.sdcardcleaner.models.SDFile;
 import com.bonepeople.android.sdcardcleaner.thread.Service_fileManager;
 import com.bonepeople.android.sdcardcleaner.thread.Thread_delete;
@@ -30,7 +30,7 @@ import com.bonepeople.android.sdcardcleaner.thread.Thread_updateRubbish;
 import java.util.ArrayList;
 import java.util.Stack;
 
-public class FileListActivity extends Basic_appCompatActivity implements View.OnClickListener, View.OnLongClickListener {
+public class FileListActivity extends BaseAppCompatActivity implements View.OnClickListener, View.OnLongClickListener {
     private static final String ACTION_DELETE = "delete";
     private static final String ACTION_CLEAN = "clean";
     private static final String ACTION_HOLD = "hold";
@@ -42,7 +42,7 @@ public class FileListActivity extends Basic_appCompatActivity implements View.On
     private CheckBox _checkbox_all;
     private ProgressDialog _progressDialog;
     private LocalBroadcastManager _broadcastManager;
-    private Adapter_list_file _adapter;
+    private FileListAdapter _adapter;
     private String _basic_path = Global.get_rootFile().get_path();
     private Stack<SDFile> _files = new Stack<>();
     private Stack<Integer> _positions = new Stack<>();
@@ -68,7 +68,7 @@ public class FileListActivity extends Basic_appCompatActivity implements View.On
         _layoutManager = new LinearLayoutManager(this);
         _layoutManager.setOrientation(LinearLayoutManager.VERTICAL);
         _list.setLayoutManager(_layoutManager);
-        _adapter = new Adapter_list_file(this, this);
+        _adapter = new FileListAdapter(this, this);
         _adapter.set_data(Global.get_rootFile());
         _list.setAdapter(_adapter);
         _list.addItemDecoration(new DividerItemDecoration(this, DividerItemDecoration.VERTICAL));
@@ -89,7 +89,7 @@ public class FileListActivity extends Basic_appCompatActivity implements View.On
     private void setMultiSelect(boolean _selecting) {
         _adapter.set_multiSelect(_selecting);
         //经测试，只刷新部分条目会出现bug
-        _adapter.notifyItemRangeChanged(0, _adapter.getItemCount(), Adapter_list_file.PART_CHECKBOX);
+        _adapter.notifyItemRangeChanged(0, _adapter.getItemCount(), FileListAdapter.PART_CHECKBOX);
         if (_selecting) {
             _buttonbar.setVisibility(LinearLayout.VISIBLE);
         } else {
@@ -262,16 +262,16 @@ public class FileListActivity extends Basic_appCompatActivity implements View.On
             case ACTION_CHECK:
                 _adapter.set_checkList(-1);
                 //经测试，只刷新部分条目会出现bug
-                _adapter.notifyItemRangeChanged(0, _adapter.getItemCount(), Adapter_list_file.PART_CHECKBOX);
+                _adapter.notifyItemRangeChanged(0, _adapter.getItemCount(), FileListAdapter.PART_CHECKBOX);
                 break;
             case ACTION_CLOSE:
                 setMultiSelect(false);
                 break;
-            case Adapter_list_file.ACTION_CLICK_ITEM:
+            case FileListAdapter.ACTION_CLICK_ITEM:
                 int _position = Integer.parseInt(_tags[1]);
                 if (_adapter.is_multiSelect()) {//处于多选状态
                     _checkbox_all.setChecked(_adapter.set_checkList(_position));
-                    _adapter.notifyItemChanged(_position, Adapter_list_file.PART_CHECKBOX);
+                    _adapter.notifyItemChanged(_position, FileListAdapter.PART_CHECKBOX);
                 } else {//处于浏览状态
                     SDFile _clickFile = _adapter.get_data().get_children().get(_position);
                     if (_clickFile.isDirectory()) {
@@ -301,11 +301,11 @@ public class FileListActivity extends Basic_appCompatActivity implements View.On
         int _position = Integer.parseInt(_tags[1]);
         if (_adapter.is_multiSelect()) {//处于多选状态
             _checkbox_all.setChecked(_adapter.set_checkList(_position));
-            _adapter.notifyItemChanged(_position, Adapter_list_file.PART_CHECKBOX);
+            _adapter.notifyItemChanged(_position, FileListAdapter.PART_CHECKBOX);
         } else {//处于浏览状态
             setMultiSelect(true);
             _checkbox_all.setChecked(_adapter.set_checkList(_position));
-            _adapter.notifyItemChanged(_position, Adapter_list_file.PART_CHECKBOX);
+            _adapter.notifyItemChanged(_position, FileListAdapter.PART_CHECKBOX);
         }
         return true;
     }

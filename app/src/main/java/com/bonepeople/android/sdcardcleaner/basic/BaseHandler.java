@@ -9,10 +9,10 @@ import android.os.Message;
  * Created by bonepeople on 2017/12/25.
  */
 
-public class Basic_handler extends Handler {
-    private Basic_appCompatActivity _activity;
+public class BaseHandler extends Handler {
+    private BaseAppCompatActivity _activity;
 
-    Basic_handler(Basic_appCompatActivity _activity) {
+    BaseHandler(BaseAppCompatActivity _activity) {
         this._activity = _activity;
     }
 

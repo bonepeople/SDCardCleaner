@@ -12,8 +12,8 @@ import android.widget.Toast;
 
 import com.bonepeople.android.sdcardcleaner.Global;
 import com.bonepeople.android.sdcardcleaner.R;
-import com.bonepeople.android.sdcardcleaner.adapter.Adapter_list_path;
-import com.bonepeople.android.sdcardcleaner.basic.Basic_appCompatActivity;
+import com.bonepeople.android.sdcardcleaner.adapter.PathListAdapter;
+import com.bonepeople.android.sdcardcleaner.basic.BaseAppCompatActivity;
 import com.bonepeople.android.sdcardcleaner.thread.Service_fileManager;
 
 import java.util.ArrayList;
@@ -23,13 +23,13 @@ import java.util.ArrayList;
  * <p>
  * <b>intent:</b>"mode"-当前页面的类型(MODE_SAVE/MODE_CLEAN)
  */
-public class PathListActivity extends Basic_appCompatActivity implements View.OnClickListener {
+public class PathListActivity extends BaseAppCompatActivity implements View.OnClickListener {
     public static final int MODE_SAVE = 0;//保留列表
     public static final int MODE_CLEAN = 1;//待清理列表
     private int _mode;
     private LinearLayoutManager _layoutManager;
     private RecyclerView _list;
-    private Adapter_list_path _adapter;
+    private PathListAdapter _adapter;
     private ArrayList<String> _data;
 
     @Override
@@ -57,7 +57,7 @@ public class PathListActivity extends Basic_appCompatActivity implements View.On
         _layoutManager = new LinearLayoutManager(this);
         _layoutManager.setOrientation(LinearLayoutManager.VERTICAL);
         _list.setLayoutManager(_layoutManager);
-        _adapter = new Adapter_list_path(this);
+        _adapter = new PathListAdapter(this);
         _adapter.set_data(_data);
         _list.setAdapter(_adapter);
         _list.addItemDecoration(new DividerItemDecoration(this, DividerItemDecoration.VERTICAL));
@@ -71,7 +71,7 @@ public class PathListActivity extends Basic_appCompatActivity implements View.On
     public void onClick(View v) {
         String[] _tags = (String[]) v.getTag();
         switch (_tags[0]) {
-            case Adapter_list_path.ACTION_CLICK_ITEM:
+            case PathListAdapter.ACTION_CLICK_ITEM:
                 if (Service_fileManager.get_state() != Service_fileManager.STATE_SCAN_EXECUTING)
                     removeItem(Integer.parseInt(_tags[1]));
                 break;

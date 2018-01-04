@@ -11,13 +11,13 @@ import java.util.LinkedList;
  * Created by bonepeople on 2017/12/25.
  */
 
-public abstract class Basic_appCompatActivity extends AppCompatActivity {
-    private LinkedList<Basic_handler> _handlers = null;
+public abstract class BaseAppCompatActivity extends AppCompatActivity {
+    private LinkedList<BaseHandler> _handlers = null;
 
-    protected final Basic_handler createHandler() {
+    protected final BaseHandler createHandler() {
         if (_handlers == null)
             _handlers = new LinkedList<>();
-        Basic_handler _handler = new Basic_handler(this);
+        BaseHandler _handler = new BaseHandler(this);
         _handlers.add(_handler);
         return _handler;
     }
@@ -28,7 +28,7 @@ public abstract class Basic_appCompatActivity extends AppCompatActivity {
     @Override
     protected void onDestroy() {
         if (_handlers != null) {
-            for (Basic_handler _handler : _handlers) {
+            for (BaseHandler _handler : _handlers) {
                 _handler.destroy();
             }
             _handlers.clear();

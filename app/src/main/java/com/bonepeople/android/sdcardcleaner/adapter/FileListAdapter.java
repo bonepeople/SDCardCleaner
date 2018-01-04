@@ -24,7 +24,7 @@ import java.util.List;
  * Created by bonepeople on 2017/6/26.
  */
 
-public class Adapter_list_file extends RecyclerView.Adapter<Adapter_list_file.ViewHolder> {
+public class FileListAdapter extends RecyclerView.Adapter<FileListAdapter.ViewHolder> {
     public static final String PART_CHECKBOX = "checkBox";
     public static final String ACTION_CLICK_ITEM = "click_item";
     private static final int COLOR_START = 0xFFEAD799;
@@ -36,7 +36,7 @@ public class Adapter_list_file extends RecyclerView.Adapter<Adapter_list_file.Vi
     private boolean _multiSelect = false;//是否处于多选状态中
     private ArrayList<Integer> _checkList = new ArrayList<>();//已选项目集合
 
-    public Adapter_list_file(View.OnClickListener _listener_click, View.OnLongClickListener _listener_long) {
+    public FileListAdapter(View.OnClickListener _listener_click, View.OnLongClickListener _listener_long) {
         this._listener_click = _listener_click;
         this._listener_long = _listener_long;
     }
