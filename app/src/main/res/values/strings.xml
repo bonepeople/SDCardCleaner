@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">SDCardCleaner</string>
+    <string name="app_name">SD卡清理器</string>
     <string name="str_path_rootFile">SD卡</string>
 
     <!--Toast展示的信息-->
