@@ -13,6 +13,7 @@ import com.bonepeople.android.sdcardcleaner.basic.BaseAppCompatActivity;
 import com.bonepeople.android.sdcardcleaner.basic.BaseHandler;
 import com.bonepeople.android.sdcardcleaner.service.FileManager;
 import com.bonepeople.android.sdcardcleaner.widget.SDCardPercent;
+import com.bonepeople.android.sdcardcleaner.widget.TitleBar;
 
 public class ScanActivity extends BaseAppCompatActivity implements View.OnClickListener {
     private static final String ACTION_START_SCAN = "startScan";
@@ -33,8 +34,8 @@ public class ScanActivity extends BaseAppCompatActivity implements View.OnClickL
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_scan);
-        setTitle(getString(R.string.caption_text_mine));
 
+        TitleBar _titleBar = (TitleBar) findViewById(R.id.titleBar);
         _progressBar = (ProgressBar) findViewById(R.id.progressBar);
         _text_state = (TextView) findViewById(R.id.textView_state);
         _percent = (SDCardPercent) findViewById(R.id.SDCardPercent);
@@ -42,6 +43,7 @@ public class ScanActivity extends BaseAppCompatActivity implements View.OnClickL
         _button_left = (Button) findViewById(R.id.button_clean);
         _button_right = (Button) findViewById(R.id.button_show);
 
+        _titleBar.setTitle(R.string.caption_text_mine);
         _button_middle.setOnClickListener(this);
         _button_left.setOnClickListener(this);
         _button_right.setOnClickListener(this);

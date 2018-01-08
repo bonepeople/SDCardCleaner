@@ -15,6 +15,7 @@ import com.bonepeople.android.sdcardcleaner.R;
 import com.bonepeople.android.sdcardcleaner.adapter.PathListAdapter;
 import com.bonepeople.android.sdcardcleaner.basic.BaseAppCompatActivity;
 import com.bonepeople.android.sdcardcleaner.service.FileManager;
+import com.bonepeople.android.sdcardcleaner.widget.TitleBar;
 
 import java.util.ArrayList;
 
@@ -35,25 +36,26 @@ public class PathListActivity extends BaseAppCompatActivity implements View.OnCl
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        _mode = getIntent().getIntExtra("mode", MODE_SAVE);
         setContentView(R.layout.activity_path_list);
+
+        TitleBar _titleBar = (TitleBar) findViewById(R.id.titleBar);
+        _list = (RecyclerView) findViewById(R.id.recyclerview);
+
         String _basic_path = Environment.getExternalStorageDirectory().getPath();
+        _mode = getIntent().getIntExtra("mode", MODE_SAVE);
         if (_mode == MODE_SAVE) {
-            setTitle(getString(R.string.caption_text_white));
+            _titleBar.setTitle(R.string.caption_text_white);
             _data = new ArrayList<>(Global.get_saveList().size());
             for (int _temp_i = 0; _temp_i < Global.get_saveList().size(); _temp_i++) {
                 _data.add(Global.get_saveList().get(_temp_i).replace(_basic_path, getString(R.string.str_path_rootFile)));
             }
         } else {
-            setTitle(getString(R.string.caption_text_black));
+            _titleBar.setTitle(R.string.caption_text_black);
             _data = new ArrayList<>(Global.get_cleanList().size());
             for (int _temp_i = 0; _temp_i < Global.get_cleanList().size(); _temp_i++) {
                 _data.add(Global.get_cleanList().get(_temp_i).replace(_basic_path, getString(R.string.str_path_rootFile)));
             }
         }
-
-        _list = (RecyclerView) findViewById(R.id.recyclerview);
-
         _layoutManager = new LinearLayoutManager(this);
         _layoutManager.setOrientation(LinearLayoutManager.VERTICAL);
         _list.setLayoutManager(_layoutManager);

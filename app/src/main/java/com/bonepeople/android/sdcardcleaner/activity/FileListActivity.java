@@ -26,6 +26,7 @@ import com.bonepeople.android.sdcardcleaner.models.SDFile;
 import com.bonepeople.android.sdcardcleaner.thread.DeleteFileThread;
 import com.bonepeople.android.sdcardcleaner.service.FileManager;
 import com.bonepeople.android.sdcardcleaner.thread.UpdateRubbishThread;
+import com.bonepeople.android.sdcardcleaner.widget.TitleBar;
 
 import java.util.ArrayList;
 import java.util.Stack;
@@ -53,8 +54,8 @@ public class FileListActivity extends BaseAppCompatActivity implements View.OnCl
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_file_list);
-        setTitle(getString(R.string.caption_text_mine));
 
+        TitleBar _titleBar = (TitleBar) findViewById(R.id.titleBar);
         _text_path = (EditText) findViewById(R.id.edittext_path);
         RecyclerView _list = (RecyclerView) findViewById(R.id.recyclerview);
         _buttonbar = (LinearLayout) findViewById(R.id.linearlayout_buttonbar);
@@ -64,6 +65,7 @@ public class FileListActivity extends BaseAppCompatActivity implements View.OnCl
         View _button_close = findViewById(R.id.imageview_close);
         _checkbox_all = (CheckBox) findViewById(R.id.checkbox_all);
 
+        _titleBar.setTitle(R.string.caption_text_mine);
         _text_path.setText(Global.get_rootFile().get_path().replace(_basic_path, getString(R.string.str_path_rootFile)));
         _layoutManager = new LinearLayoutManager(this);
         _layoutManager.setOrientation(LinearLayoutManager.VERTICAL);

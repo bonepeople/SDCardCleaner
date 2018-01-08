@@ -19,9 +19,15 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".activity.ScanActivity" />
-        <activity android:name=".activity.FileListActivity" />
-        <activity android:name=".activity.PathListActivity" />
+        <activity
+            android:name=".activity.ScanActivity"
+            android:theme="@style/AppTheme.NoTitle" />
+        <activity
+            android:name=".activity.FileListActivity"
+            android:theme="@style/AppTheme.NoTitle" />
+        <activity
+            android:name=".activity.PathListActivity"
+            android:theme="@style/AppTheme.NoTitle" />
 
         <service
             android:name=".service.FileManager"
