@@ -1,5 +1,6 @@
 package com.bonepeople.android.sdcardcleaner.activity;
 
+import android.app.ActivityOptions;
 import android.content.Intent;
 import android.graphics.Point;
 import android.os.Bundle;
@@ -7,6 +8,7 @@ import android.os.Environment;
 import android.os.Handler;
 import android.os.Message;
 import android.support.v7.widget.CardView;
+import android.util.Pair;
 import android.view.View;
 import android.view.animation.AlphaAnimation;
 import android.view.animation.Animation;
@@ -156,23 +158,35 @@ public class MainActivity extends BaseAppCompatActivity implements View.OnClickL
 
     @Override
     public void onClick(View v) {
-        if (_state == STATE_SHOWN || _state == STATE_QUIT)
+        if (_state == STATE_SHOWN || _state == STATE_QUIT) {
+            Pair<View, String> _title, _body;
+            Bundle _bundle;
             switch (v.getId()) {
                 case R.id.cardview_scan:
-                    if (Environment.getExternalStorageState().equals(Environment.MEDIA_MOUNTED))
-                        startActivity(new Intent(getApplicationContext(), ScanActivity.class));
-                    else
+                    if (Environment.getExternalStorageState().equals(Environment.MEDIA_MOUNTED)) {
+                        _title = Pair.create(findViewById(R.id.textView_scan), "transition_title");
+                        _body = Pair.create((View) _card_scan, "transition_body");
+                        _bundle = ActivityOptions.makeSceneTransitionAnimation(this, _title, _body).toBundle();
+                        startActivity(new Intent(getApplicationContext(), ScanActivity.class), _bundle);
+                    } else
                         Toast.makeText(this, R.string.toast_sdcard_error, Toast.LENGTH_SHORT).show();
                     break;
                 case R.id.cardview_white:
-                    startActivity(new Intent(getApplicationContext(), PathListActivity.class).putExtra("mode", PathListActivity.MODE_SAVE));
+                    _title = Pair.create(findViewById(R.id.textView_white), "transition_title");
+                    _body = Pair.create((View) _card_white, "transition_body");
+                    _bundle = ActivityOptions.makeSceneTransitionAnimation(this, _title, _body).toBundle();
+                    startActivity(new Intent(getApplicationContext(), PathListActivity.class).putExtra("mode", PathListActivity.MODE_SAVE), _bundle);
                     break;
                 case R.id.cardview_black:
-                    startActivity(new Intent(getApplicationContext(), PathListActivity.class).putExtra("mode", PathListActivity.MODE_CLEAN));
+                    _title = Pair.create(findViewById(R.id.textView_black), "transition_title");
+                    _body = Pair.create((View) _card_black, "transition_body");
+                    _bundle = ActivityOptions.makeSceneTransitionAnimation(this, _title, _body).toBundle();
+                    startActivity(new Intent(getApplicationContext(), PathListActivity.class).putExtra("mode", PathListActivity.MODE_CLEAN), _bundle);
                     break;
                 case R.id.cardview_set:
                     Toast.makeText(this, R.string.toast_comingSoon, Toast.LENGTH_SHORT).show();
                     break;
             }
+        }
     }
 }

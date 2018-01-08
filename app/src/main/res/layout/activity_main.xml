@@ -38,6 +38,7 @@
                     android:orientation="vertical">
 
                     <TextView
+                        android:id="@+id/textView_scan"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:maxLines="1"
@@ -84,6 +85,7 @@
                     android:orientation="vertical">
 
                     <TextView
+                        android:id="@+id/textView_white"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:maxLines="1"
@@ -130,6 +132,7 @@
                     android:orientation="vertical">
 
                     <TextView
+                        android:id="@+id/textView_black"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:maxLines="1"
@@ -176,6 +179,7 @@
                     android:orientation="vertical">
 
                     <TextView
+                        android:id="@+id/textView_set"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:maxLines="1"

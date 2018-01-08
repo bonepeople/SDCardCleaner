@@ -8,7 +8,6 @@ import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
-import android.widget.Toast;
 
 import com.bonepeople.android.sdcardcleaner.Global;
 import com.bonepeople.android.sdcardcleaner.R;
@@ -63,10 +62,10 @@ public class PathListActivity extends BaseAppCompatActivity implements View.OnCl
         _adapter.set_data(_data);
         _list.setAdapter(_adapter);
         _list.addItemDecoration(new DividerItemDecoration(this, DividerItemDecoration.VERTICAL));
-        if (FileManager.get_state() == FileManager.STATE_SCAN_EXECUTING)
-            Toast.makeText(this, R.string.toast_list_path_lock, Toast.LENGTH_LONG).show();
-        else
-            Toast.makeText(this, R.string.toast_list_path_remove, Toast.LENGTH_LONG).show();
+//        if (FileManager.get_state() == FileManager.STATE_SCAN_EXECUTING)
+//            Toast.makeText(this, R.string.toast_list_path_lock, Toast.LENGTH_LONG).show();
+//        else
+//            Toast.makeText(this, R.string.toast_list_path_remove, Toast.LENGTH_LONG).show();
     }
 
     @Override
