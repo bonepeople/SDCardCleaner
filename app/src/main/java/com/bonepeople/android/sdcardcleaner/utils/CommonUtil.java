@@ -17,8 +17,8 @@ public class CommonUtil {
         char _char1, _char2;
 
         while (_mark1 < _path1.length() && _mark2 < _path2.length()) {
-            _char1 = _path1.charAt(_mark1);
-            _char2 = _path2.charAt(_mark2);
+            _char1 = Character.toLowerCase(_path1.charAt(_mark1));
+            _char2 = Character.toLowerCase(_path2.charAt(_mark2));
             if (Character.isDigit(_char1) && Character.isDigit(_char2)) {
                 StringBuilder _str_number_1 = new StringBuilder();
                 StringBuilder _str_number_2 = new StringBuilder();
@@ -41,19 +41,19 @@ public class CommonUtil {
                         return _result;
                 } else
                     return _str_number_1.length() - _str_number_2.length();
-            } else if (Character.toUpperCase(_char1) == Character.toUpperCase(_char2)) {
+            } else if (_char1 == _char2) {
                 _mark1++;
                 _mark2++;
             } else {
-                return String.valueOf(_char1).compareToIgnoreCase(String.valueOf(_char2));
+                return _char1 - _char2;
             }
-            if (_mark1 == _path1.length() && _mark2 == _path2.length())
-                return 0;
-            if (_mark1 == _path1.length())
-                return -1;
-            if (_mark2 == _path2.length())
-                return 1;
         }
-        return 0;
+        if (_mark1 == _path1.length())
+            if (_mark2 == _path2.length())
+                return 0;
+            else
+                return -1;
+        else
+            return 1;
     }
 }
