@@ -25,6 +25,14 @@ public class FileManager extends Service {
     private static int _state = STATE_READY;
 
     /**
+     * 重置状态为未扫描的状态，根文件异常丢失的情况使用
+     */
+    public static void reset() {
+        _state = STATE_READY;
+        Global.reset();
+    }
+
+    /**
      * 开始扫描文件
      */
     public static void startScan() {

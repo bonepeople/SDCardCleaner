@@ -44,7 +44,7 @@ public class FileListActivity extends BaseAppCompatActivity implements View.OnCl
     private ProgressDialog _progressDialog;
     private LocalBroadcastManager _broadcastManager;
     private FileListAdapter _adapter;
-    private String _basic_path = Global.get_rootFile().get_path();
+    private String _basic_path;
     private Stack<SDFile> _files = new Stack<>();
     private Stack<Integer> _positions = new Stack<>();
     private Stack<Integer> _offsets = new Stack<>();
@@ -65,7 +65,14 @@ public class FileListActivity extends BaseAppCompatActivity implements View.OnCl
         View _button_close = findViewById(R.id.imageview_close);
         _checkbox_all = (CheckBox) findViewById(R.id.checkbox_all);
 
+        if (Global.get_rootFile() == null) {
+            FileManager.reset();
+            finish();
+            return;
+        }
+
         _titleBar.setTitle(R.string.caption_text_mine);
+        _basic_path = Global.get_rootFile().get_path();
         _text_path.setText(Global.get_rootFile().get_path().replace(_basic_path, getString(R.string.str_path_rootFile)));
         _layoutManager = new LinearLayoutManager(this);
         _layoutManager.setOrientation(LinearLayoutManager.VERTICAL);

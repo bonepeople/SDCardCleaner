@@ -15,6 +15,8 @@ public class CleanFileThread extends Thread {
     public void run() {
         if (Global.get_rootFile() != null)
             Global.get_rootFile().delete(true);
+        else
+            FileManager.reset();
         FileManager.finishClean();
     }
 }
