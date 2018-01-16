@@ -25,6 +25,11 @@ public class UpdateRubbishThread extends Thread {
 
     @Override
     public void run() {
+        try {
+            sleep(500);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
         LocalBroadcastManager _manager = LocalBroadcastManager.getInstance(Global.get_applicationContext());
         SDFile _file;
         for (int _temp_i = 0; _temp_i < _files.size(); _temp_i++) {
