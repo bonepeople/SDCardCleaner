@@ -18,9 +18,9 @@ public class ScanFileThread extends Thread {
 
     @Override
     public void run() {
-        File _file = Environment.getExternalStorageDirectory();
-        SDFile _root = new SDFile(null, _file);
-        Global.set_rootFile(_root);
+        File file = Environment.getExternalStorageDirectory();
+        SDFile root = new SDFile(null, file);
+        Global.setRootFile(root);
         FileManager.finishScan();
     }
 }

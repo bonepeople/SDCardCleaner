@@ -31,79 +31,84 @@ import com.bonepeople.android.sdcardcleaner.widget.TitleBar;
 import java.util.ArrayList;
 import java.util.Stack;
 
+/**
+ * 文件列表界面
+ *
+ * @author bonepeople
+ */
 public class FileListActivity extends BaseAppCompatActivity implements View.OnClickListener, View.OnLongClickListener {
     private static final String ACTION_DELETE = "delete";
     private static final String ACTION_CLEAN = "clean";
     private static final String ACTION_HOLD = "hold";
     private static final String ACTION_CHECK = "checkAll";
     private static final String ACTION_CLOSE = "close";
-    private EditText _text_path;
-    private LinearLayoutManager _layoutManager;
-    private LinearLayout _buttonbar;
-    private CheckBox _checkbox_all;
-    private ProgressDialog _progressDialog;
-    private LocalBroadcastManager _broadcastManager;
-    private FileListAdapter _adapter;
-    private String _basic_path;
-    private Stack<SDFile> _files = new Stack<>();
-    private Stack<Integer> _positions = new Stack<>();
-    private Stack<Integer> _offsets = new Stack<>();
-    private ArrayList<Integer> _notifyItems = new ArrayList<>();
+    private EditText editText_path;
+    private LinearLayoutManager layoutManager;
+    private LinearLayout buttonBar;
+    private CheckBox checkBox_all;
+    private ProgressDialog progressDialog;
+    private LocalBroadcastManager broadcastManager;
+    private FileListAdapter adapter;
+    private String basic_path;
+    private Stack<SDFile> files = new Stack<>();
+    private Stack<Integer> positions = new Stack<>();
+    private Stack<Integer> offsets = new Stack<>();
+    private ArrayList<Integer> notifyItems = new ArrayList<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_file_list);
 
-        TitleBar _titleBar = (TitleBar) findViewById(R.id.titleBar);
-        _text_path = (EditText) findViewById(R.id.edittext_path);
-        RecyclerView _list = (RecyclerView) findViewById(R.id.recyclerview);
-        _buttonbar = (LinearLayout) findViewById(R.id.linearlayout_buttonbar);
-        View _button_delete = findViewById(R.id.textView_delete);
-        View _button_clean = findViewById(R.id.textView_clean);
-        View _button_hold = findViewById(R.id.textView_hold);
-        View _button_close = findViewById(R.id.imageview_close);
-        _checkbox_all = (CheckBox) findViewById(R.id.checkbox_all);
+        TitleBar titleBar = findViewById(R.id.titleBar);
+        editText_path = findViewById(R.id.edittext_path);
+        RecyclerView recyclerView = findViewById(R.id.recyclerview);
+        buttonBar = findViewById(R.id.linearlayout_buttonbar);
+        View view_delete = findViewById(R.id.textView_delete);
+        View view_clean = findViewById(R.id.textView_clean);
+        View view_hold = findViewById(R.id.textView_hold);
+        View view_close = findViewById(R.id.imageview_close);
+        checkBox_all = findViewById(R.id.checkbox_all);
 
-        if (Global.get_rootFile() == null) {
+        if (Global.getRootFile() == null) {
             FileManager.reset();
             finish();
             return;
         }
 
-        _titleBar.setTitle(R.string.caption_text_mine);
-        _basic_path = Global.get_rootFile().get_path();
-        _text_path.setText(Global.get_rootFile().get_path().replace(_basic_path, getString(R.string.str_path_rootFile)));
-        _layoutManager = new LinearLayoutManager(this);
-        _layoutManager.setOrientation(LinearLayoutManager.VERTICAL);
-        _list.setLayoutManager(_layoutManager);
-        _adapter = new FileListAdapter(this, this);
-        _adapter.set_data(Global.get_rootFile());
-        _list.setAdapter(_adapter);
-        _list.addItemDecoration(new DividerItemDecoration(this, DividerItemDecoration.VERTICAL));
-        _broadcastManager = LocalBroadcastManager.getInstance(getApplicationContext());
+        titleBar.setTitle(R.string.caption_text_mine);
+        basic_path = Global.getRootFile().getPath();
+        editText_path.setText(Global.getRootFile().getPath().replace(basic_path, getString(R.string.str_path_rootFile)));
+        layoutManager = new LinearLayoutManager(this);
+        layoutManager.setOrientation(LinearLayoutManager.VERTICAL);
+        recyclerView.setLayoutManager(layoutManager);
+        adapter = new FileListAdapter(this, this);
+        adapter.setData(Global.getRootFile());
+        recyclerView.setAdapter(adapter);
+        recyclerView.addItemDecoration(new DividerItemDecoration(this, DividerItemDecoration.VERTICAL));
+        broadcastManager = LocalBroadcastManager.getInstance(getApplicationContext());
 
-        _button_delete.setTag(new String[]{ACTION_DELETE});
-        _button_clean.setTag(new String[]{ACTION_CLEAN});
-        _button_hold.setTag(new String[]{ACTION_HOLD});
-        _checkbox_all.setTag(new String[]{ACTION_CHECK});
-        _button_close.setTag(new String[]{ACTION_CLOSE});
-        _button_delete.setOnClickListener(this);
-        _button_clean.setOnClickListener(this);
-        _button_hold.setOnClickListener(this);
-        _checkbox_all.setOnClickListener(this);
-        _button_close.setOnClickListener(this);
+        view_delete.setTag(new String[]{ACTION_DELETE});
+        view_clean.setTag(new String[]{ACTION_CLEAN});
+        view_hold.setTag(new String[]{ACTION_HOLD});
+        checkBox_all.setTag(new String[]{ACTION_CHECK});
+        view_close.setTag(new String[]{ACTION_CLOSE});
+        view_delete.setOnClickListener(this);
+        view_clean.setOnClickListener(this);
+        view_hold.setOnClickListener(this);
+        checkBox_all.setOnClickListener(this);
+        view_close.setOnClickListener(this);
     }
 
-    private void setMultiSelect(boolean _selecting) {
-        _adapter.set_multiSelect(_selecting);
-        //经测试，只刷新部分条目会出现bug
-        _adapter.notifyItemRangeChanged(0, _adapter.getItemCount(), FileListAdapter.PART_CHECKBOX);
-        if (_selecting) {
-            _buttonbar.setVisibility(LinearLayout.VISIBLE);
+    private void setMultiSelect(boolean selecting) {
+        adapter.setMultiSelect(selecting);
+        //经测试，只刷新部分条目会出现bug @ recyclerview-v7:25.3.1'
+        adapter.notifyItemRangeChanged(0, adapter.getItemCount(), FileListAdapter.PART_CHECKBOX);
+        if (selecting) {
+            buttonBar.setVisibility(LinearLayout.VISIBLE);
         } else {
-            _buttonbar.setVisibility(LinearLayout.GONE);
-            _checkbox_all.setChecked(false);
+            buttonBar.setVisibility(LinearLayout.GONE);
+            checkBox_all.setChecked(false);
         }
     }
 
@@ -111,63 +116,63 @@ public class FileListActivity extends BaseAppCompatActivity implements View.OnCl
      * 删除所选文件
      */
     private void deleteFiles() {
-        AlertDialog.Builder _builder = new AlertDialog.Builder(this);
-        _builder.setTitle(getString(R.string.dialog_list_file_delete_title));
-        _builder.setMessage(getString(R.string.dialog_list_file_delete_message));
-        _builder.setCancelable(false);
-        _builder.setPositiveButton(R.string.caption_button_positive, new DialogInterface.OnClickListener() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle(getString(R.string.dialog_list_file_delete_title));
+        builder.setMessage(getString(R.string.dialog_list_file_delete_message));
+        builder.setCancelable(false);
+        builder.setPositiveButton(R.string.caption_button_positive, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
-                SparseArray<SDFile> _deleteFiles = new SparseArray<>(_adapter.get_checkList().size());
-                for (int _position : _adapter.get_checkList()) {
-                    _deleteFiles.put(_position, _adapter.get_data().get_children().get(_position));
+                SparseArray<SDFile> deleteFiles = new SparseArray<>(adapter.getCheckList().size());
+                for (int position : adapter.getCheckList()) {
+                    deleteFiles.put(position, adapter.getData().getChildren().get(position));
                 }
-                showProgress(ACTION_DELETE, _deleteFiles.size());
-                FileManager.startDelete(_deleteFiles);
+                showProgress(ACTION_DELETE, deleteFiles.size());
+                FileManager.startDelete(deleteFiles);
             }
         });
-        _builder.setNegativeButton(R.string.caption_button_negative, null);
-        _builder.create().show();
+        builder.setNegativeButton(R.string.caption_button_negative, null);
+        builder.create().show();
     }
 
     /**
      * 将所选文件添加到清理列表中
      */
     private void cleanFiles() {
-        ArrayList<String> _cleanPathList = new ArrayList<>(_adapter.get_checkList().size());
-        SparseArray<SDFile> _cleanFiles = new SparseArray<>(_adapter.get_checkList().size());
-        for (int _position : _adapter.get_checkList()) {
-            _cleanPathList.add(_adapter.get_data().get_children().get(_position).get_path());
-            _cleanFiles.put(_position, _adapter.get_data().get_children().get(_position));
+        ArrayList<String> cleanPathList = new ArrayList<>(adapter.getCheckList().size());
+        SparseArray<SDFile> cleanFiles = new SparseArray<>(adapter.getCheckList().size());
+        for (int position : adapter.getCheckList()) {
+            cleanPathList.add(adapter.getData().getChildren().get(position).getPath());
+            cleanFiles.put(position, adapter.getData().getChildren().get(position));
         }
-        Global.add_cleanList(_cleanPathList);
-        showProgress(ACTION_CLEAN, _cleanFiles.size());
-        new UpdateRubbishThread(_cleanFiles).start();
+        Global.add_cleanList(cleanPathList);
+        showProgress(ACTION_CLEAN, cleanFiles.size());
+        new UpdateRubbishThread(cleanFiles).start();
     }
 
     /**
      * 将所选文件添加到保存列表中
      */
     private void saveFiles() {
-        ArrayList<String> _savePathList = new ArrayList<>(_adapter.get_checkList().size());
-        SparseArray<SDFile> _saveFiles = new SparseArray<>(_adapter.get_checkList().size());
-        for (int _position : _adapter.get_checkList()) {
-            _savePathList.add(_adapter.get_data().get_children().get(_position).get_path());
-            _saveFiles.put(_position, _adapter.get_data().get_children().get(_position));
+        ArrayList<String> savePathList = new ArrayList<>(adapter.getCheckList().size());
+        SparseArray<SDFile> saveFiles = new SparseArray<>(adapter.getCheckList().size());
+        for (int position : adapter.getCheckList()) {
+            savePathList.add(adapter.getData().getChildren().get(position).getPath());
+            saveFiles.put(position, adapter.getData().getChildren().get(position));
         }
-        Global.add_saveList(_savePathList);
-        showProgress(ACTION_HOLD, _saveFiles.size());
-        new UpdateRubbishThread(_saveFiles).start();
+        Global.add_saveList(savePathList);
+        showProgress(ACTION_HOLD, saveFiles.size());
+        new UpdateRubbishThread(saveFiles).start();
     }
 
-    private void showProgress(String _action, int _count) {
-        _progressDialog = new ProgressDialog(this, R.style.DialogTheme);
-        _progressDialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
-        _progressDialog.setCancelable(false);
-        switch (_action) {
+    private void showProgress(String action, int count) {
+        progressDialog = new ProgressDialog(this, R.style.DialogTheme);
+        progressDialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
+        progressDialog.setCancelable(false);
+        switch (action) {
             case ACTION_DELETE:
-                _progressDialog.setMessage(getString(R.string.dialog_list_file_deleting));
-                _progressDialog.setButton(ProgressDialog.BUTTON_NEGATIVE, getString(R.string.caption_button_negative), new DialogInterface.OnClickListener() {
+                progressDialog.setMessage(getString(R.string.dialog_list_file_deleting));
+                progressDialog.setButton(ProgressDialog.BUTTON_NEGATIVE, getString(R.string.caption_button_negative), new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         FileManager.stopDelete();
@@ -175,129 +180,129 @@ public class FileListActivity extends BaseAppCompatActivity implements View.OnCl
                 });
                 break;
             case ACTION_CLEAN:
-                _progressDialog.setMessage(getString(R.string.dialog_list_file_cleaning));
+                progressDialog.setMessage(getString(R.string.dialog_list_file_cleaning));
                 break;
             case ACTION_HOLD:
-                _progressDialog.setMessage(getString(R.string.dialog_list_file_saving));
+                progressDialog.setMessage(getString(R.string.dialog_list_file_saving));
                 break;
         }
-        _progressDialog.setMax(_count);
-        _progressDialog.show();
-        _notifyItems.clear();
+        progressDialog.setMax(count);
+        progressDialog.show();
+        notifyItems.clear();
 
-        BroadcastReceiver _receiver = new BroadcastReceiver() {
+        BroadcastReceiver receiver = new BroadcastReceiver() {
             @Override
             public void onReceive(Context context, Intent intent) {
-                String _action = intent.getAction();
-                if (_action == null)
+                String action = intent.getAction();
+                if (action == null)
                     return;
-                int _index;
-                switch (_action) {
+                int index;
+                switch (action) {
                     case DeleteFileThread.ACTION_DELETE:
-                        _index = intent.getIntExtra("index", -1);
-                        if (_index != -1) {
-                            _notifyItems.add(_index - _progressDialog.getProgress());
-                            _progressDialog.incrementProgressBy(1);
+                        index = intent.getIntExtra("index", -1);
+                        if (index != -1) {
+                            notifyItems.add(index - progressDialog.getProgress());
+                            progressDialog.incrementProgressBy(1);
                         }
                         break;
                     case DeleteFileThread.ACTION_FINISH:
-                        _progressDialog.dismiss();
-                        _progressDialog = null;
-                        _broadcastManager.unregisterReceiver(this);
-                        for (int _index_change : _notifyItems) {
-                            _adapter.notifyItemRemoved(_index_change);
+                        progressDialog.dismiss();
+                        progressDialog = null;
+                        broadcastManager.unregisterReceiver(this);
+                        for (int index_change : notifyItems) {
+                            adapter.notifyItemRemoved(index_change);
                         }
-                        _adapter.notifyItemRangeChanged(0, _adapter.getItemCount());
+                        adapter.notifyItemRangeChanged(0, adapter.getItemCount());
                         break;
                     case UpdateRubbishThread.ACTION_UPDATE:
-                        _index = intent.getIntExtra("index", -1);
-                        if (_index != -1) {
-                            _notifyItems.add(_index);
-                            _progressDialog.incrementProgressBy(1);
+                        index = intent.getIntExtra("index", -1);
+                        if (index != -1) {
+                            notifyItems.add(index);
+                            progressDialog.incrementProgressBy(1);
                         }
                         break;
                     case UpdateRubbishThread.ACTION_FINISH:
-                        _progressDialog.dismiss();
-                        _progressDialog = null;
-                        _broadcastManager.unregisterReceiver(this);
-                        for (int _index_change : _notifyItems) {
-                            _adapter.notifyItemChanged(_index_change);
+                        progressDialog.dismiss();
+                        progressDialog = null;
+                        broadcastManager.unregisterReceiver(this);
+                        for (int index_change : notifyItems) {
+                            adapter.notifyItemChanged(index_change);
                         }
                         break;
                 }
             }
         };
-        IntentFilter _filter = new IntentFilter();
-        _filter.addAction(DeleteFileThread.ACTION_DELETE);
-        _filter.addAction(DeleteFileThread.ACTION_FINISH);
-        _filter.addAction(UpdateRubbishThread.ACTION_UPDATE);
-        _filter.addAction(UpdateRubbishThread.ACTION_FINISH);
-        _broadcastManager.registerReceiver(_receiver, _filter);
+        IntentFilter filter = new IntentFilter();
+        filter.addAction(DeleteFileThread.ACTION_DELETE);
+        filter.addAction(DeleteFileThread.ACTION_FINISH);
+        filter.addAction(UpdateRubbishThread.ACTION_UPDATE);
+        filter.addAction(UpdateRubbishThread.ACTION_FINISH);
+        broadcastManager.registerReceiver(receiver, filter);
     }
 
     @Override
     public void onBackPressed() {
-        if (_adapter.is_multiSelect()) {
+        if (adapter.isMultiSelect()) {
             setMultiSelect(false);
-        } else if (_files.size() > 0) {
-            _text_path.setText(_files.peek().get_path().replace(_basic_path, getString(R.string.str_path_rootFile)));
-            _text_path.setSelection(_text_path.getText().length());
-            _adapter.set_data(_files.pop());
-            _adapter.notifyDataSetChanged();
-            _layoutManager.scrollToPositionWithOffset(_positions.pop(), _offsets.pop());
+        } else if (files.size() > 0) {
+            editText_path.setText(files.peek().getPath().replace(basic_path, getString(R.string.str_path_rootFile)));
+            editText_path.setSelection(editText_path.getText().length());
+            adapter.setData(files.pop());
+            adapter.notifyDataSetChanged();
+            layoutManager.scrollToPositionWithOffset(positions.pop(), offsets.pop());
         } else
             super.onBackPressed();
     }
 
     @Override
     public void onClick(View v) {
-        String[] _tags = (String[]) v.getTag();
-        switch (_tags[0]) {
+        String[] tags = (String[]) v.getTag();
+        switch (tags[0]) {
             case ACTION_DELETE:
                 setMultiSelect(false);
-                if (_adapter.get_checkList().size() > 0)
+                if (adapter.getCheckList().size() > 0)
                     deleteFiles();
                 break;
             case ACTION_CLEAN:
                 setMultiSelect(false);
-                if (_adapter.get_checkList().size() > 0)
+                if (adapter.getCheckList().size() > 0)
                     cleanFiles();
                 break;
             case ACTION_HOLD:
                 setMultiSelect(false);
-                if (_adapter.get_checkList().size() > 0)
+                if (adapter.getCheckList().size() > 0)
                     saveFiles();
                 break;
             case ACTION_CHECK:
-                _adapter.set_checkList(-1);
-                //经测试，只刷新部分条目会出现bug
-                _adapter.notifyItemRangeChanged(0, _adapter.getItemCount(), FileListAdapter.PART_CHECKBOX);
+                adapter.set_checkList(-1);
+                //经测试，只刷新部分条目会出现bug @ recyclerview-v7:25.3.1'
+                adapter.notifyItemRangeChanged(0, adapter.getItemCount(), FileListAdapter.PART_CHECKBOX);
                 break;
             case ACTION_CLOSE:
                 setMultiSelect(false);
                 break;
             case FileListAdapter.ACTION_CLICK_ITEM:
-                int _position = Integer.parseInt(_tags[1]);
-                if (_adapter.is_multiSelect()) {//处于多选状态
-                    _checkbox_all.setChecked(_adapter.set_checkList(_position));
-                    _adapter.notifyItemChanged(_position, FileListAdapter.PART_CHECKBOX);
+                int position = Integer.parseInt(tags[1]);
+                if (adapter.isMultiSelect()) {//处于多选状态
+                    checkBox_all.setChecked(adapter.set_checkList(position));
+                    adapter.notifyItemChanged(position, FileListAdapter.PART_CHECKBOX);
                 } else {//处于浏览状态
-                    SDFile _clickFile = _adapter.get_data().get_children().get(_position);
-                    if (_clickFile.isDirectory()) {
-                        int _firstItemPosition = _layoutManager.findFirstVisibleItemPosition();
-                        _positions.push(_firstItemPosition);
-                        View _firstVisibleView = _layoutManager.getChildAt(0);
-                        if (_firstVisibleView != null) {
-                            int _offset = _firstVisibleView.getTop();
-                            _offsets.push(_offset);
+                    SDFile clickFile = adapter.getData().getChildren().get(position);
+                    if (clickFile.isDirectory()) {
+                        int firstItemPosition = layoutManager.findFirstVisibleItemPosition();
+                        positions.push(firstItemPosition);
+                        View firstVisibleView = layoutManager.getChildAt(0);
+                        if (firstVisibleView != null) {
+                            int offset = firstVisibleView.getTop();
+                            offsets.push(offset);
                         } else
-                            _offsets.push(0);
-                        _text_path.setText(_clickFile.get_path().replace(_basic_path, getString(R.string.str_path_rootFile)));
-                        _text_path.setSelection(_text_path.getText().length());
-                        _files.push(_adapter.get_data());
-                        _adapter.set_data(_clickFile);
-                        _adapter.notifyDataSetChanged();
-                        _layoutManager.scrollToPositionWithOffset(0, 0);
+                            offsets.push(0);
+                        editText_path.setText(clickFile.getPath().replace(basic_path, getString(R.string.str_path_rootFile)));
+                        editText_path.setSelection(editText_path.getText().length());
+                        files.push(adapter.getData());
+                        adapter.setData(clickFile);
+                        adapter.notifyDataSetChanged();
+                        layoutManager.scrollToPositionWithOffset(0, 0);
                     }
                 }
                 break;
@@ -306,15 +311,15 @@ public class FileListActivity extends BaseAppCompatActivity implements View.OnCl
 
     @Override
     public boolean onLongClick(View v) {
-        String[] _tags = (String[]) v.getTag();
-        int _position = Integer.parseInt(_tags[1]);
-        if (_adapter.is_multiSelect()) {//处于多选状态
-            _checkbox_all.setChecked(_adapter.set_checkList(_position));
-            _adapter.notifyItemChanged(_position, FileListAdapter.PART_CHECKBOX);
+        String[] tags = (String[]) v.getTag();
+        int position = Integer.parseInt(tags[1]);
+        if (adapter.isMultiSelect()) {//处于多选状态
+            checkBox_all.setChecked(adapter.set_checkList(position));
+            adapter.notifyItemChanged(position, FileListAdapter.PART_CHECKBOX);
         } else {//处于浏览状态
             setMultiSelect(true);
-            _checkbox_all.setChecked(_adapter.set_checkList(_position));
-            _adapter.notifyItemChanged(_position, FileListAdapter.PART_CHECKBOX);
+            checkBox_all.setChecked(adapter.set_checkList(position));
+            adapter.notifyItemChanged(position, FileListAdapter.PART_CHECKBOX);
         }
         return true;
     }

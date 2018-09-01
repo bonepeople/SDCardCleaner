@@ -12,44 +12,44 @@ public class CommonUtil {
     /**
      * 对比两个路径（用于排序）
      */
-    public static int comparePath(String _path1, String _path2) {
-        int _mark1 = 0, _mark2 = 0;
-        char _char1, _char2;
+    public static int comparePath(String path1, String path2) {
+        int mark1 = 0, mark2 = 0;
+        char char1, char2;
 
-        while (_mark1 < _path1.length() && _mark2 < _path2.length()) {
-            _char1 = Character.toLowerCase(_path1.charAt(_mark1));
-            _char2 = Character.toLowerCase(_path2.charAt(_mark2));
-            if (Character.isDigit(_char1) && Character.isDigit(_char2)) {
-                StringBuilder _str_number_1 = new StringBuilder();
-                StringBuilder _str_number_2 = new StringBuilder();
+        while (mark1 < path1.length() && mark2 < path2.length()) {
+            char1 = Character.toLowerCase(path1.charAt(mark1));
+            char2 = Character.toLowerCase(path2.charAt(mark2));
+            if (Character.isDigit(char1) && Character.isDigit(char2)) {
+                StringBuilder str_number_1 = new StringBuilder();
+                StringBuilder str_number_2 = new StringBuilder();
                 //获取第一个字符串中的数字
-                while (_mark1 < _path1.length() && Character.isDigit(_path1.charAt(_mark1))) {
-                    _str_number_1.append(_path1.charAt(_mark1));
-                    _mark1++;
+                while (mark1 < path1.length() && Character.isDigit(path1.charAt(mark1))) {
+                    str_number_1.append(path1.charAt(mark1));
+                    mark1++;
                 }
                 //获取第二个字符串中的数字
-                while (_mark2 < _path2.length() && Character.isDigit(_path2.charAt(_mark2))) {
-                    _str_number_2.append(_path2.charAt(_mark2));
-                    _mark2++;
+                while (mark2 < path2.length() && Character.isDigit(path2.charAt(mark2))) {
+                    str_number_2.append(path2.charAt(mark2));
+                    mark2++;
                 }
-                if (_str_number_1.length() == _str_number_2.length()) {
+                if (str_number_1.length() == str_number_2.length()) {
                     //将字符串转换为数字进行比较
-                    BigInteger _number_1 = new BigInteger(_str_number_1.toString());
-                    BigInteger _number_2 = new BigInteger(_str_number_2.toString());
-                    int _result = _number_1.compareTo(_number_2);
-                    if (_result != 0)
-                        return _result;
+                    BigInteger number_1 = new BigInteger(str_number_1.toString());
+                    BigInteger number_2 = new BigInteger(str_number_2.toString());
+                    int result = number_1.compareTo(number_2);
+                    if (result != 0)
+                        return result;
                 } else
-                    return _str_number_1.length() - _str_number_2.length();
-            } else if (_char1 == _char2) {
-                _mark1++;
-                _mark2++;
+                    return str_number_1.length() - str_number_2.length();
+            } else if (char1 == char2) {
+                mark1++;
+                mark2++;
             } else {
-                return _char1 - _char2;
+                return char1 - char2;
             }
         }
-        if (_mark1 == _path1.length())
-            if (_mark2 == _path2.length())
+        if (mark1 == path1.length())
+            if (mark2 == path2.length())
                 return 0;
             else
                 return -1;

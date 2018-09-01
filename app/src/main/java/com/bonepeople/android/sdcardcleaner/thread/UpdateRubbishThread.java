@@ -17,10 +17,10 @@ import com.bonepeople.android.sdcardcleaner.models.SDFile;
 public class UpdateRubbishThread extends Thread {
     public static final String ACTION_UPDATE = "UpdateRubbishThread:update successful";
     public static final String ACTION_FINISH = "UpdateRubbishThread:update finish";
-    private SparseArray<SDFile> _files;
+    private SparseArray<SDFile> files;
 
-    public UpdateRubbishThread(@NonNull SparseArray<SDFile> _files) {
-        this._files = _files;
+    public UpdateRubbishThread(@NonNull SparseArray<SDFile> files) {
+        this.files = files;
     }
 
     @Override
@@ -30,16 +30,16 @@ public class UpdateRubbishThread extends Thread {
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
-        LocalBroadcastManager _manager = LocalBroadcastManager.getInstance(Global.get_applicationContext());
-        SDFile _file;
-        for (int _temp_i = 0; _temp_i < _files.size(); _temp_i++) {
-            _file = _files.valueAt(_temp_i);
-            _file.updateRubbish();
-            Intent _update = new Intent(ACTION_UPDATE);
-            _update.putExtra("index", _files.keyAt(_temp_i));
-            _manager.sendBroadcast(_update);
+        LocalBroadcastManager manager = LocalBroadcastManager.getInstance(Global.getApplicationContext());
+        SDFile file;
+        for (int temp_i = 0; temp_i < files.size(); temp_i++) {
+            file = files.valueAt(temp_i);
+            file.updateRubbish();
+            Intent update = new Intent(ACTION_UPDATE);
+            update.putExtra("index", files.keyAt(temp_i));
+            manager.sendBroadcast(update);
         }
-        Intent _finish = new Intent(ACTION_FINISH);
-        _manager.sendBroadcast(_finish);
+        Intent finish = new Intent(ACTION_FINISH);
+        manager.sendBroadcast(finish);
     }
 }

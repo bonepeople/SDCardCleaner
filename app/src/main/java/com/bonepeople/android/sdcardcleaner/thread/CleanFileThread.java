@@ -13,8 +13,8 @@ public class CleanFileThread extends Thread {
 
     @Override
     public void run() {
-        if (Global.get_rootFile() != null)
-            Global.get_rootFile().delete(true);
+        if (Global.getRootFile() != null)
+            Global.getRootFile().delete(true);
         else
             FileManager.reset();
         FileManager.finishClean();

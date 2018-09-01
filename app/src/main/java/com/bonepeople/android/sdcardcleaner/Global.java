@@ -20,204 +20,204 @@ import java.util.Set;
  */
 
 public class Global {
-    private static Context _applicationContext;
-    private static SDFile _rootFile = null;
-    private static long _fileCount_all = 0;//所有文件总数，包含文件夹
-    private static long _fileSize_all = 0;//所有文件总大小
-    private static long _fileCount_rubbish = 0;//待清理文件总数，包含文件夹
-    private static long _fileSize_rubbish = 0;//待清理文件总大小
-    private static ArrayList<String> _saveList = new ArrayList<>();//保留列表
-    private static ArrayList<String> _cleanList = new ArrayList<>();//清理列表
+    private static Context applicationContext;
+    private static SDFile rootFile = null;
+    private static long fileCount_all = 0;//所有文件总数，包含文件夹
+    private static long fileSize_all = 0;//所有文件总大小
+    private static long fileCount_rubbish = 0;//待清理文件总数，包含文件夹
+    private static long fileSize_rubbish = 0;//待清理文件总大小
+    private static ArrayList<String> saveList = new ArrayList<>();//保留列表
+    private static ArrayList<String> cleanList = new ArrayList<>();//清理列表
 
     /**
      * 初始化全局变量
      *
-     * @param _context 该Context会被储存复用，推荐使用ApplicationContext
+     * @param context 该Context会被储存复用，推荐使用ApplicationContext
      */
-    public static void init(@NonNull Context _context) {
-        Global._applicationContext = _context;
+    public static void init(@NonNull Context context) {
+        Global.applicationContext = context;
         //从配置文件中初始化保留列表
-        Set<String> _set_save = ConfigUtil.getSaveList(_applicationContext);
-        _saveList.clear();
-        if (_set_save != null) {
-            _saveList.addAll(_set_save);
-            sortList(_saveList);
+        Set<String> set_save = ConfigUtil.getSaveList(applicationContext);
+        saveList.clear();
+        if (set_save != null) {
+            saveList.addAll(set_save);
+            sortList(saveList);
         }
         //从配置文件中初始化清理列表
-        Set<String> _set_clean = ConfigUtil.getCleanList(_applicationContext);
-        _cleanList.clear();
-        if (_set_clean != null) {
-            _cleanList.addAll(_set_clean);
-            sortList(_cleanList);
+        Set<String> set_clean = ConfigUtil.getCleanList(applicationContext);
+        cleanList.clear();
+        if (set_clean != null) {
+            cleanList.addAll(set_clean);
+            sortList(cleanList);
         }
     }
 
     public static void reset() {
         //重置变量
-        _rootFile = null;
-        _fileCount_all = 0;
-        _fileSize_all = 0;
-        _fileCount_rubbish = 0;
-        _fileSize_rubbish = 0;
+        rootFile = null;
+        fileCount_all = 0;
+        fileSize_all = 0;
+        fileCount_rubbish = 0;
+        fileSize_rubbish = 0;
     }
 
     public static void destroy() {
-        _applicationContext = null;
-        _rootFile = null;
-        _saveList.clear();
-        _cleanList.clear();
+        applicationContext = null;
+        rootFile = null;
+        saveList.clear();
+        cleanList.clear();
     }
 
     /**
      * 对列表进行排序
      */
-    private static void sortList(@NonNull ArrayList<String> _list) {
-        Collections.sort(_list, new Comparator<String>() {
+    private static void sortList(@NonNull ArrayList<String> list) {
+        Collections.sort(list, new Comparator<String>() {
             @Override
-            public int compare(String _str1, String _str2) {
-                return CommonUtil.comparePath(_str1, _str2);
+            public int compare(String str1, String str2) {
+                return CommonUtil.comparePath(str1, str2);
             }
         });
     }
 
-    public static void set_rootFile(SDFile _rootFile) {
-        if (_applicationContext != null)
-            Global._rootFile = _rootFile;
+    public static void setRootFile(SDFile rootFile) {
+        if (applicationContext != null)
+            Global.rootFile = rootFile;
     }
 
     /**
      * 统计已扫描文件个数
      */
-    public static void set_fileCount_all(int _count) {
-        _fileCount_all += _count;
+    public static void setFileCount_all(int count) {
+        fileCount_all += count;
     }
 
     /**
      * 统计总文件大小
      *
-     * @param _fileSize 文件大小
+     * @param fileSize 文件大小
      */
-    public static void set_fileSize_all(long _fileSize) {
-        _fileSize_all += _fileSize;
+    public static void setFileSize_all(long fileSize) {
+        fileSize_all += fileSize;
     }
 
     /**
      * 统计待清理文件个数
      */
-    public static void set_fileCount_rubbish(int _count) {
-        _fileCount_rubbish += _count;
+    public static void setFileCount_rubbish(int count) {
+        fileCount_rubbish += count;
     }
 
     /**
      * 统计待清理文件的大小
      *
-     * @param _fileSize 文件大小
+     * @param fileSize 文件大小
      */
-    public static void set_fileSize_rubbish(long _fileSize) {
-        _fileSize_rubbish += _fileSize;
+    public static void setFileSize_rubbish(long fileSize) {
+        fileSize_rubbish += fileSize;
     }
 
     /**
      * 向保留列表里添加数据
      */
-    public static void add_saveList(@NonNull ArrayList<String> _newList) {
-        for (String _path : _newList) {
-            if (_cleanList.contains(_path))
-                _cleanList.remove(_path);
-            if (!_saveList.contains(_path))
-                _saveList.add(_path);
+    public static void add_saveList(@NonNull ArrayList<String> newList) {
+        for (String path : newList) {
+            if (cleanList.contains(path))
+                cleanList.remove(path);
+            if (!saveList.contains(path))
+                saveList.add(path);
         }
-        sortList(_saveList);
-        HashSet<String> _saveSet = new HashSet<>(_saveList.size());
-        _saveSet.addAll(_saveList);
-        ConfigUtil.putSaveList(_applicationContext, _saveSet);
-        HashSet<String> _cleanSet = new HashSet<>(_cleanList.size());
-        _cleanSet.addAll(_cleanList);
-        ConfigUtil.putCleanList(_applicationContext, _cleanSet);
+        sortList(saveList);
+        HashSet<String> saveSet = new HashSet<>(saveList.size());
+        saveSet.addAll(saveList);
+        ConfigUtil.putSaveList(applicationContext, saveSet);
+        HashSet<String> cleanSet = new HashSet<>(cleanList.size());
+        cleanSet.addAll(cleanList);
+        ConfigUtil.putCleanList(applicationContext, cleanSet);
     }
 
     /**
      * 向清理列表里添加数据
      */
-    public static void add_cleanList(@NonNull ArrayList<String> _newList) {
-        for (String _path : _newList) {
-            if (_saveList.contains(_path))
-                _saveList.remove(_path);
-            if (!_cleanList.contains(_path))
-                _cleanList.add(_path);
+    public static void add_cleanList(@NonNull ArrayList<String> newList) {
+        for (String path : newList) {
+            if (saveList.contains(path))
+                saveList.remove(path);
+            if (!cleanList.contains(path))
+                cleanList.add(path);
         }
-        sortList(_cleanList);
-        HashSet<String> _saveSet = new HashSet<>(_saveList.size());
-        _saveSet.addAll(_saveList);
-        ConfigUtil.putSaveList(_applicationContext, _saveSet);
-        HashSet<String> _cleanSet = new HashSet<>(_cleanList.size());
-        _cleanSet.addAll(_cleanList);
-        ConfigUtil.putCleanList(_applicationContext, _cleanSet);
+        sortList(cleanList);
+        HashSet<String> saveSet = new HashSet<>(saveList.size());
+        saveSet.addAll(saveList);
+        ConfigUtil.putSaveList(applicationContext, saveSet);
+        HashSet<String> cleanSet = new HashSet<>(cleanList.size());
+        cleanSet.addAll(cleanList);
+        ConfigUtil.putCleanList(applicationContext, cleanSet);
     }
 
     /**
      * 移除保留列表中的数据
      */
-    public static void remove_saveList(int _index) {
-        _saveList.remove(_index);
-        HashSet<String> _saveSet = new HashSet<>(_saveList.size());
-        _saveSet.addAll(_saveList);
-        ConfigUtil.putSaveList(_applicationContext, _saveSet);
+    public static void remove_saveList(int index) {
+        saveList.remove(index);
+        HashSet<String> saveSet = new HashSet<>(saveList.size());
+        saveSet.addAll(saveList);
+        ConfigUtil.putSaveList(applicationContext, saveSet);
     }
 
     /**
      * 移除清理列表中的数据
      */
-    public static void remove_cleanList(int _index) {
-        _cleanList.remove(_index);
-        HashSet<String> _cleanSet = new HashSet<>(_cleanList.size());
-        _cleanSet.addAll(_cleanList);
-        ConfigUtil.putCleanList(_applicationContext, _cleanSet);
+    public static void remove_cleanList(int index) {
+        cleanList.remove(index);
+        HashSet<String> cleanSet = new HashSet<>(cleanList.size());
+        cleanSet.addAll(cleanList);
+        ConfigUtil.putCleanList(applicationContext, cleanSet);
     }
 
     /**
      * 判断指定路径是否需要保留
      */
-    public static boolean isSave(String _path) {
-        return _saveList.contains(_path);
+    public static boolean isSave(String path) {
+        return saveList.contains(path);
     }
 
     /**
      * 判断指定路径是否需要清理
      */
-    public static boolean isClean(String _path) {
-        return _cleanList.contains(_path);
+    public static boolean isClean(String path) {
+        return cleanList.contains(path);
     }
 
-    public static Context get_applicationContext() {
-        return _applicationContext;
+    public static Context getApplicationContext() {
+        return applicationContext;
     }
 
-    public static SDFile get_rootFile() {
-        return _rootFile;
+    public static SDFile getRootFile() {
+        return rootFile;
     }
 
-    public static long get_fileCount_all() {
-        return _fileCount_all;
+    public static long getFileCount_all() {
+        return fileCount_all;
     }
 
-    public static long get_fileSize_all() {
-        return _fileSize_all;
+    public static long getFileSize_all() {
+        return fileSize_all;
     }
 
-    public static long get_fileCount_rubbish() {
-        return _fileCount_rubbish;
+    public static long getFileCount_rubbish() {
+        return fileCount_rubbish;
     }
 
-    public static long get_fileSize_rubbish() {
-        return _fileSize_rubbish;
+    public static long getFileSize_rubbish() {
+        return fileSize_rubbish;
     }
 
-    public static ArrayList<String> get_saveList() {
-        return _saveList;
+    public static ArrayList<String> getSaveList() {
+        return saveList;
     }
 
-    public static ArrayList<String> get_cleanList() {
-        return _cleanList;
+    public static ArrayList<String> getCleanList() {
+        return cleanList;
     }
 }

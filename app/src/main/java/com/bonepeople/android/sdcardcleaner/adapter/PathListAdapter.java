@@ -17,74 +17,74 @@ import java.util.ArrayList;
 
 public class PathListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     public static final String ACTION_CLICK_ITEM = "click_item";
-    private ArrayList<String> _data;
-    private View.OnClickListener _listener_click;
+    private ArrayList<String> data;
+    private View.OnClickListener listener_click;
 
-    public PathListAdapter(View.OnClickListener _listener_click) {
-        this._listener_click = _listener_click;
+    public PathListAdapter(View.OnClickListener listener_click) {
+        this.listener_click = listener_click;
     }
 
-    public void set_data(ArrayList<String> _data) {
-        this._data = _data;
+    public void setData(ArrayList<String> data) {
+        this.data = data;
     }
 
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         if (viewType == 1) {
-            TextView _textView = new TextView(parent.getContext());
-            _textView.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
-            _textView.setGravity(Gravity.CENTER);
-            _textView.setText(parent.getContext().getString(R.string.state_emptyView));
-            return new ViewHolder_empty(_textView);
+            TextView textView = new TextView(parent.getContext());
+            textView.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
+            textView.setGravity(Gravity.CENTER);
+            textView.setText(parent.getContext().getString(R.string.state_emptyView));
+            return new ViewHolder_empty(textView);
         } else {
-            TextView _textView = new TextView(parent.getContext());
-            _textView.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
-            _textView.setPadding(20, 20, 20, 20);
-            return new ViewHolder_data(_textView);
+            TextView textView = new TextView(parent.getContext());
+            textView.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
+            textView.setPadding(20, 20, 20, 20);
+            return new ViewHolder_data(textView);
         }
     }
 
     @Override
     public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
         if (holder instanceof ViewHolder_data) {
-            ViewHolder_data _viewHolder = (ViewHolder_data) holder;
-            _viewHolder._text_name.setText(_data.get(position));
-            _viewHolder._text_name.setTag(new String[]{ACTION_CLICK_ITEM, String.valueOf(position)});
+            ViewHolder_data viewHolder = (ViewHolder_data) holder;
+            viewHolder.textView_name.setText(data.get(position));
+            viewHolder.textView_name.setTag(new String[]{ACTION_CLICK_ITEM, String.valueOf(position)});
         }
     }
 
     @Override
     public int getItemCount() {
-        if (_data.size() == 0)
+        if (data.size() == 0)
             return 1;
         else
-            return _data.size();
+            return data.size();
     }
 
     @Override
     public int getItemViewType(int position) {
-        if (_data.size() == 0)
+        if (data.size() == 0)
             return 1;
         else
             return super.getItemViewType(position);
     }
 
     class ViewHolder_data extends RecyclerView.ViewHolder {
-        TextView _text_name;
+        TextView textView_name;
 
         ViewHolder_data(TextView itemView) {
             super(itemView);
-            _text_name = itemView;
-            _text_name.setOnClickListener(_listener_click);
+            textView_name = itemView;
+            textView_name.setOnClickListener(listener_click);
         }
     }
 
     class ViewHolder_empty extends RecyclerView.ViewHolder {
-        TextView _text_title;
+        TextView textView_title;
 
         ViewHolder_empty(TextView itemView) {
             super(itemView);
-            _text_title = itemView;
+            textView_title = itemView;
         }
     }
 }

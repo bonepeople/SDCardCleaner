@@ -12,27 +12,27 @@ import java.util.LinkedList;
  */
 
 public abstract class BaseAppCompatActivity extends AppCompatActivity {
-    private LinkedList<BaseHandler> _handlers = null;
+    private LinkedList<BaseHandler> handlers = null;
 
     protected final BaseHandler createHandler() {
-        if (_handlers == null)
-            _handlers = new LinkedList<>();
-        BaseHandler _handler = new BaseHandler(this);
-        _handlers.add(_handler);
-        return _handler;
+        if (handlers == null)
+            handlers = new LinkedList<>();
+        BaseHandler handler = new BaseHandler(this);
+        handlers.add(handler);
+        return handler;
     }
 
-    protected void handleMessage(Message _msg) {
+    protected void handleMessage(Message msg) {
     }
 
     @Override
     protected void onDestroy() {
-        if (_handlers != null) {
-            for (BaseHandler _handler : _handlers) {
-                _handler.destroy();
+        if (handlers != null) {
+            for (BaseHandler handler : handlers) {
+                handler.destroy();
             }
-            _handlers.clear();
-            _handlers = null;
+            handlers.clear();
+            handlers = null;
         }
         super.onDestroy();
     }

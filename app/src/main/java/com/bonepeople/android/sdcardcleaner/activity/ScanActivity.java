@@ -15,6 +15,11 @@ import com.bonepeople.android.sdcardcleaner.service.FileManager;
 import com.bonepeople.android.sdcardcleaner.widget.SDCardPercent;
 import com.bonepeople.android.sdcardcleaner.widget.TitleBar;
 
+/**
+ * 文件扫描界面
+ *
+ * @author bonepeople
+ */
 public class ScanActivity extends BaseAppCompatActivity implements View.OnClickListener {
     private static final String ACTION_START_SCAN = "startScan";
     private static final String ACTION_STOP_SCAN = "stopScan";
@@ -23,163 +28,163 @@ public class ScanActivity extends BaseAppCompatActivity implements View.OnClickL
     private static final String ACTION_VIEW_FILE = "viewFile";
     private static final int MSG_REFRESH = 1;
     private static final int REQUEST_FILE = 0;
-    private ProgressBar _progressBar;
-    private TextView _text_state;
-    private SDCardPercent _percent;
-    private Button _button_middle, _button_left, _button_right;
-    private BaseHandler _handler = createHandler();
-    private int _state = -1;
+    private ProgressBar progressBar;
+    private TextView textView_state;
+    private SDCardPercent percent;
+    private Button button_middle, button_left, button_right;
+    private BaseHandler handler = createHandler();
+    private int state = -1;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_scan);
 
-        TitleBar _titleBar = (TitleBar) findViewById(R.id.titleBar);
-        _progressBar = (ProgressBar) findViewById(R.id.progressBar);
-        _text_state = (TextView) findViewById(R.id.textView_state);
-        _percent = (SDCardPercent) findViewById(R.id.SDCardPercent);
-        _button_middle = (Button) findViewById(R.id.button_stop);
-        _button_left = (Button) findViewById(R.id.button_clean);
-        _button_right = (Button) findViewById(R.id.button_show);
+        TitleBar titleBar = findViewById(R.id.titleBar);
+        progressBar = findViewById(R.id.progressBar);
+        textView_state = findViewById(R.id.textView_state);
+        percent = findViewById(R.id.SDCardPercent);
+        button_middle = findViewById(R.id.button_stop);
+        button_left = findViewById(R.id.button_clean);
+        button_right = findViewById(R.id.button_show);
 
-        _titleBar.setTitle(R.string.caption_text_mine);
-        _button_middle.setOnClickListener(this);
-        _button_left.setOnClickListener(this);
-        _button_right.setOnClickListener(this);
+        titleBar.setTitle(R.string.caption_text_mine);
+        button_middle.setOnClickListener(this);
+        button_left.setOnClickListener(this);
+        button_right.setOnClickListener(this);
 
-        _handler.sendEmptyMessage(MSG_REFRESH);
+        handler.sendEmptyMessage(MSG_REFRESH);
     }
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == REQUEST_FILE) {
-            _handler.sendEmptyMessage(MSG_REFRESH);
+            handler.sendEmptyMessage(MSG_REFRESH);
         }
     }
 
     @Override
-    protected void handleMessage(Message _msg) {
-        super.handleMessage(_msg);
-        switch (_msg.what) {
+    protected void handleMessage(Message msg) {
+        super.handleMessage(msg);
+        switch (msg.what) {
             case MSG_REFRESH:
-                if (_state != FileManager.get_state()) {
-                    _state = FileManager.get_state();
+                if (state != FileManager.getState()) {
+                    state = FileManager.getState();
                     updateState();
                 }
-                _percent.refresh();
-                if (_state == FileManager.STATE_READY)
+                percent.refresh();
+                if (state == FileManager.STATE_READY)
                     return;
-                if (_state == FileManager.STATE_SCAN_FINISH)
+                if (state == FileManager.STATE_SCAN_FINISH)
                     return;
-                if (_state == FileManager.STATE_CLEAN_FINISH)
+                if (state == FileManager.STATE_CLEAN_FINISH)
                     return;
-                if (_state == FileManager.STATE_DELETE_FINISH)
+                if (state == FileManager.STATE_DELETE_FINISH)
                     return;
-                _handler.sendEmptyMessageDelayed(MSG_REFRESH, 500);
+                handler.sendEmptyMessageDelayed(MSG_REFRESH, 500);
                 break;
         }
     }
 
     private void updateState() {
-        switch (_state) {
+        switch (state) {
             case FileManager.STATE_READY:
-                _text_state.setText(R.string.state_ready);
-                _button_middle.setText(R.string.caption_button_startScan);
-                _button_middle.setTag(new String[]{ACTION_START_SCAN});
-                _button_middle.setVisibility(Button.VISIBLE);
-                _button_left.setVisibility(Button.GONE);
-                _button_right.setVisibility(Button.GONE);
+                textView_state.setText(R.string.state_ready);
+                button_middle.setText(R.string.caption_button_startScan);
+                button_middle.setTag(new String[]{ACTION_START_SCAN});
+                button_middle.setVisibility(Button.VISIBLE);
+                button_left.setVisibility(Button.GONE);
+                button_right.setVisibility(Button.GONE);
                 break;
             case FileManager.STATE_SCAN_EXECUTING:
-                _progressBar.setVisibility(ProgressBar.VISIBLE);
-                _text_state.setText(getString(R.string.state_scan_executing));
-                _button_middle.setText(R.string.caption_button_stopScan);
-                _button_middle.setTag(new String[]{ACTION_STOP_SCAN});
-                _button_middle.setVisibility(Button.VISIBLE);
-                _button_left.setVisibility(Button.GONE);
-                _button_right.setVisibility(Button.GONE);
+                progressBar.setVisibility(ProgressBar.VISIBLE);
+                textView_state.setText(getString(R.string.state_scan_executing));
+                button_middle.setText(R.string.caption_button_stopScan);
+                button_middle.setTag(new String[]{ACTION_STOP_SCAN});
+                button_middle.setVisibility(Button.VISIBLE);
+                button_left.setVisibility(Button.GONE);
+                button_right.setVisibility(Button.GONE);
                 break;
             case FileManager.STATE_SCAN_STOP:
-                _progressBar.setVisibility(ProgressBar.VISIBLE);
-                _text_state.setText(getString(R.string.state_scan_stopping));
-                _button_middle.setVisibility(Button.GONE);
-                _button_left.setVisibility(Button.GONE);
-                _button_right.setVisibility(Button.GONE);
+                progressBar.setVisibility(ProgressBar.VISIBLE);
+                textView_state.setText(getString(R.string.state_scan_stopping));
+                button_middle.setVisibility(Button.GONE);
+                button_left.setVisibility(Button.GONE);
+                button_right.setVisibility(Button.GONE);
                 break;
             case FileManager.STATE_SCAN_FINISH:
-                _progressBar.setVisibility(ProgressBar.GONE);
-                _text_state.setText(getString(R.string.state_scan_finish));
-                _button_middle.setText(R.string.caption_button_reScan);
-                _button_left.setText(R.string.caption_button_startClean);
-                _button_right.setText(R.string.caption_button_viewFiles);
-                _button_middle.setTag(new String[]{ACTION_START_SCAN});
-                _button_left.setTag(new String[]{ACTION_START_CLEAN});
-                _button_right.setTag(new String[]{ACTION_VIEW_FILE});
-                _button_middle.setVisibility(Button.VISIBLE);
-                _button_left.setVisibility(Button.VISIBLE);
-                _button_right.setVisibility(Button.VISIBLE);
+                progressBar.setVisibility(ProgressBar.GONE);
+                textView_state.setText(getString(R.string.state_scan_finish));
+                button_middle.setText(R.string.caption_button_reScan);
+                button_left.setText(R.string.caption_button_startClean);
+                button_right.setText(R.string.caption_button_viewFiles);
+                button_middle.setTag(new String[]{ACTION_START_SCAN});
+                button_left.setTag(new String[]{ACTION_START_CLEAN});
+                button_right.setTag(new String[]{ACTION_VIEW_FILE});
+                button_middle.setVisibility(Button.VISIBLE);
+                button_left.setVisibility(Button.VISIBLE);
+                button_right.setVisibility(Button.VISIBLE);
                 break;
             case FileManager.STATE_CLEAN_EXECUTING:
-                _progressBar.setVisibility(ProgressBar.VISIBLE);
-                _text_state.setText(getString(R.string.state_clean_executing));
-                _button_middle.setText(R.string.caption_button_stopClean);
-                _button_middle.setTag(new String[]{ACTION_STOP_CLEAN});
-                _button_middle.setVisibility(Button.VISIBLE);
-                _button_left.setVisibility(Button.GONE);
-                _button_right.setVisibility(Button.GONE);
+                progressBar.setVisibility(ProgressBar.VISIBLE);
+                textView_state.setText(getString(R.string.state_clean_executing));
+                button_middle.setText(R.string.caption_button_stopClean);
+                button_middle.setTag(new String[]{ACTION_STOP_CLEAN});
+                button_middle.setVisibility(Button.VISIBLE);
+                button_left.setVisibility(Button.GONE);
+                button_right.setVisibility(Button.GONE);
                 break;
             case FileManager.STATE_CLEAN_STOP:
-                _progressBar.setVisibility(ProgressBar.VISIBLE);
-                _text_state.setText(getString(R.string.state_clean_stopping));
-                _button_middle.setVisibility(Button.GONE);
-                _button_left.setVisibility(Button.GONE);
-                _button_right.setVisibility(Button.GONE);
+                progressBar.setVisibility(ProgressBar.VISIBLE);
+                textView_state.setText(getString(R.string.state_clean_stopping));
+                button_middle.setVisibility(Button.GONE);
+                button_left.setVisibility(Button.GONE);
+                button_right.setVisibility(Button.GONE);
                 break;
             case FileManager.STATE_CLEAN_FINISH:
-                _progressBar.setVisibility(ProgressBar.GONE);
-                _text_state.setText(getString(R.string.state_clean_finish));
-                _button_middle.setText(R.string.caption_button_reScan);
-                _button_left.setText(R.string.caption_button_startClean);
-                _button_right.setText(R.string.caption_button_viewFiles);
-                _button_middle.setTag(new String[]{ACTION_START_SCAN});
-                _button_left.setTag(new String[]{ACTION_START_CLEAN});
-                _button_right.setTag(new String[]{ACTION_VIEW_FILE});
-                _button_middle.setVisibility(Button.VISIBLE);
-                _button_left.setVisibility(Button.VISIBLE);
-                _button_right.setVisibility(Button.VISIBLE);
+                progressBar.setVisibility(ProgressBar.GONE);
+                textView_state.setText(getString(R.string.state_clean_finish));
+                button_middle.setText(R.string.caption_button_reScan);
+                button_left.setText(R.string.caption_button_startClean);
+                button_right.setText(R.string.caption_button_viewFiles);
+                button_middle.setTag(new String[]{ACTION_START_SCAN});
+                button_left.setTag(new String[]{ACTION_START_CLEAN});
+                button_right.setTag(new String[]{ACTION_VIEW_FILE});
+                button_middle.setVisibility(Button.VISIBLE);
+                button_left.setVisibility(Button.VISIBLE);
+                button_right.setVisibility(Button.VISIBLE);
                 break;
             default:
-                _progressBar.setVisibility(ProgressBar.GONE);
-                _text_state.setText(getString(R.string.state_scan_finish));
-                _button_middle.setText(R.string.caption_button_reScan);
-                _button_left.setText(R.string.caption_button_startClean);
-                _button_right.setText(R.string.caption_button_viewFiles);
-                _button_middle.setTag(new String[]{ACTION_START_SCAN});
-                _button_left.setTag(new String[]{ACTION_START_CLEAN});
-                _button_right.setTag(new String[]{ACTION_VIEW_FILE});
-                _button_middle.setVisibility(Button.VISIBLE);
-                _button_left.setVisibility(Button.VISIBLE);
-                _button_right.setVisibility(Button.VISIBLE);
+                progressBar.setVisibility(ProgressBar.GONE);
+                textView_state.setText(getString(R.string.state_scan_finish));
+                button_middle.setText(R.string.caption_button_reScan);
+                button_left.setText(R.string.caption_button_startClean);
+                button_right.setText(R.string.caption_button_viewFiles);
+                button_middle.setTag(new String[]{ACTION_START_SCAN});
+                button_left.setTag(new String[]{ACTION_START_CLEAN});
+                button_right.setTag(new String[]{ACTION_VIEW_FILE});
+                button_middle.setVisibility(Button.VISIBLE);
+                button_left.setVisibility(Button.VISIBLE);
+                button_right.setVisibility(Button.VISIBLE);
                 break;
         }
     }
 
     @Override
     public void onClick(View v) {
-        String[] _tag = (String[]) v.getTag();
-        switch (_tag[0]) {
+        String[] tags = (String[]) v.getTag();
+        switch (tags[0]) {
             case ACTION_START_SCAN:
                 FileManager.startScan();
-                _handler.sendEmptyMessageDelayed(MSG_REFRESH, 150);
+                handler.sendEmptyMessageDelayed(MSG_REFRESH, 150);
                 break;
             case ACTION_STOP_SCAN:
                 FileManager.stopScan();
                 break;
             case ACTION_START_CLEAN:
                 FileManager.startClean();
-                _handler.sendEmptyMessageDelayed(MSG_REFRESH, 150);
+                handler.sendEmptyMessageDelayed(MSG_REFRESH, 150);
                 break;
             case ACTION_STOP_CLEAN:
                 FileManager.stopClean();

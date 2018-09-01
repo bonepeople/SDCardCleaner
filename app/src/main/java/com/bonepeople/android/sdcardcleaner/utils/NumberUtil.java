@@ -7,9 +7,9 @@ import android.content.Context;
 public class NumberUtil {
     private static final int DEF_DIV_SCALE = 10;
 
-    public static int get_px(Context context, double _dp) {
+    public static int get_px(Context context, double dp) {
         float scale = context.getResources().getDisplayMetrics().density;
-        return (int) (_dp * scale + 0.5f);
+        return (int) (dp * scale + 0.5f);
     }
 
     /**

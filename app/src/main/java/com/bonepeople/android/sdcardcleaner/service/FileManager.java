@@ -22,13 +22,13 @@ public class FileManager extends Service {
     public static final int STATE_DELETE_EXECUTING = 7;
     public static final int STATE_DELETE_STOP = 8;
     public static final int STATE_DELETE_FINISH = 9;
-    private static int _state = STATE_READY;
+    private static int state = STATE_READY;
 
     /**
      * 重置状态为未扫描的状态，根文件异常丢失的情况使用
      */
     public static void reset() {
-        _state = STATE_READY;
+        state = STATE_READY;
         Global.reset();
     }
 
@@ -36,8 +36,8 @@ public class FileManager extends Service {
      * 开始扫描文件
      */
     public static void startScan() {
-        if (_state == STATE_READY || _state == STATE_SCAN_FINISH || _state == STATE_CLEAN_FINISH || _state == STATE_DELETE_FINISH) {
-            _state = STATE_SCAN_EXECUTING;
+        if (state == STATE_READY || state == STATE_SCAN_FINISH || state == STATE_CLEAN_FINISH || state == STATE_DELETE_FINISH) {
+            state = STATE_SCAN_EXECUTING;
             Global.reset();
             new ScanFileThread().start();
         }
@@ -47,8 +47,8 @@ public class FileManager extends Service {
      * 停止扫描文件
      */
     public static void stopScan() {
-        if (_state == STATE_SCAN_EXECUTING) {
-            _state = STATE_SCAN_STOP;
+        if (state == STATE_SCAN_EXECUTING) {
+            state = STATE_SCAN_STOP;
         }
     }
 
@@ -56,15 +56,15 @@ public class FileManager extends Service {
      * 扫描文件结束，该方法仅由扫描的线程调用
      */
     public static void finishScan() {
-        _state = STATE_SCAN_FINISH;
+        state = STATE_SCAN_FINISH;
     }
 
     /**
      * 开始清理文件
      */
     public static void startClean() {
-        if (_state == STATE_SCAN_FINISH || _state == STATE_CLEAN_FINISH || _state == STATE_DELETE_FINISH) {
-            _state = STATE_CLEAN_EXECUTING;
+        if (state == STATE_SCAN_FINISH || state == STATE_CLEAN_FINISH || state == STATE_DELETE_FINISH) {
+            state = STATE_CLEAN_EXECUTING;
             new CleanFileThread().start();
         }
     }
@@ -73,8 +73,8 @@ public class FileManager extends Service {
      * 停止清理文件
      */
     public static void stopClean() {
-        if (_state == STATE_CLEAN_EXECUTING) {
-            _state = STATE_CLEAN_STOP;
+        if (state == STATE_CLEAN_EXECUTING) {
+            state = STATE_CLEAN_STOP;
         }
     }
 
@@ -82,16 +82,16 @@ public class FileManager extends Service {
      * 清理文件结束，该方法仅由清理的线程调用
      */
     public static void finishClean() {
-        _state = STATE_CLEAN_FINISH;
+        state = STATE_CLEAN_FINISH;
     }
 
     /**
      * 开始删除文件
      */
-    public static void startDelete(SparseArray<SDFile> _files) {
-        if (_state == STATE_SCAN_FINISH || _state == STATE_CLEAN_FINISH || _state == STATE_DELETE_FINISH) {
-            _state = STATE_DELETE_EXECUTING;
-            new DeleteFileThread(_files).start();
+    public static void startDelete(SparseArray<SDFile> files) {
+        if (state == STATE_SCAN_FINISH || state == STATE_CLEAN_FINISH || state == STATE_DELETE_FINISH) {
+            state = STATE_DELETE_EXECUTING;
+            new DeleteFileThread(files).start();
         }
     }
 
@@ -99,8 +99,8 @@ public class FileManager extends Service {
      * 停止删除文件
      */
     public static void stopDelete() {
-        if (_state == STATE_DELETE_EXECUTING) {
-            _state = STATE_DELETE_STOP;
+        if (state == STATE_DELETE_EXECUTING) {
+            state = STATE_DELETE_STOP;
         }
     }
 
@@ -108,7 +108,7 @@ public class FileManager extends Service {
      * 删除文件结束，该方法仅由删除的线程调用
      */
     public static void finishDelete() {
-        _state = STATE_DELETE_FINISH;
+        state = STATE_DELETE_FINISH;
     }
 
     @Override
@@ -122,7 +122,7 @@ public class FileManager extends Service {
 
     }
 
-    public static int get_state() {
-        return _state;
+    public static int getState() {
+        return state;
     }
 }

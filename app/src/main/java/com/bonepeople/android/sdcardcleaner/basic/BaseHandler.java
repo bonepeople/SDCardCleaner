@@ -10,20 +10,20 @@ import android.os.Message;
  */
 
 public class BaseHandler extends Handler {
-    private BaseAppCompatActivity _activity;
+    private BaseAppCompatActivity activity;
 
-    BaseHandler(BaseAppCompatActivity _activity) {
-        this._activity = _activity;
+    BaseHandler(BaseAppCompatActivity activity) {
+        this.activity = activity;
     }
 
     @Override
     public void handleMessage(Message msg) {
-        if (_activity != null && !_activity.isDestroyed())
-            _activity.handleMessage(msg);
+        if (activity != null && !activity.isDestroyed())
+            activity.handleMessage(msg);
     }
 
     void destroy() {
-        _activity = null;
+        activity = null;
         removeCallbacksAndMessages(null);
     }
 }

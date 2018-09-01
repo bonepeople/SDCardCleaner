@@ -20,79 +20,81 @@ public class SDFile {
     private static final String FILE_ADD = "add_file";
     private static final String FILE_DELETE = "delete_file";
     private static final String FILE_CHANGE = "change_file";
-    private String _name;//文件名
-    private String _path;//文件路径
-    private long _size = 0;//文件大小
-    private int _fileCount = 0;//文件夹内文件的数量
+    private String name;//文件名
+    private String path;//文件路径
+    private long size = 0;//文件大小
+    private int fileCount = 0;//文件夹内文件的数量
     private boolean directory = false;//是否是文件夹
     private boolean rubbish = false;//是否需要清理
-    private SDFile _parent;//父目录
-    private SDFile _largestChild = null;//文件夹内最大的文件
+    private boolean sorted = false;//是否已排序
+    private boolean checked = false;//是否被选中，用于多选
+    private SDFile parent;//父目录
+    private SDFile largestChild = null;//文件夹内最大的文件
 
-    private ArrayList<SDFile> _children = new ArrayList<>();//子文件列表
+    private ArrayList<SDFile> children = new ArrayList<>();//子文件列表
 
-    public SDFile(SDFile _parent, File _file) {
-        this._parent = _parent;
-        _name = _file.getName();
-        _path = _file.getAbsolutePath();
+    public SDFile(SDFile parent, File file) {
+        this.parent = parent;
+        name = file.getName();
+        path = file.getAbsolutePath();
 
-        Global.set_fileCount_all(1);
-        if (Global.isSave(_path)) {
+        Global.setFileCount_all(1);
+        if (Global.isSave(path)) {
             rubbish = false;
-        } else if (Global.isClean(_path)) {
+        } else if (Global.isClean(path)) {
             rubbish = true;
-            Global.set_fileCount_rubbish(1);
-        } else if (_parent != null && _parent.isRubbish()) {
+            Global.setFileCount_rubbish(1);
+        } else if (parent != null && parent.isRubbish()) {
             rubbish = true;
-            Global.set_fileCount_rubbish(1);
+            Global.setFileCount_rubbish(1);
         } else
             rubbish = false;
 
-        if (_file.isDirectory()) {
+        if (file.isDirectory()) {
             directory = true;
-            File[] _files = sortFile(_file.listFiles());
-            if (_files != null)
-                for (File _child : _files) {
-                    if (_child != null)
-                        if (FileManager.get_state() == FileManager.STATE_SCAN_EXECUTING)
-                            new SDFile(this, _child);
+            File[] files = sortFile(file.listFiles());
+            if (files != null)
+                for (File child : files) {
+                    if (child != null)
+                        if (FileManager.getState() == FileManager.STATE_SCAN_EXECUTING)
+                            new SDFile(this, child);
                         else
                             break;
                 }
-            if (_parent != null)
-                _parent.updateSize(this, FILE_ADD);
+            if (parent != null)
+                parent.updateSize(this, FILE_ADD);
         } else {
             directory = false;
-            _size = _file.length();
-            Global.set_fileSize_all(_size);
+            size = file.length();
+            Global.setFileSize_all(size);
             if (rubbish)
-                Global.set_fileSize_rubbish(_size);
-            if (_parent != null)
-                _parent.updateSize(this, FILE_ADD);
+                Global.setFileSize_rubbish(size);
+            if (parent != null)
+                parent.updateSize(this, FILE_ADD);
         }
     }
 
     /**
      * 对文件进行排序
      */
-    private File[] sortFile(File[] _files) {
-        if (_files != null) {
-            Arrays.sort(_files, new Comparator<File>() {
+    private File[] sortFile(File[] files) {
+        if (files != null) {
+            Arrays.sort(files, new Comparator<File>() {
                 @Override
-                public int compare(File _file1, File _file2) {
-                    if (_file1.isDirectory() && _file2.isDirectory()) {
-                        return CommonUtil.comparePath(_file1.getName(), _file2.getName());
-                    } else if (_file1.isDirectory() && _file2.isFile()) {
+                public int compare(File file1, File file2) {
+                    if (file1.isDirectory() && file2.isDirectory()) {
+                        return CommonUtil.comparePath(file1.getName(), file2.getName());
+                    } else if (file1.isDirectory() && file2.isFile()) {
                         return -1;
-                    } else if (_file1.isFile() && _file2.isDirectory()) {
+                    } else if (file1.isFile() && file2.isDirectory()) {
                         return 1;
                     } else {
-                        return CommonUtil.comparePath(_file1.getName(), _file2.getName());
+                        return CommonUtil.comparePath(file1.getName(), file2.getName());
                     }
                 }
             });
         }
-        return _files;
+        return files;
     }
 
     /**
@@ -100,71 +102,71 @@ public class SDFile {
      * <p>
      * 该函数由子文件调用，用于获取子文件的大小及引用
      *
-     * @param _file 子文件
-     * @param _type 文件大小变动的原因
+     * @param file 子文件
+     * @param type 文件大小变动的原因
      */
-    private void updateSize(SDFile _file, String _type) {
-        switch (_type) {
+    private void updateSize(SDFile file, String type) {
+        switch (type) {
             case FILE_ADD:
-                _size += _file.get_size();
-                if (_file.isDirectory())
-                    _fileCount += _file.get_fileCount();
-                _fileCount += 1;
-                if (_largestChild != null) {
-                    if (_file.get_size() > _largestChild.get_size())
-                        _largestChild = _file;
+                size += file.getSize();
+                if (file.isDirectory())
+                    fileCount += file.getFileCount();
+                fileCount += 1;
+                if (largestChild != null) {
+                    if (file.getSize() > largestChild.getSize())
+                        largestChild = file;
                 } else
-                    _largestChild = _file;
-                _children.add(_file);
+                    largestChild = file;
+                children.add(file);
                 break;
             case FILE_DELETE:
-                if (_parent != null)
-                    _parent.updateSize(_file, FILE_CHANGE);
-                _size -= _file.get_size();
-                _fileCount -= 1;
-                _largestChild = null;
-                _children.remove(_file);
+                if (parent != null)
+                    parent.updateSize(file, FILE_CHANGE);
+                size -= file.getSize();
+                fileCount -= 1;
+                largestChild = null;
+                children.remove(file);
                 break;
             case FILE_CHANGE:
-                if (_parent != null)
-                    _parent.updateSize(_file, FILE_CHANGE);
-                _size -= _file.get_size();
-                _fileCount -= 1;
-                _largestChild = null;
+                if (parent != null)
+                    parent.updateSize(file, FILE_CHANGE);
+                size -= file.getSize();
+                fileCount -= 1;
+                largestChild = null;
                 break;
         }
     }
 
     private void findLargestChild() {
-        for (SDFile _child : _children) {
-            if (_largestChild != null) {
-                if (_child.get_size() > _largestChild.get_size())
-                    _largestChild = _child;
+        for (SDFile child : children) {
+            if (largestChild != null) {
+                if (child.getSize() > largestChild.getSize())
+                    largestChild = child;
             } else
-                _largestChild = _child;
+                largestChild = child;
         }
     }
 
-    public String get_name() {
-        return _name;
+    public String getName() {
+        return name;
     }
 
-    public String get_path() {
-        return _path;
+    public String getPath() {
+        return path;
     }
 
-    public long get_size() {
-        return _size;
+    public long getSize() {
+        return size;
     }
 
-    public int get_fileCount() {
-        return _fileCount;
+    public int getFileCount() {
+        return fileCount;
     }
 
-    private SDFile get_largestChild() {
-        if (_largestChild == null)
+    private SDFile getLargestChild() {
+        if (largestChild == null)
             findLargestChild();
-        return _largestChild;
+        return largestChild;
     }
 
     public boolean isDirectory() {
@@ -175,8 +177,8 @@ public class SDFile {
         return rubbish;
     }
 
-    public ArrayList<SDFile> get_children() {
-        return _children;
+    public ArrayList<SDFile> getChildren() {
+        return children;
     }
 
     /**
@@ -185,10 +187,10 @@ public class SDFile {
      * 以文件夹中最大的文件作为100%，按比例计算自身比重
      */
     public int get_sizePercent() {
-        if (_parent != null) {
-            SDFile _largestChild = _parent.get_largestChild();
-            if (_largestChild != null && _largestChild.get_size() != 0) {
-                double _percent = NumberUtil.div(_size, _largestChild.get_size(), 2);
+        if (parent != null) {
+            SDFile _largestChild = parent.getLargestChild();
+            if (_largestChild != null && _largestChild.getSize() != 0) {
+                double _percent = NumberUtil.div(size, _largestChild.getSize(), 2);
                 return (int) (_percent * 100);
             } else
                 return 0;
@@ -201,38 +203,38 @@ public class SDFile {
      */
     public void updateRubbish() {
         if (rubbish) {//之前需要被清理-true
-            if (Global.isSave(_path)) {
+            if (Global.isSave(path)) {
                 rubbish = false;
-                Global.set_fileCount_rubbish(-1);
+                Global.setFileCount_rubbish(-1);
                 if (!directory)
-                    Global.set_fileSize_rubbish(-_size);
-            } else if (Global.isClean(_path)) {
+                    Global.setFileSize_rubbish(-size);
+            } else if (Global.isClean(path)) {
                 rubbish = true;
-            } else if (_parent != null && _parent.isRubbish()) {
+            } else if (parent != null && parent.isRubbish()) {
                 rubbish = true;
             } else {
                 rubbish = false;
-                Global.set_fileCount_rubbish(-1);
+                Global.setFileCount_rubbish(-1);
                 if (!directory)
-                    Global.set_fileSize_rubbish(-_size);
+                    Global.setFileSize_rubbish(-size);
             }
         } else {//之前需要被保留-false
-            if (Global.isSave(_path)) {
+            if (Global.isSave(path)) {
                 rubbish = false;
-            } else if (Global.isClean(_path)) {
+            } else if (Global.isClean(path)) {
                 rubbish = true;
-                Global.set_fileCount_rubbish(1);
+                Global.setFileCount_rubbish(1);
                 if (!directory)
-                    Global.set_fileSize_rubbish(_size);
-            } else if (_parent != null && _parent.isRubbish()) {
+                    Global.setFileSize_rubbish(size);
+            } else if (parent != null && parent.isRubbish()) {
                 rubbish = true;
-                Global.set_fileCount_rubbish(1);
+                Global.setFileCount_rubbish(1);
                 if (!directory)
-                    Global.set_fileSize_rubbish(_size);
+                    Global.setFileSize_rubbish(size);
             } else
                 rubbish = false;
         }
-        for (SDFile _child : _children) {
+        for (SDFile _child : children) {
             _child.updateRubbish();
         }
     }
@@ -240,45 +242,45 @@ public class SDFile {
     /**
      * 删除自身
      *
-     * @param _auto 是否由APP自动清理
+     * @param auto 是否由APP自动清理
      */
-    public void delete(boolean _auto) {
+    public void delete(boolean auto) {
         if (directory) {
-            ArrayList<SDFile> _deleteList = new ArrayList<>(_children.size());
-            _deleteList.addAll(_children);
-            for (SDFile _item : _deleteList) {
-                _item.delete(_auto);
+            ArrayList<SDFile> deleteList = new ArrayList<>(children.size());
+            deleteList.addAll(children);
+            for (SDFile item : deleteList) {
+                item.delete(auto);
             }
         }
-        if (_children.size() == 0) {
-            if (_auto) {
-                if (rubbish && FileManager.get_state() == FileManager.STATE_CLEAN_EXECUTING) {
-                    File _file = new File(_path);
-                    if (!_file.exists() || _file.delete()) {
-                        Global.set_fileCount_all(-1);
-                        Global.set_fileSize_all(-_size);
-                        Global.set_fileCount_rubbish(-1);
-                        Global.set_fileSize_rubbish(-_size);
-                        if (_parent != null)
-                            _parent.updateSize(this, FILE_DELETE);
-                        _largestChild = null;
-                        _parent = null;
+        if (children.size() == 0) {
+            if (auto) {
+                if (rubbish && FileManager.getState() == FileManager.STATE_CLEAN_EXECUTING) {
+                    File file = new File(path);
+                    if (!file.exists() || file.delete()) {
+                        Global.setFileCount_all(-1);
+                        Global.setFileSize_all(-size);
+                        Global.setFileCount_rubbish(-1);
+                        Global.setFileSize_rubbish(-size);
+                        if (parent != null)
+                            parent.updateSize(this, FILE_DELETE);
+                        largestChild = null;
+                        parent = null;
                     }
                 }
             } else {
-                if (FileManager.get_state() == FileManager.STATE_DELETE_EXECUTING) {
-                    File _file = new File(_path);
-                    if (!_file.exists() || _file.delete()) {
-                        Global.set_fileCount_all(-1);
-                        Global.set_fileSize_all(-_size);
+                if (FileManager.getState() == FileManager.STATE_DELETE_EXECUTING) {
+                    File file = new File(path);
+                    if (!file.exists() || file.delete()) {
+                        Global.setFileCount_all(-1);
+                        Global.setFileSize_all(-size);
                         if (rubbish) {
-                            Global.set_fileCount_rubbish(-1);
-                            Global.set_fileSize_rubbish(-_size);
+                            Global.setFileCount_rubbish(-1);
+                            Global.setFileSize_rubbish(-size);
                         }
-                        if (_parent != null)
-                            _parent.updateSize(this, FILE_DELETE);
-                        _largestChild = null;
-                        _parent = null;
+                        if (parent != null)
+                            parent.updateSize(this, FILE_DELETE);
+                        largestChild = null;
+                        parent = null;
                     }
                 }
             }
