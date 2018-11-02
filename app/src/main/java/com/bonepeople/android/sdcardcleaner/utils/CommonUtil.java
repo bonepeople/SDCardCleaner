@@ -22,6 +22,8 @@ public class CommonUtil {
             if (Character.isDigit(char1) && Character.isDigit(char2)) {
                 StringBuilder str_number_1 = new StringBuilder();
                 StringBuilder str_number_2 = new StringBuilder();
+                //此处可以两个字符串同步获取数字，当某一个数字位数大于另一个的时候直接返回大小，可以加快判断速度减小内存占用
+                //在获取数字的时候需要对开头为0的数字进行处理，避免由补0导致的位数差异而影响数字大小的判断
                 //获取第一个字符串中的数字
                 while (mark1 < path1.length() && Character.isDigit(path1.charAt(mark1))) {
                     str_number_1.append(path1.charAt(mark1));
