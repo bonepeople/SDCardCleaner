@@ -5,7 +5,6 @@ import android.os.Message;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
-import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.bonepeople.android.sdcardcleaner.R;
@@ -28,8 +27,7 @@ public class ScanActivity extends BaseAppCompatActivity implements View.OnClickL
     private static final String ACTION_VIEW_FILE = "viewFile";
     private static final int MSG_REFRESH = 1;
     private static final int REQUEST_FILE = 0;
-    private ProgressBar progressBar;
-    private TextView textView_state;
+    private TextView textView_state, textView_time;
     private SDCardPercent percent;
     private Button button_middle, button_left, button_right;
     private BaseHandler handler = createHandler();
@@ -41,7 +39,7 @@ public class ScanActivity extends BaseAppCompatActivity implements View.OnClickL
         setContentView(R.layout.activity_scan);
 
         TitleBar titleBar = findViewById(R.id.titleBar);
-        progressBar = findViewById(R.id.progressBar);
+        textView_time = findViewById(R.id.textView_time);
         textView_state = findViewById(R.id.textView_state);
         percent = findViewById(R.id.SDCardPercent);
         button_middle = findViewById(R.id.button_stop);
@@ -73,6 +71,19 @@ public class ScanActivity extends BaseAppCompatActivity implements View.OnClickL
                     state = FileManager.getState();
                     updateState();
                 }
+                //更新时间
+                switch (state) {
+                    case FileManager.STATE_SCAN_EXECUTING:
+                    case FileManager.STATE_SCAN_STOP:
+                    case FileManager.STATE_SCAN_FINISH:
+                    case FileManager.STATE_CLEAN_EXECUTING:
+                    case FileManager.STATE_CLEAN_STOP:
+                    case FileManager.STATE_CLEAN_FINISH:
+                        textView_time.setText(FileManager.getProgressTimeString());
+                        break;
+                    default:
+                        textView_time.setText("");
+                }
                 percent.refresh();
                 if (state == FileManager.STATE_READY)
                     return;
@@ -98,7 +109,6 @@ public class ScanActivity extends BaseAppCompatActivity implements View.OnClickL
                 button_right.setVisibility(Button.GONE);
                 break;
             case FileManager.STATE_SCAN_EXECUTING:
-                progressBar.setVisibility(ProgressBar.VISIBLE);
                 textView_state.setText(getString(R.string.state_scan_executing));
                 button_middle.setText(R.string.caption_button_stopScan);
                 button_middle.setTag(new String[]{ACTION_STOP_SCAN});
@@ -107,14 +117,12 @@ public class ScanActivity extends BaseAppCompatActivity implements View.OnClickL
                 button_right.setVisibility(Button.GONE);
                 break;
             case FileManager.STATE_SCAN_STOP:
-                progressBar.setVisibility(ProgressBar.VISIBLE);
                 textView_state.setText(getString(R.string.state_scan_stopping));
                 button_middle.setVisibility(Button.GONE);
                 button_left.setVisibility(Button.GONE);
                 button_right.setVisibility(Button.GONE);
                 break;
             case FileManager.STATE_SCAN_FINISH:
-                progressBar.setVisibility(ProgressBar.GONE);
                 textView_state.setText(getString(R.string.state_scan_finish));
                 button_middle.setText(R.string.caption_button_reScan);
                 button_left.setText(R.string.caption_button_startClean);
@@ -127,7 +135,6 @@ public class ScanActivity extends BaseAppCompatActivity implements View.OnClickL
                 button_right.setVisibility(Button.VISIBLE);
                 break;
             case FileManager.STATE_CLEAN_EXECUTING:
-                progressBar.setVisibility(ProgressBar.VISIBLE);
                 textView_state.setText(getString(R.string.state_clean_executing));
                 button_middle.setText(R.string.caption_button_stopClean);
                 button_middle.setTag(new String[]{ACTION_STOP_CLEAN});
@@ -136,14 +143,12 @@ public class ScanActivity extends BaseAppCompatActivity implements View.OnClickL
                 button_right.setVisibility(Button.GONE);
                 break;
             case FileManager.STATE_CLEAN_STOP:
-                progressBar.setVisibility(ProgressBar.VISIBLE);
                 textView_state.setText(getString(R.string.state_clean_stopping));
                 button_middle.setVisibility(Button.GONE);
                 button_left.setVisibility(Button.GONE);
                 button_right.setVisibility(Button.GONE);
                 break;
             case FileManager.STATE_CLEAN_FINISH:
-                progressBar.setVisibility(ProgressBar.GONE);
                 textView_state.setText(getString(R.string.state_clean_finish));
                 button_middle.setText(R.string.caption_button_reScan);
                 button_left.setText(R.string.caption_button_startClean);
@@ -155,8 +160,7 @@ public class ScanActivity extends BaseAppCompatActivity implements View.OnClickL
                 button_left.setVisibility(Button.VISIBLE);
                 button_right.setVisibility(Button.VISIBLE);
                 break;
-            default:
-                progressBar.setVisibility(ProgressBar.GONE);
+            default://手动删除文件会导致状态值的变化，在手动删除文件后依旧显示扫描结束的提示信息
                 textView_state.setText(getString(R.string.state_scan_finish));
                 button_middle.setText(R.string.caption_button_reScan);
                 button_left.setText(R.string.caption_button_startClean);

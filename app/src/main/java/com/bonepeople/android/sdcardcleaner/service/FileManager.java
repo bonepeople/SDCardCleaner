@@ -11,6 +11,10 @@ import com.bonepeople.android.sdcardcleaner.thread.CleanFileThread;
 import com.bonepeople.android.sdcardcleaner.thread.DeleteFileThread;
 import com.bonepeople.android.sdcardcleaner.thread.ScanFileThread;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.Locale;
+
 public class FileManager extends Service {
     public static final int STATE_READY = 0;
     public static final int STATE_SCAN_EXECUTING = 1;
@@ -22,7 +26,9 @@ public class FileManager extends Service {
     public static final int STATE_DELETE_EXECUTING = 7;
     public static final int STATE_DELETE_STOP = 8;
     public static final int STATE_DELETE_FINISH = 9;
-    private static int state = STATE_READY;
+    private static volatile int state = STATE_READY;
+    private static long progressStartTime = 0;
+    private static long progressFinishTime = 0;
 
     /**
      * 重置状态为未扫描的状态，根文件异常丢失的情况使用
@@ -39,6 +45,7 @@ public class FileManager extends Service {
         if (state == STATE_READY || state == STATE_SCAN_FINISH || state == STATE_CLEAN_FINISH || state == STATE_DELETE_FINISH) {
             state = STATE_SCAN_EXECUTING;
             Global.reset();
+            progressStartTime = System.currentTimeMillis();
             new ScanFileThread().start();
         }
     }
@@ -57,6 +64,7 @@ public class FileManager extends Service {
      */
     public static void finishScan() {
         state = STATE_SCAN_FINISH;
+        progressFinishTime = System.currentTimeMillis();
     }
 
     /**
@@ -65,6 +73,7 @@ public class FileManager extends Service {
     public static void startClean() {
         if (state == STATE_SCAN_FINISH || state == STATE_CLEAN_FINISH || state == STATE_DELETE_FINISH) {
             state = STATE_CLEAN_EXECUTING;
+            progressStartTime = System.currentTimeMillis();
             new CleanFileThread().start();
         }
     }
@@ -83,6 +92,7 @@ public class FileManager extends Service {
      */
     public static void finishClean() {
         state = STATE_CLEAN_FINISH;
+        progressFinishTime = System.currentTimeMillis();
     }
 
     /**
@@ -124,5 +134,17 @@ public class FileManager extends Service {
 
     public static int getState() {
         return state;
+    }
+
+    /**
+     * 返回当前任务的执行时间
+     *
+     * @return 将时间格式化为00:01的样式
+     */
+    public static String getProgressTimeString() {
+        if (state != STATE_SCAN_FINISH && state != STATE_CLEAN_FINISH)
+            progressFinishTime = System.currentTimeMillis();
+        long time = progressFinishTime - progressStartTime;
+        return "(" + new SimpleDateFormat("mm:ss.SSS", Locale.CHINA).format(new Date(time)) + ")";
     }
 }
