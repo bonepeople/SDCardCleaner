@@ -22,6 +22,8 @@ import com.bonepeople.android.sdcardcleaner.R;
 import com.bonepeople.android.sdcardcleaner.basic.BaseAppCompatActivity;
 import com.bonepeople.android.sdcardcleaner.service.FileManager;
 
+import java.util.Locale;
+
 /**
  * APP主界面
  *
@@ -49,6 +51,9 @@ public class MainActivity extends BaseAppCompatActivity implements View.OnClickL
         cardView_set.setOnClickListener(this);
 
         Global.init(getApplicationContext());
+        //将APP的本地化文件设置为Locale.ENGLISH，这样在使用Formatter的时候格式化的单位就是MB、GB了，CHINA默认是中文单位
+        //此项设置可以最好放在Application的初始化函数中
+        getApplication().getResources().getConfiguration().setLocale(Locale.ENGLISH);
     }
 
     @Override
@@ -172,7 +177,7 @@ public class MainActivity extends BaseAppCompatActivity implements View.OnClickL
                         title = Pair.create(findViewById(R.id.textView_scan), "transition_title");
                         body = Pair.create((View) cardView_scan, "transition_body");
                         bundle = ActivityOptions.makeSceneTransitionAnimation(this, title, body).toBundle();
-                        startActivity(new Intent(getApplicationContext(), ScanActivity.class), bundle);
+                        startActivity(new Intent(this, ScanActivity.class), bundle);
                     } else
                         Toast.makeText(this, R.string.toast_sdcard_error, Toast.LENGTH_SHORT).show();
                     break;
@@ -180,13 +185,13 @@ public class MainActivity extends BaseAppCompatActivity implements View.OnClickL
                     title = Pair.create(findViewById(R.id.textView_white), "transition_title");
                     body = Pair.create((View) cardView_white, "transition_body");
                     bundle = ActivityOptions.makeSceneTransitionAnimation(this, title, body).toBundle();
-                    startActivity(new Intent(getApplicationContext(), PathListActivity.class).putExtra("mode", PathListActivity.MODE_SAVE), bundle);
+                    startActivity(new Intent(this, PathListActivity.class).putExtra("mode", PathListActivity.MODE_SAVE), bundle);
                     break;
                 case R.id.cardview_black:
                     title = Pair.create(findViewById(R.id.textView_black), "transition_title");
                     body = Pair.create((View) cardView_black, "transition_body");
                     bundle = ActivityOptions.makeSceneTransitionAnimation(this, title, body).toBundle();
-                    startActivity(new Intent(getApplicationContext(), PathListActivity.class).putExtra("mode", PathListActivity.MODE_CLEAN), bundle);
+                    startActivity(new Intent(this, PathListActivity.class).putExtra("mode", PathListActivity.MODE_CLEAN), bundle);
                     break;
                 case R.id.cardview_set:
                     Toast.makeText(this, R.string.toast_comingSoon, Toast.LENGTH_SHORT).show();

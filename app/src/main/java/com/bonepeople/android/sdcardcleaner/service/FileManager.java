@@ -145,6 +145,6 @@ public class FileManager extends Service {
         if (state != STATE_SCAN_FINISH && state != STATE_CLEAN_FINISH)
             progressFinishTime = System.currentTimeMillis();
         long time = progressFinishTime - progressStartTime;
-        return "(" + new SimpleDateFormat("mm:ss.SSS", Locale.CHINA).format(new Date(time)) + ")";
+        return "(" + new SimpleDateFormat("mm:ss.SSS", Locale.CHINA).format(new Date(time)) + "秒)";
     }
 }
