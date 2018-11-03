@@ -22,8 +22,6 @@ import com.bonepeople.android.sdcardcleaner.R;
 import com.bonepeople.android.sdcardcleaner.basic.BaseAppCompatActivity;
 import com.bonepeople.android.sdcardcleaner.service.FileManager;
 
-import java.util.Locale;
-
 /**
  * APP主界面
  *
@@ -51,9 +49,6 @@ public class MainActivity extends BaseAppCompatActivity implements View.OnClickL
         cardView_set.setOnClickListener(this);
 
         Global.init(getApplicationContext());
-        //将APP的本地化文件设置为Locale.ENGLISH，这样在使用Formatter的时候格式化的单位就是MB、GB了，CHINA默认是中文单位
-        //此项设置可以最好放在Application的初始化函数中
-        getApplication().getResources().getConfiguration().setLocale(Locale.ENGLISH);
     }
 
     @Override

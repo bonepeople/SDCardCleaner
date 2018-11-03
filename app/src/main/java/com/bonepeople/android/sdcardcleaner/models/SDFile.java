@@ -2,13 +2,10 @@ package com.bonepeople.android.sdcardcleaner.models;
 
 import com.bonepeople.android.sdcardcleaner.Global;
 import com.bonepeople.android.sdcardcleaner.service.FileManager;
-import com.bonepeople.android.sdcardcleaner.utils.CommonUtil;
 import com.bonepeople.android.sdcardcleaner.utils.NumberUtil;
 
 import java.io.File;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Comparator;
 
 /**
  * SD卡中文件的数据模型
@@ -52,7 +49,7 @@ public class SDFile {
 
         if (file.isDirectory()) {
             directory = true;
-            File[] files = sortFile(file.listFiles());
+            File[] files = file.listFiles();
             if (files != null)
                 for (File child : files) {
                     if (child != null)
@@ -63,6 +60,7 @@ public class SDFile {
                 }
             if (parent != null)
                 parent.updateSize(this, FILE_ADD);
+            FileManager.executeSort(this);
         } else {
             directory = false;
             size = file.length();
@@ -72,29 +70,6 @@ public class SDFile {
             if (parent != null)
                 parent.updateSize(this, FILE_ADD);
         }
-    }
-
-    /**
-     * 对文件进行排序
-     */
-    private File[] sortFile(File[] files) {
-        if (files != null) {
-            Arrays.sort(files, new Comparator<File>() {
-                @Override
-                public int compare(File file1, File file2) {
-                    if (file1.isDirectory() && file2.isDirectory()) {
-                        return CommonUtil.comparePath(file1.getName(), file2.getName());
-                    } else if (file1.isDirectory() && file2.isFile()) {
-                        return -1;
-                    } else if (file1.isFile() && file2.isDirectory()) {
-                        return 1;
-                    } else {
-                        return CommonUtil.comparePath(file1.getName(), file2.getName());
-                    }
-                }
-            });
-        }
-        return files;
     }
 
     /**

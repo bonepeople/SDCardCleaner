@@ -13,6 +13,8 @@ import com.bonepeople.android.sdcardcleaner.Global;
 import com.bonepeople.android.sdcardcleaner.R;
 import com.bonepeople.android.sdcardcleaner.utils.NumberUtil;
 
+import java.util.Locale;
+
 /**
  * 用于显示SD卡中文件大小占比的控件
  * <p>
@@ -39,6 +41,8 @@ public class SDCardPercent extends ConstraintLayout {
     }
 
     private void setContentView() {
+        //将这个控件的Context设置为Locale.ENGLISH，这样在使用Formatter的时候格式化的单位就是MB、GB了，中文系统默认是中文单位
+        getContext().getResources().getConfiguration().setLocale(Locale.ENGLISH);
         int padding = NumberUtil.get_px(getContext(), 15);
         setPadding(padding, padding, padding, padding);
         inflate(getContext(), R.layout.widget_sdcard_percent, this);

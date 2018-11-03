@@ -10,10 +10,14 @@ import com.bonepeople.android.sdcardcleaner.models.SDFile;
 import com.bonepeople.android.sdcardcleaner.thread.CleanFileThread;
 import com.bonepeople.android.sdcardcleaner.thread.DeleteFileThread;
 import com.bonepeople.android.sdcardcleaner.thread.ScanFileThread;
+import com.bonepeople.android.sdcardcleaner.thread.SortThread;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
+import java.util.concurrent.LinkedBlockingQueue;
+import java.util.concurrent.ThreadPoolExecutor;
+import java.util.concurrent.TimeUnit;
 
 public class FileManager extends Service {
     public static final int STATE_READY = 0;
@@ -29,6 +33,7 @@ public class FileManager extends Service {
     private static volatile int state = STATE_READY;
     private static long progressStartTime = 0;
     private static long progressFinishTime = 0;
+    private static ThreadPoolExecutor executor;
 
     /**
      * 重置状态为未扫描的状态，根文件异常丢失的情况使用
@@ -45,9 +50,19 @@ public class FileManager extends Service {
         if (state == STATE_READY || state == STATE_SCAN_FINISH || state == STATE_CLEAN_FINISH || state == STATE_DELETE_FINISH) {
             state = STATE_SCAN_EXECUTING;
             Global.reset();
+            if (executor == null)
+                executor = new ThreadPoolExecutor(1, 5, 1, TimeUnit.SECONDS, new LinkedBlockingQueue<Runnable>());
             progressStartTime = System.currentTimeMillis();
             new ScanFileThread().start();
         }
+    }
+
+    /**
+     * 为文件夹内的文件排序
+     */
+    public static void executeSort(SDFile file) {
+        if (executor != null)
+            executor.execute(new SortThread(file));
     }
 
     /**
