@@ -51,7 +51,7 @@ public class FileManager extends Service {
             state = STATE_SCAN_EXECUTING;
             Global.reset();
             if (executor == null)
-                executor = new ThreadPoolExecutor(1, 5, 1, TimeUnit.SECONDS, new LinkedBlockingQueue<Runnable>());
+                executor = new ThreadPoolExecutor(2, 2, 1, TimeUnit.SECONDS, new LinkedBlockingQueue<Runnable>());
             progressStartTime = System.currentTimeMillis();
             new ScanFileThread().start();
         }
@@ -63,6 +63,15 @@ public class FileManager extends Service {
     public static void executeSort(SDFile file) {
         if (executor != null)
             executor.execute(new SortThread(file));
+    }
+
+    /**
+     * 等待扫描线程结束
+     */
+    public static void shutdownSort() throws InterruptedException {
+        executor.shutdown();
+        executor.awaitTermination(1, TimeUnit.HOURS);
+        executor = null;
     }
 
     /**

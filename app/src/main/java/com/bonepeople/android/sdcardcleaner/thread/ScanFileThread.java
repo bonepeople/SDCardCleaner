@@ -21,6 +21,11 @@ public class ScanFileThread extends Thread {
         File file = Environment.getExternalStorageDirectory();
         SDFile root = new SDFile(null, file);
         Global.setRootFile(root);
+        try {
+            FileManager.shutdownSort();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
         FileManager.finishScan();
     }
 }
