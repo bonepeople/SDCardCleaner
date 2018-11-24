@@ -1,11 +1,13 @@
 package com.bonepeople.android.sdcardcleaner.activity;
 
+import android.Manifest;
 import android.content.Intent;
 import android.os.Message;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.bonepeople.android.sdcardcleaner.R;
 import com.bonepeople.android.sdcardcleaner.basic.BaseAppCompatActivity;
@@ -25,6 +27,7 @@ public class ScanActivity extends BaseAppCompatActivity implements View.OnClickL
     private static final String ACTION_START_CLEAN = "startClean";
     private static final String ACTION_STOP_CLEAN = "stopClean";
     private static final String ACTION_VIEW_FILE = "viewFile";
+    private static final int PERMISSION_STORAGE = 1;
     private static final int MSG_REFRESH = 1;
     private static final int REQUEST_FILE = 0;
     private TextView textView_state, textView_time;
@@ -52,6 +55,18 @@ public class ScanActivity extends BaseAppCompatActivity implements View.OnClickL
         button_right.setOnClickListener(this);
 
         handler.sendEmptyMessage(MSG_REFRESH);
+    }
+
+    @Override
+    protected void onRequestPermission(int requestCode, boolean granted) {
+        switch (requestCode) {
+            case PERMISSION_STORAGE:
+                if (granted)
+                    startScan();
+                else
+                    Toast.makeText(this, "没有权限，无法进行后续操作", Toast.LENGTH_SHORT).show();
+                break;
+        }
     }
 
     @Override
@@ -175,13 +190,20 @@ public class ScanActivity extends BaseAppCompatActivity implements View.OnClickL
         }
     }
 
+    private void startScan() {
+        FileManager.startScan();
+        handler.sendEmptyMessageDelayed(MSG_REFRESH, 150);
+    }
+
     @Override
     public void onClick(View v) {
         String[] tags = (String[]) v.getTag();
         switch (tags[0]) {
             case ACTION_START_SCAN:
-                FileManager.startScan();
-                handler.sendEmptyMessageDelayed(MSG_REFRESH, 150);
+                if (checkPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE))
+                    startScan();
+                else
+                    requestPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE, "需要存储空间的权限才能扫描文件", PERMISSION_STORAGE);
                 break;
             case ACTION_STOP_SCAN:
                 FileManager.stopScan();
