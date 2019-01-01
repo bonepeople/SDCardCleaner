@@ -2,6 +2,7 @@ package com.bonepeople.android.sdcardcleaner.activity;
 
 import android.content.Context;
 import android.content.Intent;
+import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
@@ -11,10 +12,15 @@ import com.bonepeople.android.sdcardcleaner.BuildConfig;
 import com.bonepeople.android.sdcardcleaner.R;
 import com.bonepeople.android.sdcardcleaner.widget.TitleBar;
 
+/**
+ * 设置页面
+ *
+ * @author bonepeople
+ */
 public class SettingActivity extends AppCompatActivity implements View.OnClickListener {
     private TextView textView_version;
 
-    public static void open(Context context) {
+    public static void open(@NonNull Context context) {
         context.startActivity(new Intent(context, SettingActivity.class));
     }
 
@@ -41,7 +47,7 @@ public class SettingActivity extends AppCompatActivity implements View.OnClickLi
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.textView_about:
-
+                AboutActivity.open(this);
                 break;
         }
     }

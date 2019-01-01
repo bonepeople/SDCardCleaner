@@ -13,5 +13,7 @@
     <color name="block_system">#A7A3A3</color>
     <color name="block_blank">#FFFFFF</color>
 
+    <color name="font_black_90">#E5000000</color>
+    <color name="font_black_60">#99000000</color>
     <color name="font_black_30">#48000000</color>
 </resources>
