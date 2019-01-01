@@ -189,7 +189,7 @@ public class MainActivity extends BaseAppCompatActivity implements View.OnClickL
                     startActivity(new Intent(this, PathListActivity.class).putExtra("mode", PathListActivity.MODE_CLEAN), bundle);
                     break;
                 case R.id.cardview_set:
-                    Toast.makeText(this, R.string.toast_comingSoon, Toast.LENGTH_SHORT).show();
+                    SettingActivity.open(this);
                     break;
             }
         }

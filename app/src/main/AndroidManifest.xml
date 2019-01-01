@@ -12,6 +12,11 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="false"
         android:theme="@style/AppTheme">
+        <service
+            android:name=".service.FileManager"
+            android:enabled="true"
+            android:exported="false" />
+
         <activity android:name=".activity.MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -28,11 +33,9 @@
         <activity
             android:name=".activity.PathListActivity"
             android:theme="@style/AppTheme.NoTitle" />
-
-        <service
-            android:name=".service.FileManager"
-            android:enabled="true"
-            android:exported="false" />
+        <activity
+            android:name=".activity.SettingActivity"
+            android:theme="@style/AppTheme.NoTitle" />
     </application>
 
 </manifest>

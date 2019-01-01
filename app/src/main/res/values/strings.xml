@@ -36,6 +36,7 @@
     <string name="caption_text_white">白名单</string>
     <string name="caption_text_black">黑名单</string>
     <string name="caption_text_set">设置</string>
+    <string name="caption_text_about">关于</string>
 
     <string name="caption_explain_mine">查看内部存储中的文件信息</string>
     <string name="caption_explain_white">单独指定不被清理的文件或文件夹</string>
@@ -52,6 +53,7 @@
     <string name="dialog_list_file_saving">正在更新保留的文件</string>
 
     <!--用于显示各种状态的描述-->
+    <string name="state_version">当前版本 %s</string>
     <string name="state_emptyView">空空如也</string>
     <string name="state_ready">还未进行扫描</string>
     <string name="state_scan_executing">正在扫描文件…</string>
