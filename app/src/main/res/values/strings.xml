@@ -37,6 +37,7 @@
     <string name="caption_text_black">黑名单</string>
     <string name="caption_text_set">设置</string>
     <string name="caption_text_about">关于</string>
+    <string name="caption_text_file">我的文件</string>
 
     <string name="caption_explain_mine">查看内部存储中的文件信息</string>
     <string name="caption_explain_white">单独指定不被清理的文件或文件夹</string>

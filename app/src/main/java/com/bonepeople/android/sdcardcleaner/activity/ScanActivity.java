@@ -216,7 +216,7 @@ public class ScanActivity extends BaseAppCompatActivity implements View.OnClickL
                 FileManager.stopClean();
                 break;
             case ACTION_VIEW_FILE:
-                startActivityForResult(new Intent(this, FileListActivity.class), REQUEST_FILE);
+                FileExplorerActivity.call(this, "", REQUEST_FILE);
                 break;
         }
     }

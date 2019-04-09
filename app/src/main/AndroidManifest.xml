@@ -39,6 +39,9 @@
         <activity
             android:name=".activity.AboutActivity"
             android:theme="@style/AppTheme.NoTitle" />
+        <activity
+            android:name=".activity.FileExplorerActivity"
+            android:theme="@style/AppTheme.NoTitle" />
     </application>
 
 </manifest>
