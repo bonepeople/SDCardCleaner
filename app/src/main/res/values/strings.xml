@@ -28,8 +28,8 @@
     <string name="caption_button_stopClean">停止清理</string>
     <string name="caption_button_viewFiles">查看文件</string>
     <string name="caption_button_delete">删除</string>
-    <string name="caption_button_clean">待清理</string>
-    <string name="caption_button_save">保留</string>
+    <string name="caption_button_clean">标记为垃圾</string>
+    <string name="caption_button_save">取消标记</string>
     <string name="caption_button_checkAll">全选</string>
 
     <string name="caption_text_mine">我的文件</string>

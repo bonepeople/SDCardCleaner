@@ -44,8 +44,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:contentDescription="@string/contentDescription_rubbishMark"
-        android:src="@drawable/buttonbar_clean"
-        app:layout_constraintBottom_toBottomOf="parent"
+        android:src="@drawable/icon_rubbish"
         app:layout_constraintEnd_toStartOf="@id/checkBox"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_goneMarginEnd="10dp" />

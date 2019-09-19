@@ -31,16 +31,23 @@
             tools:text="5959\156156\4894894\56\156\\\\1\56156\1\561\561564894156189456156156156156" />
     </HorizontalScrollView>
 
+    <View
+        android:id="@+id/line_top"
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="#E5E5E5"
+        app:layout_constraintTop_toBottomOf="@id/scrollView_path" />
+
     <android.support.v7.widget.RecyclerView
         android:id="@+id/recyclerView"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:transitionName="transition_body"
-        app:layout_constraintBottom_toTopOf="@+id/view_line_split"
-        app:layout_constraintTop_toBottomOf="@id/scrollView_path" />
+        app:layout_constraintBottom_toTopOf="@+id/line_bottom"
+        app:layout_constraintTop_toBottomOf="@id/line_top" />
 
     <View
-        android:id="@+id/view_line_split"
+        android:id="@+id/line_bottom"
         android:layout_width="match_parent"
         android:layout_height="1dp"
         android:background="#E5E5E5"
@@ -53,7 +60,8 @@
         android:gravity="center_vertical"
         android:orientation="horizontal"
         android:visibility="gone"
-        app:layout_constraintBottom_toBottomOf="parent">
+        app:layout_constraintBottom_toBottomOf="parent"
+        tools:visibility="visible">
 
         <TextView
             android:id="@+id/textView_delete"
@@ -77,8 +85,8 @@
             android:drawableTop="@drawable/buttonbar_clean"
             android:drawablePadding="3dp"
             android:gravity="center"
-            android:paddingStart="20dp"
-            android:paddingEnd="20dp"
+            android:paddingStart="10dp"
+            android:paddingEnd="10dp"
             android:text="@string/caption_button_clean"
             android:textColor="#666666"
             android:textSize="12sp" />
@@ -91,8 +99,8 @@
             android:drawableTop="@drawable/buttonbar_hold"
             android:drawablePadding="3dp"
             android:gravity="center"
-            android:paddingStart="20dp"
-            android:paddingEnd="20dp"
+            android:paddingStart="10dp"
+            android:paddingEnd="10dp"
             android:text="@string/caption_button_save"
             android:textColor="#666666"
             android:textSize="12sp" />

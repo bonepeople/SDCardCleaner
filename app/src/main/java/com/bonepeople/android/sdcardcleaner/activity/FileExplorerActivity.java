@@ -85,6 +85,7 @@ public class FileExplorerActivity extends AppCompatActivity implements View.OnCl
         findViewById(R.id.textView_clean).setOnClickListener(this);
         findViewById(R.id.textView_hold).setOnClickListener(this);
         findViewById(R.id.imageView_close).setOnClickListener(this);
+        checkBox_all.setOnClickListener(this);
     }
 
     private void initData() {
