@@ -1,6 +1,7 @@
 package com.bonepeople.android.sdcardcleaner.activity;
 
 import android.app.Activity;
+import android.app.ActivityOptions;
 import android.app.ProgressDialog;
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -16,6 +17,7 @@ import android.os.Bundle;
 import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Pair;
 import android.util.SparseArray;
 import android.view.View;
 import android.widget.CheckBox;
@@ -65,6 +67,19 @@ public class FileExplorerActivity extends AppCompatActivity implements View.OnCl
         Intent intent = new Intent(activity, FileExplorerActivity.class);
         intent.putExtra("path", filePath);
         activity.startActivityForResult(intent, requestCode);
+    }
+
+    /**
+     * 开启一个文件浏览界面
+     *
+     * @param filePath 所开界面所展示的文件路径，无路径则展示根目录
+     */
+    public static void call(@Nullable Activity activity, @NonNull String filePath, int requestCode, Bundle bundle) {
+        if (activity == null)
+            return;
+        Intent intent = new Intent(activity, FileExplorerActivity.class);
+        intent.putExtra("path", filePath);
+        activity.startActivityForResult(intent, requestCode, bundle);
     }
 
     @Override
@@ -312,7 +327,13 @@ public class FileExplorerActivity extends AppCompatActivity implements View.OnCl
                             SDFile clickFile = file.getChildren().get(position);
                             if (clickFile.isDirectory()) {
                                 files.put(clickFile.getPath(), clickFile);
-                                FileExplorerActivity.call(this, clickFile.getPath(), REQUEST_FILE);
+
+                                View view = recyclerView.findViewHolderForAdapterPosition(position).itemView;
+                                View textView_name = view.findViewById(R.id.textView_name);
+                                Pair<View, String> list = new Pair<>(view, "transition_body");
+                                Pair<View, String> name = new Pair<>(textView_name, "transition_title");
+                                Bundle bundle = ActivityOptions.makeSceneTransitionAnimation(this, list, name).toBundle();
+                                FileExplorerActivity.call(this, clickFile.getPath(), REQUEST_FILE, bundle);
                             }
                         }
                         break;
