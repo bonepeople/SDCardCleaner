@@ -2,12 +2,13 @@ package com.bonepeople.android.sdcardcleaner.widget;
 
 import android.content.Context;
 import android.os.Environment;
-import android.support.constraint.ConstraintLayout;
-import android.support.constraint.ConstraintSet;
 import android.text.format.Formatter;
 import android.transition.TransitionManager;
 import android.util.AttributeSet;
 import android.widget.TextView;
+
+import androidx.constraintlayout.widget.ConstraintLayout;
+import androidx.constraintlayout.widget.ConstraintSet;
 
 import com.bonepeople.android.sdcardcleaner.Global;
 import com.bonepeople.android.sdcardcleaner.R;

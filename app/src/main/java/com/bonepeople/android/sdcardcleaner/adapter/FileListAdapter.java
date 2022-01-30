@@ -1,8 +1,6 @@
 package com.bonepeople.android.sdcardcleaner.adapter;
 
 import android.animation.ArgbEvaluator;
-import android.support.percent.PercentRelativeLayout;
-import android.support.v7.widget.RecyclerView;
 import android.text.format.Formatter;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -10,6 +8,9 @@ import android.view.ViewGroup;
 import android.widget.CheckBox;
 import android.widget.ImageView;
 import android.widget.TextView;
+
+import androidx.constraintlayout.widget.ConstraintLayout;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.bonepeople.android.sdcardcleaner.R;
 import com.bonepeople.android.sdcardcleaner.models.SDFile;
@@ -119,9 +120,9 @@ public class FileListAdapter extends RecyclerView.Adapter<FileListAdapter.ViewHo
         SDFile temp_data = data.getChildren().get(position);
         //设置文件大小比例条
         float percent = (float) NumberUtil.div(temp_data.get_sizePercent(), 100, 2);
-        PercentRelativeLayout.LayoutParams params = new PercentRelativeLayout.LayoutParams(0, 0);
-        params.getPercentLayoutInfo().widthPercent = percent;
-        holder.view_percent.setLayoutParams(params);
+        ConstraintLayout.LayoutParams layoutParams = (ConstraintLayout.LayoutParams) holder.view_percent.getLayoutParams();
+        layoutParams.matchConstraintPercentWidth = percent;
+        holder.view_percent.setLayoutParams(layoutParams);
         int color = (int) evaluator.evaluate(percent, COLOR_START, COLOR_END);
         holder.view_percent.setBackgroundColor(color);
         //设置清理标志
