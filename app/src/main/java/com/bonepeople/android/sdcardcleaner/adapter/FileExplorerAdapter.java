@@ -215,13 +215,13 @@ public class FileExplorerAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
             return TYPE_ITEM;
     }
 
-    private class ViewHolder_empty extends RecyclerView.ViewHolder {
+    private static class ViewHolder_empty extends RecyclerView.ViewHolder {
         private ViewHolder_empty(View itemView) {
             super(itemView);
         }
     }
 
-    private class ViewHolder_loading extends RecyclerView.ViewHolder {
+    private static class ViewHolder_loading extends RecyclerView.ViewHolder {
         private ViewHolder_loading(View itemView) {
             super(itemView);
         }

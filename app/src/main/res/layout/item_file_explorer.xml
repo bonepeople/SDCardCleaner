@@ -17,16 +17,21 @@
         app:layout_constraintTop_toTopOf="parent"
         tools:background="#669966" />
 
-    <View
-        android:id="@+id/view_percent"
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="0dp"
         android:layout_height="match_parent"
         android:layout_marginStart="10dp"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0"
-        app:layout_constraintStart_toEndOf="@id/imageView_type"
-        tools:background="#196E9E"
-        tools:layout_constraintWidth_percent="0.1" />
+        app:layout_constraintStart_toEndOf="@id/imageView_type">
+
+        <View
+            android:id="@+id/view_percent"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintWidth_percent="0.1"
+            tools:background="#196E9E" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
     <CheckBox
         android:id="@+id/checkBox"
@@ -53,11 +58,12 @@
         android:id="@+id/textView_name"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
+        android:layout_marginStart="10dp"
         android:ellipsize="end"
         android:maxLines="1"
         app:layout_constraintBottom_toTopOf="@id/textView_description"
         app:layout_constraintEnd_toStartOf="@id/imageView_rubbish"
-        app:layout_constraintStart_toStartOf="@id/view_percent"
+        app:layout_constraintStart_toEndOf="@id/imageView_type"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_chainStyle="packed" />
 
