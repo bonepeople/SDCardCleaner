@@ -1,19 +1,56 @@
 apply plugin: 'com.android.application'
 
 android {
-    compileSdkVersion 31
+    compileSdk 31
     defaultConfig {
         applicationId "com.bonepeople.android.sdcardcleaner"
-        minSdkVersion 21
-        targetSdkVersion 31
+        minSdk 21
+        targetSdk 31
         versionCode 4
         versionName "1.2.1"
     }
-    buildTypes {
+
+    signingConfigs {
         release {
-            minifyEnabled false
-            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+            storeFile file('app.jks')
+            storePassword 'F9VyTq8HwC0gBRObN8EAP2EGOSPlLWE6'
+            keyAlias 'release'
+            keyPassword 'F9VyTq8HwC0gBRObN8EAP2EGOSPlLWE6'
         }
+    }
+
+    buildTypes {
+        debug {
+            minifyEnabled false
+            signingConfig signingConfigs.release
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        }
+        release {
+            minifyEnabled true
+            shrinkResources true
+            signingConfig signingConfigs.release
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        }
+    }
+    buildTypes.all {
+        buildConfigField "long", "buildTime", "${System.currentTimeMillis()}"
+    }
+
+    applicationVariants.all { variant ->
+        variant.outputs.all { output ->
+            def type = variant.buildType.name
+            def releaseApkName = rootProject.name + '_' + type + "_" + versionName + '.apk'
+            outputFileName = releaseApkName
+        }
+    }
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+
+    buildFeatures {
+        viewBinding true
     }
 }
 
