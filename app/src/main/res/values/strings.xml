@@ -76,7 +76,7 @@
     <string name="text_about_subject_statement">免责声明</string>
     <string name="text_about_content_feature1">统计系统内部存储中文件所占的空间及文件数量</string>
     <string name="text_about_content_feature2">快速清理目标文件</string>
-    <string name="text_about_content_require1">需要Android 5.0 及以上版本</string>
+    <string name="text_about_content_require1">需要Android 6.0 及以上版本</string>
     <string name="text_about_content_require2">需要读写手机存储的权限</string>
     <string name="text_about_content_source1">软件作者：bonepeople</string>
     <string name="text_about_content_source2">源码地址：https://github.com/bonepeople/SDCardCleaner</string>
