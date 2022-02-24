@@ -39,10 +39,10 @@ public class MainActivity extends BaseAppCompatActivity implements View.OnClickL
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        cardView_scan = findViewById(R.id.cardview_scan);
-        cardView_white = findViewById(R.id.cardview_white);
-        cardView_black = findViewById(R.id.cardview_black);
-        cardView_set = findViewById(R.id.cardview_set);
+        cardView_scan = findViewById(R.id.cardView_scan);
+        cardView_white = findViewById(R.id.cardView_white);
+        cardView_black = findViewById(R.id.cardView_black);
+        cardView_set = findViewById(R.id.cardView_set);
 
         cardView_scan.setOnClickListener(this);
         cardView_white.setOnClickListener(this);
@@ -168,7 +168,7 @@ public class MainActivity extends BaseAppCompatActivity implements View.OnClickL
             Pair<View, String> title, body;
             Bundle bundle;
             switch (v.getId()) {
-                case R.id.cardview_scan:
+                case R.id.cardView_scan:
                     if (Environment.getExternalStorageState().equals(Environment.MEDIA_MOUNTED)) {
                         title = Pair.create(findViewById(R.id.textView_scan), "transition_title");
                         body = Pair.create((View) cardView_scan, "transition_body");
@@ -177,19 +177,19 @@ public class MainActivity extends BaseAppCompatActivity implements View.OnClickL
                     } else
                         Toast.makeText(this, R.string.toast_sdcard_error, Toast.LENGTH_SHORT).show();
                     break;
-                case R.id.cardview_white:
+                case R.id.cardView_white:
                     title = Pair.create(findViewById(R.id.textView_white), "transition_title");
                     body = Pair.create((View) cardView_white, "transition_body");
                     bundle = ActivityOptions.makeSceneTransitionAnimation(this, title, body).toBundle();
                     startActivity(new Intent(this, PathListActivity.class).putExtra("mode", PathListActivity.MODE_SAVE), bundle);
                     break;
-                case R.id.cardview_black:
+                case R.id.cardView_black:
                     title = Pair.create(findViewById(R.id.textView_black), "transition_title");
                     body = Pair.create((View) cardView_black, "transition_body");
                     bundle = ActivityOptions.makeSceneTransitionAnimation(this, title, body).toBundle();
                     startActivity(new Intent(this, PathListActivity.class).putExtra("mode", PathListActivity.MODE_CLEAN), bundle);
                     break;
-                case R.id.cardview_set:
+                case R.id.cardView_set:
                     SettingActivity.open(this);
                     break;
             }
