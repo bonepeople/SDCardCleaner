@@ -11,11 +11,15 @@
         android:label="@string/app_name"
         android:supportsRtl="false"
         android:theme="@style/AppTheme">
+
         <service
             android:name=".service.FileManager"
             android:enabled="true"
             android:exported="false" />
 
+        <activity
+            android:name=".activity.HomeActivity"
+            android:exported="false" />
         <activity
             android:name=".activity.MainActivity"
             android:exported="true">
@@ -52,4 +56,5 @@
             android:name=".activity.FileExplorerActivity"
             android:theme="@style/AppTheme.NoTitle" />
     </application>
+
 </manifest>

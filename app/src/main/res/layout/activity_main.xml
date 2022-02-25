@@ -205,5 +205,24 @@
                     app:layout_constraintTop_toBottomOf="@id/textView_set" />
             </androidx.constraintlayout.widget.ConstraintLayout>
         </androidx.cardview.widget.CardView>
+
+        <androidx.cardview.widget.CardView
+            android:id="@+id/cardView_home"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="5dp"
+            android:foreground="?android:selectableItemBackground"
+            app:cardBackgroundColor="#6EBD3B"
+            app:cardElevation="5dp"
+            app:contentPadding="10dp">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:maxLines="1"
+                android:text="@string/caption_text_home"
+                android:textColor="#333333"
+                android:textSize="25sp" />
+        </androidx.cardview.widget.CardView>
     </LinearLayout>
 </ScrollView>

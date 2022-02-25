@@ -43,6 +43,7 @@ public class MainActivity extends BaseAppCompatActivity implements View.OnClickL
         cardView_white = findViewById(R.id.cardView_white);
         cardView_black = findViewById(R.id.cardView_black);
         cardView_set = findViewById(R.id.cardView_set);
+        findViewById(R.id.cardView_home).setOnClickListener(this);
 
         cardView_scan.setOnClickListener(this);
         cardView_white.setOnClickListener(this);
@@ -191,6 +192,9 @@ public class MainActivity extends BaseAppCompatActivity implements View.OnClickL
                     break;
                 case R.id.cardView_set:
                     SettingActivity.open(this);
+                    break;
+                case R.id.cardView_home:
+                    HomeActivity.Companion.open(this);
                     break;
             }
         }

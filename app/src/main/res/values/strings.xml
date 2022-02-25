@@ -32,6 +32,7 @@
     <string name="caption_button_save">取消标记</string>
     <string name="caption_button_checkAll">全选</string>
 
+    <string name="caption_text_home">新版界面</string>
     <string name="caption_text_mine">我的文件</string>
     <string name="caption_text_white">白名单</string>
     <string name="caption_text_black">黑名单</string>
