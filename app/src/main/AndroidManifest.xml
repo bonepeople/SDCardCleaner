@@ -19,7 +19,8 @@
 
         <activity
             android:name=".activity.HomeActivity"
-            android:exported="false" />
+            android:exported="false"
+            android:theme="@style/AppTheme.NoTitle" />
         <activity
             android:name=".activity.MainActivity"
             android:exported="true">
