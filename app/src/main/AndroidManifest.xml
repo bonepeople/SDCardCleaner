@@ -20,8 +20,7 @@
 
         <activity
             android:name=".activity.HomeActivity"
-            android:exported="false"
-            android:theme="@style/AppTheme.NoTitle" />
+            android:exported="false" />
         <activity
             android:name=".activity.MainActivity"
             android:exported="true">
@@ -39,23 +38,11 @@
                 <data android:scheme="bone" />
             </intent-filter>
         </activity>
-        <activity
-            android:name=".activity.ScanActivity"
-            android:theme="@style/AppTheme.NoTitle" />
-        <activity
-            android:name=".activity.FileListActivity"
-            android:theme="@style/AppTheme.NoTitle" />
-        <activity
-            android:name=".activity.PathListActivity"
-            android:theme="@style/AppTheme.NoTitle" />
-        <activity
-            android:name=".activity.SettingActivity"
-            android:theme="@style/AppTheme.NoTitle" />
-        <activity
-            android:name=".activity.AboutActivity"
-            android:theme="@style/AppTheme.NoTitle" />
-        <activity
-            android:name=".activity.FileExplorerActivity"
-            android:theme="@style/AppTheme.NoTitle" />
+        <activity android:name=".activity.ScanActivity" />
+        <activity android:name=".activity.FileListActivity" />
+        <activity android:name=".activity.PathListActivity" />
+        <activity android:name=".activity.SettingActivity" />
+        <activity android:name=".activity.AboutActivity" />
+        <activity android:name=".activity.FileExplorerActivity" />
     </application>
 </manifest>
