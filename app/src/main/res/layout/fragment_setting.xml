@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
@@ -25,4 +26,24 @@
         android:text="@string/caption_text_black"
         app:drawableEndCompat="@drawable/arrow_right"
         app:layout_constraintTop_toBottomOf="@id/textView_white" />
+
+    <TextView
+        android:id="@+id/textView_about"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="@dimen/pagePadding"
+        android:text="@string/caption_text_about"
+        app:drawableEndCompat="@drawable/arrow_right"
+        app:layout_constraintTop_toBottomOf="@id/textView_black" />
+
+    <TextView
+        android:id="@+id/textView_version"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="20dp"
+        android:gravity="center"
+        android:textColor="@color/font_black_30"
+        android:textSize="12sp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        tools:text="version" />
 </androidx.constraintlayout.widget.ConstraintLayout>
