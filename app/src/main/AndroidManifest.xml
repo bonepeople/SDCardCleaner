@@ -39,7 +39,6 @@
             </intent-filter>
         </activity>
         <activity android:name=".activity.ScanActivity" />
-        <activity android:name=".activity.FileListActivity" />
         <activity android:name=".activity.PathListActivity" />
         <activity android:name=".activity.SettingActivity" />
         <activity android:name=".activity.AboutActivity" />
