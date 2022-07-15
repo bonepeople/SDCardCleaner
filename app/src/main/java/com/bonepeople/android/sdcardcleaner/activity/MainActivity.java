@@ -179,16 +179,10 @@ public class MainActivity extends BaseAppCompatActivity implements View.OnClickL
                         Toast.makeText(this, R.string.toast_sdcard_error, Toast.LENGTH_SHORT).show();
                     break;
                 case R.id.cardView_white:
-                    title = Pair.create(findViewById(R.id.textView_white), "transition_title");
-                    body = Pair.create((View) cardView_white, "transition_body");
-                    bundle = ActivityOptions.makeSceneTransitionAnimation(this, title, body).toBundle();
-                    startActivity(new Intent(this, PathListActivity.class).putExtra("mode", PathListActivity.MODE_SAVE), bundle);
+
                     break;
                 case R.id.cardView_black:
-                    title = Pair.create(findViewById(R.id.textView_black), "transition_title");
-                    body = Pair.create((View) cardView_black, "transition_body");
-                    bundle = ActivityOptions.makeSceneTransitionAnimation(this, title, body).toBundle();
-                    startActivity(new Intent(this, PathListActivity.class).putExtra("mode", PathListActivity.MODE_CLEAN), bundle);
+
                     break;
                 case R.id.cardView_set:
                     SettingActivity.open(this);

@@ -1,6 +1,7 @@
 package com.bonepeople.android.sdcardcleaner.models;
 
 import com.bonepeople.android.sdcardcleaner.Global;
+import com.bonepeople.android.sdcardcleaner.global.CleanPathManager;
 import com.bonepeople.android.sdcardcleaner.service.FileManager;
 import com.bonepeople.android.sdcardcleaner.utils.NumberUtil;
 
@@ -36,9 +37,9 @@ public class SDFile {
         path = file.getAbsolutePath();
 
         Global.setFileCount_all(1);
-        if (Global.isSave(path)) {
+        if (CleanPathManager.INSTANCE.getWhiteList().contains(path)) {
             rubbish = false;
-        } else if (Global.isClean(path)) {
+        } else if (CleanPathManager.INSTANCE.getBlackList().contains(path)) {
             rubbish = true;
             Global.setFileCount_rubbish(1);
         } else if (parent != null && parent.isRubbish()) {
@@ -178,12 +179,12 @@ public class SDFile {
      */
     public void updateRubbish() {
         if (rubbish) {//之前需要被清理-true
-            if (Global.isSave(path)) {
+            if (CleanPathManager.INSTANCE.getWhiteList().contains(path)) {
                 rubbish = false;
                 Global.setFileCount_rubbish(-1);
                 if (!directory)
                     Global.setFileSize_rubbish(-size);
-            } else if (Global.isClean(path)) {
+            } else if (CleanPathManager.INSTANCE.getBlackList().contains(path)) {
                 rubbish = true;
             } else if (parent != null && parent.isRubbish()) {
                 rubbish = true;
@@ -194,9 +195,9 @@ public class SDFile {
                     Global.setFileSize_rubbish(-size);
             }
         } else {//之前需要被保留-false
-            if (Global.isSave(path)) {
+            if (CleanPathManager.INSTANCE.getWhiteList().contains(path)) {
                 rubbish = false;
-            } else if (Global.isClean(path)) {
+            } else if (CleanPathManager.INSTANCE.getBlackList().contains(path)) {
                 rubbish = true;
                 Global.setFileCount_rubbish(1);
                 if (!directory)

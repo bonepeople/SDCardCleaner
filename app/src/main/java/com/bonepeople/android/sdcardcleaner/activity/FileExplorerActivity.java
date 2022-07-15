@@ -28,6 +28,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.bonepeople.android.sdcardcleaner.Global;
 import com.bonepeople.android.sdcardcleaner.R;
 import com.bonepeople.android.sdcardcleaner.adapter.FileExplorerAdapter;
+import com.bonepeople.android.sdcardcleaner.global.CleanPathManager;
 import com.bonepeople.android.sdcardcleaner.models.SDFile;
 import com.bonepeople.android.sdcardcleaner.service.FileManager;
 import com.bonepeople.android.sdcardcleaner.thread.DeleteFileThread;
@@ -192,7 +193,7 @@ public class FileExplorerActivity extends AppCompatActivity implements View.OnCl
             cleanPathList.add(file.getChildren().get(position).getPath());
             cleanFiles.put(position, file.getChildren().get(position));
         }
-        Global.add_cleanList(cleanPathList);
+        CleanPathManager.INSTANCE.addBlackList(cleanPathList);
         showProgress(ACTION_CLEAN, cleanFiles.size());
         new UpdateRubbishThread(cleanFiles).start();
     }
@@ -207,7 +208,7 @@ public class FileExplorerActivity extends AppCompatActivity implements View.OnCl
             savePathList.add(file.getChildren().get(position).getPath());
             saveFiles.put(position, file.getChildren().get(position));
         }
-        Global.add_saveList(savePathList);
+        CleanPathManager.INSTANCE.addWhiteList(savePathList);
         showProgress(ACTION_HOLD, saveFiles.size());
         new UpdateRubbishThread(saveFiles).start();
     }
