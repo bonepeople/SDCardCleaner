@@ -46,9 +46,6 @@ public class MainActivity extends BaseAppCompatActivity implements View.OnClickL
         findViewById(R.id.cardView_home).setOnClickListener(this);
 
         cardView_scan.setOnClickListener(this);
-        cardView_white.setOnClickListener(this);
-        cardView_black.setOnClickListener(this);
-        cardView_set.setOnClickListener(this);
 
         Global.init(getApplicationContext());
     }
@@ -177,15 +174,6 @@ public class MainActivity extends BaseAppCompatActivity implements View.OnClickL
                         startActivity(new Intent(this, ScanActivity.class), bundle);
                     } else
                         Toast.makeText(this, R.string.toast_sdcard_error, Toast.LENGTH_SHORT).show();
-                    break;
-                case R.id.cardView_white:
-
-                    break;
-                case R.id.cardView_black:
-
-                    break;
-                case R.id.cardView_set:
-                    SettingActivity.open(this);
                     break;
                 case R.id.cardView_home:
                     HomeActivity.Companion.open(this);

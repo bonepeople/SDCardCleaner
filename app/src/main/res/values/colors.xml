@@ -4,8 +4,6 @@
     <color name="colorPrimaryDark">#303F9F</color>
     <color name="colorAccent">#FF4081</color>
 
-    <color name="background_white">#FFFFFF</color>
-
     <color name="line_gray">#999999</color>
 
     <color name="block_rubbish">#FFF23B</color>
