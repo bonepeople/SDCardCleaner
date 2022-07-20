@@ -11,6 +11,8 @@ object FileTreeManager {
     const val STATE_SCAN_EXECUTING = 1
     const val STATE_SCAN_STOPPING = 2
     const val STATE_SCAN_FINISH = 3
+    val totalSpace by lazy { Environment.getExternalStorageDirectory().totalSpace }
+    val freeSpace by lazy { Environment.getExternalStorageDirectory().freeSpace }
     var rootFile: FileTreeInfo? = null
     var rubbishCount = 0L
     var rubbishSize = 0L

@@ -38,6 +38,6 @@ class HomeFragment : ViewBindingFragment<FragmentHomeBinding>() {
     }
 
     private fun startScan() {
-        views.storageSummary.refresh()
+        views.storageSummary.updateView()
     }
 }
