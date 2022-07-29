@@ -25,10 +25,10 @@ class StorageSummary(context: Context, attrs: AttributeSet?) : ConstraintLayout(
             }
         }
         percentConstraintSet.clone(views.blockPercent)
-        views.textViewCountSystem.text = context.getString(R.string.state_fileCount_system, Formatter.formatFileSize(context, 0))
-        views.textViewCountBlank.text = context.getString(R.string.state_fileCount_blank, Formatter.formatFileSize(context, 0))
-        views.textViewCountFile.text = context.getString(R.string.state_fileCount_file, Formatter.formatFileSize(context, 0), 0)
-        views.textViewCountRubbish.text = context.getString(R.string.state_fileCount_rubbish, Formatter.formatFileSize(context, 0), 0)
+        views.textViewSystem.text = context.getString(R.string.state_fileCount_system, Formatter.formatFileSize(context, 0))
+        views.textViewBlank.text = context.getString(R.string.state_fileCount_blank, Formatter.formatFileSize(context, 0))
+        views.textViewFile.text = context.getString(R.string.state_fileCount_file, Formatter.formatFileSize(context, 0), 0)
+        views.textViewRubbish.text = context.getString(R.string.state_fileCount_rubbish, Formatter.formatFileSize(context, 0), 0)
     }
 
     fun updateView() {
@@ -39,14 +39,14 @@ class StorageSummary(context: Context, attrs: AttributeSet?) : ConstraintLayout(
         val systemPercent = (1 - NumberUtil.div(manager.freeSpace.toDouble(), manager.totalSpace.toDouble(), 3)).toFloat()
 
         TransitionManager.beginDelayedTransition(views.blockPercent)
-        percentConstraintSet.setGuidelinePercent(R.id.guideLine_rubbish, rubbishPercent)
-        percentConstraintSet.setGuidelinePercent(R.id.guideLine_file, filePercent)
-        percentConstraintSet.setGuidelinePercent(R.id.guideLine_system, systemPercent)
+        percentConstraintSet.setGuidelinePercent(R.id.guideLineRubbish, rubbishPercent)
+        percentConstraintSet.setGuidelinePercent(R.id.guideLineFile, filePercent)
+        percentConstraintSet.setGuidelinePercent(R.id.guideLineSystem, systemPercent)
         percentConstraintSet.applyTo(views.blockPercent)
 
-        views.textViewCountSystem.text = context.getString(R.string.state_fileCount_system, Formatter.formatFileSize(context, manager.totalSpace - manager.freeSpace - allFileSize))
-        views.textViewCountBlank.text = context.getString(R.string.state_fileCount_blank, Formatter.formatFileSize(context, manager.freeSpace))
-        views.textViewCountFile.text = context.getString(R.string.state_fileCount_file, Formatter.formatFileSize(context, allFileSize), allFileCount)
-        views.textViewCountRubbish.text = context.getString(R.string.state_fileCount_rubbish, Formatter.formatFileSize(context, manager.rubbishSize), manager.rubbishCount)
+        views.textViewSystem.text = context.getString(R.string.state_fileCount_system, Formatter.formatFileSize(context, manager.totalSpace - manager.freeSpace - allFileSize))
+        views.textViewBlank.text = context.getString(R.string.state_fileCount_blank, Formatter.formatFileSize(context, manager.freeSpace))
+        views.textViewFile.text = context.getString(R.string.state_fileCount_file, Formatter.formatFileSize(context, allFileSize), allFileCount)
+        views.textViewRubbish.text = context.getString(R.string.state_fileCount_rubbish, Formatter.formatFileSize(context, manager.rubbishSize), manager.rubbishCount)
     }
 }

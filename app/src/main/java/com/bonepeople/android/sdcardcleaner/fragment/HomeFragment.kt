@@ -23,7 +23,7 @@ class HomeFragment : ViewBindingFragment<FragmentHomeBinding>() {
         ViewTitleBinding.bind(views.titleView).run {
             imageViewTitleAction.setImageResource(R.drawable.icon_set)
             imageViewTitleAction.visibility = View.VISIBLE
-            imageViewTitleAction.singleClick { StandardActivity.open(activity, SettingFragment()) }
+            imageViewTitleAction.singleClick { StandardActivity.open(SettingFragment()) }
         }
     }
 

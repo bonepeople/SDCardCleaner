@@ -10,7 +10,7 @@
         layout="@layout/view_title" />
 
     <TextView
-        android:id="@+id/textView_white"
+        android:id="@+id/textViewWhite"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:padding="@dimen/pagePadding"
@@ -19,25 +19,25 @@
         app:layout_constraintTop_toBottomOf="@id/titleView" />
 
     <TextView
-        android:id="@+id/textView_black"
+        android:id="@+id/textViewBlack"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:padding="@dimen/pagePadding"
         android:text="@string/caption_text_black"
         app:drawableEndCompat="@drawable/arrow_right"
-        app:layout_constraintTop_toBottomOf="@id/textView_white" />
+        app:layout_constraintTop_toBottomOf="@id/textViewWhite" />
 
     <TextView
-        android:id="@+id/textView_about"
+        android:id="@+id/textViewAbout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:padding="@dimen/pagePadding"
         android:text="@string/caption_text_about"
         app:drawableEndCompat="@drawable/arrow_right"
-        app:layout_constraintTop_toBottomOf="@id/textView_black" />
+        app:layout_constraintTop_toBottomOf="@id/textViewBlack" />
 
     <TextView
-        android:id="@+id/textView_version"
+        android:id="@+id/textViewVersion"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginBottom="20dp"

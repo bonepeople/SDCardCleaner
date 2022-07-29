@@ -16,9 +16,9 @@ class SettingFragment : ViewBindingFragment<FragmentSettingBinding>() {
         ViewTitleBinding.bind(views.titleView).run {
             textViewTitleName.setText(R.string.caption_text_set)
         }
-        views.textViewWhite.singleClick { StandardActivity.open(activity, CleanPathListFragment.getWhiteList()) }
-        views.textViewBlack.singleClick { StandardActivity.open(activity, CleanPathListFragment.getBlackList()) }
-        views.textViewAbout.singleClick { StandardActivity.open(activity, AboutFragment()) }
+        views.textViewWhite.singleClick { StandardActivity.open(CleanPathListFragment.getWhiteList()) }
+        views.textViewBlack.singleClick { StandardActivity.open(CleanPathListFragment.getBlackList()) }
+        views.textViewAbout.singleClick { StandardActivity.open(AboutFragment()) }
         views.textViewVersion.run {
             val versionName = if (ApplicationHolder.debug) "${ApplicationHolder.getVersionName()} - debug" else ApplicationHolder.getVersionName()
             val buildTime = AppTime.getDateTimeString(App.BUILD_TIME)
