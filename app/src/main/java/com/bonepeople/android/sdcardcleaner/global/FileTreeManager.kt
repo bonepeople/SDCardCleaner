@@ -3,35 +3,52 @@ package com.bonepeople.android.sdcardcleaner.global
 import android.os.Environment
 import com.bonepeople.android.sdcardcleaner.data.FileTreeInfo
 import com.bonepeople.android.widget.CoroutinesHolder
+import com.bonepeople.android.widget.util.AppTime
 import kotlinx.coroutines.launch
 import java.io.File
 
 object FileTreeManager {
-    const val STATE_READY = 0
-    const val STATE_SCAN_EXECUTING = 1
-    const val STATE_SCAN_STOPPING = 2
-    const val STATE_SCAN_FINISH = 3
-    val totalSpace by lazy { Environment.getExternalStorageDirectory().totalSpace }
-    val freeSpace by lazy { Environment.getExternalStorageDirectory().freeSpace }
-    var rootFile: FileTreeInfo? = null
-    var rubbishCount = 0L
-    var rubbishSize = 0L
-    var state = STATE_READY
+    object STATE {
+        const val READY = 0
+        const val SCAN_EXECUTING = 1
+        const val SCAN_STOPPING = 2
+        const val SCAN_FINISH = 3
+    }
+
+    object Summary {
+        val totalSpace by lazy { Environment.getExternalStorageDirectory().totalSpace }
+        val freeSpace by lazy { Environment.getExternalStorageDirectory().freeSpace }
+        var rootFile: FileTreeInfo? = null
+        var rubbishCount = 0L
+        var rubbishSize = 0L
+    }
+
+    var currentState = STATE.READY
+    private var startTime = 0L
+    private var endTime = 0L
+
+    fun getProgressTimeString(): String {
+        if (currentState != STATE.SCAN_FINISH) endTime = System.currentTimeMillis()
+        val time = endTime - startTime
+        return "(${AppTime.getTimeString(time)}秒)"
+    }
 
     fun startScan() {
-        state = STATE_SCAN_EXECUTING
+        currentState = STATE.SCAN_EXECUTING
         CoroutinesHolder.default.launch {
-            rubbishCount = 0
-            rubbishSize = 0
+            startTime = System.currentTimeMillis()
+            Summary.rubbishCount = 0
+            Summary.rubbishSize = 0
             val file = Environment.getExternalStorageDirectory()
-            rootFile = FileTreeInfo()
-            scanFile(null, rootFile!!, file)
-            state = STATE_SCAN_FINISH
+            Summary.rootFile = FileTreeInfo()
+            scanFile(null, Summary.rootFile!!, file)
+            currentState = STATE.SCAN_FINISH
+            endTime = System.currentTimeMillis()
         }
     }
 
     fun stopScan() {
-        state = STATE_SCAN_STOPPING
+        currentState = STATE.SCAN_STOPPING
     }
 
     private fun scanFile(parentFile: FileTreeInfo?, fileInfo: FileTreeInfo, file: File) {
@@ -47,8 +64,8 @@ object FileTreeManager {
             }
             CleanPathManager.blackList.contains(fileInfo.path), fileInfo.parent?.rubbish -> {
                 fileInfo.rubbish = true
-                rubbishCount++
-                rubbishSize += fileInfo.size
+                Summary.rubbishCount++
+                Summary.rubbishSize += fileInfo.size
             }
             else -> {
                 fileInfo.rubbish = false
@@ -59,7 +76,7 @@ object FileTreeManager {
 
         if (fileInfo.directory) {
             file.listFiles()?.forEach {
-                if (state == STATE_SCAN_EXECUTING) {
+                if (currentState == STATE.SCAN_EXECUTING) {
                     scanFile(fileInfo, FileTreeInfo(), it)
                 }
             }

@@ -32,16 +32,21 @@ class HomeFragment : ViewBindingFragment<FragmentHomeBinding>() {
     }
 
     private fun updateView() {
-        if (state != FileTreeManager.state) {
+        if (state != FileTreeManager.currentState) {
             updateState()
         }
+        val time = when (state) {
+            FileTreeManager.STATE.READY -> ""
+            else -> FileTreeManager.getProgressTimeString()
+        }
+        views.textViewTime.text = time
         views.storageSummary.updateView()
     }
 
     private fun updateState() {
-        state = FileTreeManager.state
+        state = FileTreeManager.currentState
         when (state) {
-            FileTreeManager.STATE_READY -> {
+            FileTreeManager.STATE.READY -> {
                 views.textViewState.setText(R.string.state_ready)
                 views.buttonTop.setText(R.string.caption_button_startScan)
                 views.buttonTop.singleClick { startScan() }
@@ -49,7 +54,7 @@ class HomeFragment : ViewBindingFragment<FragmentHomeBinding>() {
                 views.buttonLeft.visibility = Button.GONE
                 views.buttonRight.visibility = Button.GONE
             }
-            FileTreeManager.STATE_SCAN_EXECUTING -> {
+            FileTreeManager.STATE.SCAN_EXECUTING -> {
                 views.textViewState.setText(R.string.state_scan_executing)
                 views.buttonTop.setText(R.string.caption_button_stopScan)
                 views.buttonTop.singleClick { stopScan() }
@@ -57,13 +62,13 @@ class HomeFragment : ViewBindingFragment<FragmentHomeBinding>() {
                 views.buttonLeft.visibility = Button.GONE
                 views.buttonRight.visibility = Button.GONE
             }
-            FileTreeManager.STATE_SCAN_STOPPING -> {
+            FileTreeManager.STATE.SCAN_STOPPING -> {
                 views.textViewState.setText(R.string.state_scan_stopping)
                 views.buttonTop.visibility = Button.GONE
                 views.buttonLeft.visibility = Button.GONE
                 views.buttonRight.visibility = Button.GONE
             }
-            FileTreeManager.STATE_SCAN_FINISH -> {
+            FileTreeManager.STATE.SCAN_FINISH -> {
                 views.textViewState.setText(R.string.state_scan_finish)
                 views.buttonTop.setText(R.string.caption_button_reScan)
                 views.buttonLeft.setText(R.string.caption_button_startClean)
@@ -92,7 +97,6 @@ class HomeFragment : ViewBindingFragment<FragmentHomeBinding>() {
 
     private fun stopScan() {
         FileTreeManager.stopScan()
-
     }
 
     private fun startClean() {
@@ -109,10 +113,12 @@ class HomeFragment : ViewBindingFragment<FragmentHomeBinding>() {
 
     private fun autoFresh() {
         launch {
-            do {
-                delay(150)
+            updateView()
+            while (FileTreeManager.currentState != FileTreeManager.STATE.SCAN_FINISH) {
+                delay(500)
                 updateView()
-            } while (FileTreeManager.state != FileTreeManager.STATE_SCAN_FINISH)
+            }
+            delay(500)
             updateView()
         }
     }

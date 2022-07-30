@@ -10,7 +10,7 @@ import androidx.constraintlayout.widget.ConstraintSet
 import androidx.core.view.children
 import com.bonepeople.android.sdcardcleaner.R
 import com.bonepeople.android.sdcardcleaner.databinding.ViewStorageSummaryBinding
-import com.bonepeople.android.sdcardcleaner.global.FileTreeManager as manager
+import com.bonepeople.android.sdcardcleaner.global.FileTreeManager.Summary as manager
 import com.bonepeople.android.sdcardcleaner.utils.NumberUtil
 
 class StorageSummary(context: Context, attrs: AttributeSet?) : ConstraintLayout(context, attrs) {
