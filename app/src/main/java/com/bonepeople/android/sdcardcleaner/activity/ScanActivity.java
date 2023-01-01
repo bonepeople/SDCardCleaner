@@ -2,8 +2,12 @@ package com.bonepeople.android.sdcardcleaner.activity;
 
 import android.Manifest;
 import android.content.Intent;
+import android.net.Uri;
+import android.os.Build;
+import android.os.Environment;
 import android.os.Message;
 import android.os.Bundle;
+import android.provider.Settings;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
@@ -200,10 +204,18 @@ public class ScanActivity extends BaseAppCompatActivity implements View.OnClickL
         String[] tags = (String[]) v.getTag();
         switch (tags[0]) {
             case ACTION_START_SCAN:
-                if (checkPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE))
-                    startScan();
-                else
-                    requestPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE, "需要存储空间的权限才能扫描文件", PERMISSION_STORAGE);
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+                    if (Environment.isExternalStorageManager()) {
+                        startScan();
+                    } else {
+                        startActivity(new Intent(Settings.ACTION_MANAGE_APP_ALL_FILES_ACCESS_PERMISSION).setData(Uri.parse("package:" + getPackageName())));
+                    }
+                } else {
+                    if (checkPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE))
+                        startScan();
+                    else
+                        requestPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE, "需要存储空间的权限才能扫描文件", PERMISSION_STORAGE);
+                }
                 break;
             case ACTION_STOP_SCAN:
                 FileManager.stopScan();
