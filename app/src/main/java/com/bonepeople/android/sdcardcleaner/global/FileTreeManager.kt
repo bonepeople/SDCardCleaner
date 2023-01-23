@@ -2,6 +2,7 @@ package com.bonepeople.android.sdcardcleaner.global
 
 import android.os.Environment
 import com.bonepeople.android.sdcardcleaner.data.FileTreeInfo
+import com.bonepeople.android.sdcardcleaner.utils.CommonUtil
 import com.bonepeople.android.widget.CoroutinesHolder
 import com.bonepeople.android.widget.util.AppTime
 import kotlinx.coroutines.launch
@@ -23,6 +24,17 @@ object FileTreeManager {
         var rubbishSize = 0L
     }
 
+    private val nameComparator = Comparator<FileTreeInfo> { file1, file2 ->
+        if (file1.directory && file2.directory) {
+            CommonUtil.comparePath(file1.name, file2.name)
+        } else if (file1.directory) {
+            -1
+        } else if (file2.directory) {
+            1
+        } else {
+            CommonUtil.comparePath(file1.name, file2.name)
+        }
+    }
     var currentState = STATE.READY
     private var startTime = 0L
     private var endTime = 0L
@@ -52,6 +64,7 @@ object FileTreeManager {
     }
 
     private fun scanFile(parentFile: FileTreeInfo?, fileInfo: FileTreeInfo, file: File) {
+        //记录基础信息
         fileInfo.parent = parentFile
         fileInfo.name = file.name
         fileInfo.path = file.absolutePath
@@ -71,14 +84,20 @@ object FileTreeManager {
                 fileInfo.rubbish = false
             }
         }
+        //将自身添加到上级目录中
         parentFile?.children?.add(fileInfo)
+        //更新上级目录的信息
         updateParentFile(fileInfo.parent, fileInfo)
-
+        //如果当前是文件夹，对下级所有文件依次遍历
         if (fileInfo.directory) {
             file.listFiles()?.forEach {
                 if (currentState == STATE.SCAN_EXECUTING) {
                     scanFile(fileInfo, FileTreeInfo(), it)
                 }
+            }
+            //在当前目录遍历完成后对文件夹内的文件进行排序
+            CoroutinesHolder.default.launch {
+                fileInfo.children.sortWith(nameComparator)
             }
         }
     }
