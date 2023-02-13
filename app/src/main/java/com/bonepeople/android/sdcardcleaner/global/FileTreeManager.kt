@@ -8,6 +8,7 @@ import com.bonepeople.android.widget.util.AppTime
 import kotlinx.coroutines.launch
 import java.io.File
 
+@Suppress("DEPRECATION")
 object FileTreeManager {
     object STATE {
         const val READY = 0
@@ -19,7 +20,7 @@ object FileTreeManager {
     object Summary {
         val totalSpace by lazy { Environment.getExternalStorageDirectory().totalSpace }
         val freeSpace by lazy { Environment.getExternalStorageDirectory().freeSpace }
-        var rootFile: FileTreeInfo? = null
+        var rootFile: FileTreeInfo = FileTreeInfo()
         var rubbishCount = 0L
         var rubbishSize = 0L
     }
@@ -53,7 +54,7 @@ object FileTreeManager {
             Summary.rubbishSize = 0
             val file = Environment.getExternalStorageDirectory()
             Summary.rootFile = FileTreeInfo()
-            scanFile(null, Summary.rootFile!!, file)
+            scanFile(null, Summary.rootFile, file)
             currentState = STATE.SCAN_FINISH
             endTime = System.currentTimeMillis()
         }
@@ -75,7 +76,7 @@ object FileTreeManager {
             CleanPathManager.whiteList.contains(fileInfo.path) -> {
                 fileInfo.rubbish = false
             }
-            CleanPathManager.blackList.contains(fileInfo.path), fileInfo.parent?.rubbish -> {
+            CleanPathManager.blackList.contains(fileInfo.path), (fileInfo.parent?.rubbish == true) -> {
                 fileInfo.rubbish = true
                 Summary.rubbishCount++
                 Summary.rubbishSize += fileInfo.size

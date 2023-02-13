@@ -132,7 +132,7 @@ class HomeFragment : ViewBindingFragment<FragmentHomeBinding>() {
     }
 
     private fun viewFile() {
-
+        StandardActivity.call(FileListFragment(FileTreeManager.Summary.rootFile)).onResult { updateView() }
     }
 
     private fun autoFresh() {

@@ -32,8 +32,8 @@ class StorageSummary(context: Context, attrs: AttributeSet?) : ConstraintLayout(
     }
 
     fun updateView() {
-        val allFileCount = manager.rootFile?.fileCount ?: 0
-        val allFileSize = manager.rootFile?.size ?: 0
+        val allFileCount = manager.rootFile.fileCount
+        val allFileSize = manager.rootFile.size
         val rubbishPercent = NumberUtil.div(manager.rubbishSize.toDouble(), manager.totalSpace.toDouble(), 3).toFloat()
         val filePercent = NumberUtil.div(allFileSize.toDouble(), manager.totalSpace.toDouble(), 3).toFloat()
         val systemPercent = (1 - NumberUtil.div(manager.freeSpace.toDouble(), manager.totalSpace.toDouble(), 3)).toFloat()
