@@ -11,6 +11,8 @@ import com.bonepeople.android.sdcardcleaner.adapter.FileListAdapter
 import com.bonepeople.android.sdcardcleaner.data.FileTreeInfo
 import com.bonepeople.android.sdcardcleaner.databinding.FragmentFileListBinding
 import com.bonepeople.android.sdcardcleaner.global.FileTreeManager
+import com.bonepeople.android.widget.util.hide
+import com.bonepeople.android.widget.util.show
 
 class FileListFragment(private val file: FileTreeInfo) : ViewBindingFragment<FragmentFileListBinding>() {
     override fun initView() {
@@ -28,7 +30,14 @@ class FileListFragment(private val file: FileTreeInfo) : ViewBindingFragment<Fra
             textViewTitleName.text = title
         }
         views.textViewPath.text = file.path.replace(FileTreeManager.Summary.rootFile.path, getString(R.string.str_path_rootFile))
-        views.recyclerView.adapter = FileListAdapter(file, this::clickFile)
+        if (file.children.isEmpty()) {
+            views.textViewEmpty.show()
+            views.recyclerView.hide()
+        } else {
+            views.textViewEmpty.hide()
+            views.recyclerView.show()
+            views.recyclerView.adapter = FileListAdapter(file.children, this::clickFile)
+        }
     }
 
     private fun clickFile(position: Int) {

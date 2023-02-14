@@ -7,8 +7,6 @@ import android.os.Build
 import android.os.Bundle
 import android.os.Environment
 import android.provider.Settings
-import android.view.View
-import android.widget.Button
 import com.bonepeople.android.base.ViewBindingFragment
 import com.bonepeople.android.base.activity.StandardActivity
 import com.bonepeople.android.base.databinding.ViewTitleBinding
@@ -17,9 +15,7 @@ import com.bonepeople.android.sdcardcleaner.databinding.FragmentHomeBinding
 import com.bonepeople.android.sdcardcleaner.global.FileTreeManager
 import com.bonepeople.android.widget.ApplicationHolder
 import com.bonepeople.android.widget.activity.result.launch
-import com.bonepeople.android.widget.util.AppPermission
-import com.bonepeople.android.widget.util.AppToast
-import com.bonepeople.android.widget.util.singleClick
+import com.bonepeople.android.widget.util.*
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
@@ -29,7 +25,7 @@ class HomeFragment : ViewBindingFragment<FragmentHomeBinding>() {
     override fun initView() {
         ViewTitleBinding.bind(views.titleView).run {
             imageViewTitleAction.setImageResource(R.drawable.icon_set)
-            imageViewTitleAction.visibility = View.VISIBLE
+            imageViewTitleAction.show()
             imageViewTitleAction.singleClick { StandardActivity.open(SettingFragment()) }
         }
     }
@@ -57,23 +53,23 @@ class HomeFragment : ViewBindingFragment<FragmentHomeBinding>() {
                 views.textViewState.setText(R.string.state_ready)
                 views.buttonTop.setText(R.string.caption_button_startScan)
                 views.buttonTop.singleClick { startScan() }
-                views.buttonTop.visibility = Button.VISIBLE
-                views.buttonLeft.visibility = Button.GONE
-                views.buttonRight.visibility = Button.GONE
+                views.buttonTop.show()
+                views.buttonLeft.gone()
+                views.buttonRight.gone()
             }
             FileTreeManager.STATE.SCAN_EXECUTING -> {
                 views.textViewState.setText(R.string.state_scan_executing)
                 views.buttonTop.setText(R.string.caption_button_stopScan)
                 views.buttonTop.singleClick { stopScan() }
-                views.buttonTop.visibility = Button.VISIBLE
-                views.buttonLeft.visibility = Button.GONE
-                views.buttonRight.visibility = Button.GONE
+                views.buttonTop.show()
+                views.buttonLeft.gone()
+                views.buttonRight.gone()
             }
             FileTreeManager.STATE.SCAN_STOPPING -> {
                 views.textViewState.setText(R.string.state_scan_stopping)
-                views.buttonTop.visibility = Button.GONE
-                views.buttonLeft.visibility = Button.GONE
-                views.buttonRight.visibility = Button.GONE
+                views.buttonTop.gone()
+                views.buttonLeft.gone()
+                views.buttonRight.gone()
             }
             FileTreeManager.STATE.SCAN_FINISH -> {
                 views.textViewState.setText(R.string.state_scan_finish)
@@ -83,9 +79,9 @@ class HomeFragment : ViewBindingFragment<FragmentHomeBinding>() {
                 views.buttonTop.singleClick { startScan() }
                 views.buttonLeft.singleClick { startClean() }
                 views.buttonRight.singleClick { viewFile() }
-                views.buttonTop.visibility = Button.VISIBLE
-                views.buttonLeft.visibility = Button.VISIBLE
-                views.buttonRight.visibility = Button.VISIBLE
+                views.buttonTop.show()
+                views.buttonLeft.show()
+                views.buttonRight.show()
             }
         }
     }
