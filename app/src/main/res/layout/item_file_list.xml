@@ -17,28 +17,22 @@
         app:layout_constraintTop_toTopOf="parent"
         tools:background="#669966" />
 
-    <androidx.constraintlayout.widget.ConstraintLayout
+    <View
+        android:id="@+id/viewPercent"
         android:layout_width="0dp"
         android:layout_height="match_parent"
         android:layout_marginStart="10dp"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@id/imageViewType">
-
-        <View
-            android:id="@+id/viewPercent"
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintWidth_percent="0.1"
-            tools:background="#196E9E" />
-    </androidx.constraintlayout.widget.ConstraintLayout>
+        app:layout_constraintHorizontal_bias="0"
+        app:layout_constraintStart_toEndOf="@id/imageViewType"
+        app:layout_constraintWidth_percent="0.1"
+        tools:background="#196E9E" />
 
     <CheckBox
         android:id="@+id/checkBox"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginEnd="10dp"
-        android:background="@null"
         android:clickable="false"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
