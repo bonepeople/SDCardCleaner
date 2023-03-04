@@ -9,6 +9,5 @@ class FileTreeInfo {
     var rubbish = false//是否需要清理
     var sorted = 0//当前排序类型，0-未排序，1-按文件名称排序
     var parent: FileTreeInfo? = null//父目录
-    var largestChild: FileTreeInfo? = null//文件夹内最大的文件
     var children = ArrayList<FileTreeInfo>()//子文件列表
 }

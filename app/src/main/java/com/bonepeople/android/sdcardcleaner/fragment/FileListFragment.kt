@@ -1,6 +1,8 @@
 package com.bonepeople.android.sdcardcleaner.fragment
 
+import android.app.ProgressDialog
 import android.os.Bundle
+import androidx.appcompat.app.AlertDialog
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.bonepeople.android.base.ViewBindingFragment
@@ -10,8 +12,13 @@ import com.bonepeople.android.sdcardcleaner.R
 import com.bonepeople.android.sdcardcleaner.adapter.FileListAdapter
 import com.bonepeople.android.sdcardcleaner.data.FileTreeInfo
 import com.bonepeople.android.sdcardcleaner.databinding.FragmentFileListBinding
+import com.bonepeople.android.sdcardcleaner.global.CleanPathManager
 import com.bonepeople.android.sdcardcleaner.global.FileTreeManager
+import com.bonepeople.android.widget.CoroutinesHolder
 import com.bonepeople.android.widget.util.*
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 
 class FileListFragment(private val file: FileTreeInfo) : ViewBindingFragment<FragmentFileListBinding>() {
     private val adapter = FileListAdapter(file.children, this)
@@ -20,8 +27,8 @@ class FileListFragment(private val file: FileTreeInfo) : ViewBindingFragment<Fra
         views.recyclerView.layoutManager = LinearLayoutManager(activity)
         views.recyclerView.addItemDecoration(DividerItemDecoration(activity, DividerItemDecoration.VERTICAL))
         views.textViewDelete.singleClick { deleteFiles() }
-        views.textViewClean.singleClick { cleanFiles() }
-        views.textViewHold.singleClick { saveFiles() }
+        views.textViewClean.singleClick { updateFileRubbish(true) }
+        views.textViewHold.singleClick { updateFileRubbish(false) }
         views.imageViewClose.singleClick { setMultiSelect(false) }
         views.checkBoxAll.singleClick(0) {
             adapter.updateCheckSet(-1)
@@ -79,21 +86,91 @@ class FileListFragment(private val file: FileTreeInfo) : ViewBindingFragment<Fra
         }
     }
 
+    /**
+     * 删除所选文件
+     */
     private fun deleteFiles() {
+        //取消多选状态
         setMultiSelect(false)
         if (adapter.checkedSet.isEmpty()) return
-        adapter.refresh()
+        //弹出删除确认框
+        val builder = AlertDialog.Builder(requireActivity())
+        builder.setTitle(getString(R.string.dialog_list_file_delete_title))
+        builder.setMessage(getString(R.string.dialog_list_file_delete_message))
+        builder.setCancelable(false)
+        builder.setPositiveButton(R.string.caption_button_positive) { _, _ ->
+            //删除流程
+            var job: Job? = null
+            val notifyItems = ArrayList<Int>()
+            //弹出删除进度对话框
+            val progressDialog = ProgressDialog(requireActivity())
+            progressDialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL)
+            progressDialog.setCancelable(false)
+            progressDialog.setMessage(getString(R.string.dialog_list_file_deleting))
+            progressDialog.setButton(ProgressDialog.BUTTON_NEGATIVE, getString(R.string.caption_button_negative)) { _, _ ->
+                job?.cancel()
+            }
+            progressDialog.max = adapter.checkedSet.size
+            progressDialog.show()
+            //删除文件的协程
+            job = CoroutinesHolder.default.launch {
+                adapter.checkedSet.forEach { position ->
+                    FileTreeManager.deleteFile(file.children[position])
+                    notifyItems.add(position - notifyItems.size)
+                    progressDialog.incrementProgressBy(1)
+                }
+            }
+            //文件删除流程结束后进行刷新
+            job.invokeOnCompletion {
+                CoroutinesHolder.main.launch {
+                    notifyItems.forEach { position ->
+                        adapter.notifyItemRemoved(position)
+                    }
+                    adapter.refresh()
+                    progressDialog.dismiss()
+                }
+            }
+        }
+        builder.setNegativeButton(R.string.caption_button_negative, null)
+        builder.create().show()
     }
 
-    private fun cleanFiles() {
+    private fun updateFileRubbish(rubbish: Boolean) {
+        //取消多选状态
         setMultiSelect(false)
         if (adapter.checkedSet.isEmpty()) return
-        adapter.refresh()
-    }
-
-    private fun saveFiles() {
-        setMultiSelect(false)
-        if (adapter.checkedSet.isEmpty()) return
-        adapter.refresh()
+        val paths = adapter.checkedSet.map { position ->
+            file.children[position].path
+        }
+        if (rubbish) {
+            CleanPathManager.addBlackList(paths)//添加黑名单
+        } else {
+            CleanPathManager.addWhiteList(paths)//添加白名单
+        }
+        //更新文件标识及垃圾统计数据
+        val notifyItems = ArrayList<Int>()
+        //弹出处理进度对话框
+        val progressDialog = ProgressDialog(requireActivity())
+        progressDialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL)
+        progressDialog.setCancelable(false)
+        progressDialog.setMessage(getString(R.string.dialog_list_file_updating))
+        progressDialog.max = adapter.checkedSet.size
+        progressDialog.show()
+        //更新文件的协程
+        CoroutinesHolder.default.launch {
+            delay(500)
+            adapter.checkedSet.forEach { position ->
+                FileTreeManager.updateRubbish(file.children[position])
+                notifyItems.add(position)
+                progressDialog.incrementProgressBy(1)
+            }
+        }.invokeOnCompletion {//文件更新流程结束后进行刷新
+            CoroutinesHolder.main.launch {
+                notifyItems.forEach { position ->
+                    adapter.notifyItemChanged(position)
+                }
+                progressDialog.dismiss()
+            }
+        }
     }
 }

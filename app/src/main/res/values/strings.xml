@@ -50,6 +50,7 @@
     <string name="dialog_list_file_delete_title">确认删除？</string>
     <string name="dialog_list_file_delete_message">该操作会删除当前指定文件夹下的所有文件，无论它是否存在于白名单中</string>
     <string name="dialog_list_file_deleting">正在删除文件</string>
+    <string name="dialog_list_file_updating">正在更新文件</string>
     <string name="dialog_list_file_cleaning">正在更新待清理的文件</string>
     <string name="dialog_list_file_saving">正在更新保留的文件</string>
 
