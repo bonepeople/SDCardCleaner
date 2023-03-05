@@ -11,8 +11,6 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 
-import com.bonepeople.android.sdcardcleaner.R;
-
 import java.util.LinkedList;
 
 /**
@@ -73,13 +71,13 @@ public abstract class BaseAppCompatActivity extends AppCompatActivity {
         if (ActivityCompat.shouldShowRequestPermissionRationale(this, permission)) {
             AlertDialog.Builder builder = new AlertDialog.Builder(this);
             builder.setMessage(rationale);
-            builder.setPositiveButton(R.string.caption_button_positive, new DialogInterface.OnClickListener() {
+            builder.setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
                 @Override
                 public void onClick(DialogInterface dialog, int which) {
                     ActivityCompat.requestPermissions(BaseAppCompatActivity.this, new String[]{permission}, requestCode);
                 }
             });
-            builder.setNegativeButton(R.string.caption_button_negative, null);
+            builder.setNegativeButton(android.R.string.cancel, null);
             builder.create().show();
         } else
             ActivityCompat.requestPermissions(this, new String[]{permission}, requestCode);

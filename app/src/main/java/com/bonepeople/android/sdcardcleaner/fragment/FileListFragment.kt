@@ -98,7 +98,7 @@ class FileListFragment(private val file: FileTreeInfo) : ViewBindingFragment<Fra
         builder.setTitle(getString(R.string.dialog_list_file_delete_title))
         builder.setMessage(getString(R.string.dialog_list_file_delete_message))
         builder.setCancelable(false)
-        builder.setPositiveButton(R.string.caption_button_positive) { _, _ ->
+        builder.setPositiveButton(android.R.string.ok) { _, _ ->
             //删除流程
             var job: Job? = null
             val notifyItems = ArrayList<Int>()
@@ -107,7 +107,7 @@ class FileListFragment(private val file: FileTreeInfo) : ViewBindingFragment<Fra
             progressDialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL)
             progressDialog.setCancelable(false)
             progressDialog.setMessage(getString(R.string.dialog_list_file_deleting))
-            progressDialog.setButton(ProgressDialog.BUTTON_NEGATIVE, getString(R.string.caption_button_negative)) { _, _ ->
+            progressDialog.setButton(ProgressDialog.BUTTON_NEGATIVE, getString(android.R.string.cancel)) { _, _ ->
                 job?.cancel()
             }
             progressDialog.max = adapter.checkedSet.size
@@ -131,7 +131,7 @@ class FileListFragment(private val file: FileTreeInfo) : ViewBindingFragment<Fra
                 }
             }
         }
-        builder.setNegativeButton(R.string.caption_button_negative, null)
+        builder.setNegativeButton(android.R.string.cancel, null)
         builder.create().show()
     }
 

@@ -244,7 +244,7 @@ public class SDFile {
                     }
                 }
             } else {
-                if (FileManager.getState() == FileManager.STATE_DELETE_EXECUTING) {
+                if (FileManager.getState() == 7) {
                     File file = new File(path);
                     if (!file.exists() || file.delete()) {
                         Global.setFileCount_all(-1);

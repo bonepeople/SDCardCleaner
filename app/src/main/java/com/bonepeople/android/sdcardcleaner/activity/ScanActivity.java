@@ -19,6 +19,7 @@ import com.bonepeople.android.sdcardcleaner.basic.BaseHandler;
 import com.bonepeople.android.sdcardcleaner.service.FileManager;
 import com.bonepeople.android.sdcardcleaner.widget.SDCardPercent;
 import com.bonepeople.android.sdcardcleaner.widget.TitleBar;
+import com.bonepeople.android.widget.util.AppToast;
 
 /**
  * 文件扫描界面
@@ -109,8 +110,6 @@ public class ScanActivity extends BaseAppCompatActivity implements View.OnClickL
                 if (state == FileManager.STATE_SCAN_FINISH)
                     return;
                 if (state == FileManager.STATE_CLEAN_FINISH)
-                    return;
-                if (state == FileManager.STATE_DELETE_FINISH)
                     return;
                 handler.sendEmptyMessageDelayed(MSG_REFRESH, 500);
                 break;
@@ -228,7 +227,7 @@ public class ScanActivity extends BaseAppCompatActivity implements View.OnClickL
                 FileManager.stopClean();
                 break;
             case ACTION_VIEW_FILE:
-                FileExplorerActivity.call(this, "", REQUEST_FILE);
+                AppToast.INSTANCE.show("此功能已禁用");
                 break;
         }
     }

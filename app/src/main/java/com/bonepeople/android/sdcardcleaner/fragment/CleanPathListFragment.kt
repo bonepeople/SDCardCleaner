@@ -48,7 +48,7 @@ class CleanPathListFragment : ViewBindingFragment<FragmentCleanPathListBinding>(
         if (FileManager.getState() != FileManager.STATE_SCAN_EXECUTING) {
             AlertDialog.Builder(requireActivity())
                 .setMessage(getString(R.string.dialog_list_path_remove, listData[index]))
-                .setPositiveButton(R.string.caption_button_positive) { _, _ ->
+                .setPositiveButton(android.R.string.ok) { _, _ ->
                     if (mode == WHITE) {
                         CleanPathManager.removeWhiteList(index)
                     } else {
@@ -58,7 +58,7 @@ class CleanPathListFragment : ViewBindingFragment<FragmentCleanPathListBinding>(
                     adapter.notifyItemRemoved(index)
                     adapter.notifyItemRangeChanged(index, listData.size - index)
                 }
-                .setNegativeButton(R.string.caption_button_negative, null)
+                .setNegativeButton(android.R.string.cancel, null)
                 .show()
         }
     }

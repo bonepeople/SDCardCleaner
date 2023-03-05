@@ -3,12 +3,10 @@ package com.bonepeople.android.sdcardcleaner.service;
 import android.app.Service;
 import android.content.Intent;
 import android.os.IBinder;
-import android.util.SparseArray;
 
 import com.bonepeople.android.sdcardcleaner.Global;
 import com.bonepeople.android.sdcardcleaner.models.SDFile;
 import com.bonepeople.android.sdcardcleaner.thread.CleanFileThread;
-import com.bonepeople.android.sdcardcleaner.thread.DeleteFileThread;
 import com.bonepeople.android.sdcardcleaner.thread.ScanFileThread;
 import com.bonepeople.android.sdcardcleaner.thread.SortThread;
 
@@ -27,9 +25,6 @@ public class FileManager extends Service {
     public static final int STATE_CLEAN_EXECUTING = 4;
     public static final int STATE_CLEAN_STOP = 5;
     public static final int STATE_CLEAN_FINISH = 6;
-    public static final int STATE_DELETE_EXECUTING = 7;
-    public static final int STATE_DELETE_STOP = 8;
-    public static final int STATE_DELETE_FINISH = 9;
     private static volatile int state = STATE_READY;
     private static long progressStartTime = 0;
     private static long progressFinishTime = 0;
@@ -47,7 +42,7 @@ public class FileManager extends Service {
      * 开始扫描文件
      */
     public static void startScan() {
-        if (state == STATE_READY || state == STATE_SCAN_FINISH || state == STATE_CLEAN_FINISH || state == STATE_DELETE_FINISH) {
+        if (state == STATE_READY || state == STATE_SCAN_FINISH || state == STATE_CLEAN_FINISH) {
             state = STATE_SCAN_EXECUTING;
             Global.reset();
             if (executor == null)
@@ -95,7 +90,7 @@ public class FileManager extends Service {
      * 开始清理文件
      */
     public static void startClean() {
-        if (state == STATE_SCAN_FINISH || state == STATE_CLEAN_FINISH || state == STATE_DELETE_FINISH) {
+        if (state == STATE_SCAN_FINISH || state == STATE_CLEAN_FINISH) {
             state = STATE_CLEAN_EXECUTING;
             progressStartTime = System.currentTimeMillis();
             new CleanFileThread().start();
@@ -117,32 +112,6 @@ public class FileManager extends Service {
     public static void finishClean() {
         state = STATE_CLEAN_FINISH;
         progressFinishTime = System.currentTimeMillis();
-    }
-
-    /**
-     * 开始删除文件
-     */
-    public static void startDelete(SparseArray<SDFile> files) {
-        if (state == STATE_SCAN_FINISH || state == STATE_CLEAN_FINISH || state == STATE_DELETE_FINISH) {
-            state = STATE_DELETE_EXECUTING;
-            new DeleteFileThread(files).start();
-        }
-    }
-
-    /**
-     * 停止删除文件
-     */
-    public static void stopDelete() {
-        if (state == STATE_DELETE_EXECUTING) {
-            state = STATE_DELETE_STOP;
-        }
-    }
-
-    /**
-     * 删除文件结束，该方法仅由删除的线程调用
-     */
-    public static void finishDelete() {
-        state = STATE_DELETE_FINISH;
     }
 
     @Override
