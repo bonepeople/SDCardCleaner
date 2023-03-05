@@ -115,7 +115,7 @@ class FileListFragment(private val file: FileTreeInfo) : ViewBindingFragment<Fra
             //删除文件的协程
             job = CoroutinesHolder.default.launch {
                 adapter.checkedSet.forEach { position ->
-                    FileTreeManager.deleteFile(file.children[position])
+                    FileTreeManager.deleteFile(file.children[position], true)
                     notifyItems.add(position - notifyItems.size)
                     progressDialog.incrementProgressBy(1)
                 }

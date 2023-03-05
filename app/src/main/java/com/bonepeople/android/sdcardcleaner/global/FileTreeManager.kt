@@ -5,6 +5,7 @@ import com.bonepeople.android.sdcardcleaner.data.FileTreeInfo
 import com.bonepeople.android.sdcardcleaner.utils.CommonUtil
 import com.bonepeople.android.widget.CoroutinesHolder
 import com.bonepeople.android.widget.util.AppTime
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.yield
 import java.io.File
@@ -16,6 +17,9 @@ object FileTreeManager {
         const val SCAN_EXECUTING = 1
         const val SCAN_STOPPING = 2
         const val SCAN_FINISH = 3
+        const val CLEAN_EXECUTING = 4
+        const val CLEAN_STOPPING = 5
+        const val CLEAN_FINISH = 6
     }
 
     object Summary {
@@ -40,9 +44,10 @@ object FileTreeManager {
     var currentState = STATE.READY
     private var startTime = 0L
     private var endTime = 0L
+    private var cleanJob: Job? = null
 
     fun getProgressTimeString(): String {
-        if (currentState != STATE.SCAN_FINISH) endTime = System.currentTimeMillis()
+        if (currentState != STATE.SCAN_FINISH && currentState != STATE.CLEAN_FINISH) endTime = System.currentTimeMillis()
         val time = endTime - startTime
         return "(${AppTime.getTimeString(time)}秒)"
     }
@@ -69,6 +74,23 @@ object FileTreeManager {
      */
     fun stopScan() {
         currentState = STATE.SCAN_STOPPING
+    }
+
+    fun startClean() {
+        currentState = STATE.CLEAN_EXECUTING
+        startTime = System.currentTimeMillis()
+        cleanJob = CoroutinesHolder.default.launch {
+            deleteFile(Summary.rootFile, false)
+        }
+        cleanJob?.invokeOnCompletion {
+            currentState = STATE.CLEAN_FINISH
+            endTime = System.currentTimeMillis()
+        }
+    }
+
+    fun stopClean() {
+        currentState = STATE.CLEAN_STOPPING
+        cleanJob?.cancel()
     }
 
     private fun scanFile(parentFile: FileTreeInfo?, fileInfo: FileTreeInfo, file: File) {
@@ -134,25 +156,29 @@ object FileTreeManager {
     /**
      * 删除指定目录的文件
      * + 包括子目录文件
+     * @param deleteAll 是否删除全部文件，false-仅删除标记为垃圾的文件
      */
-    suspend fun deleteFile(fileInfo: FileTreeInfo) {
+    suspend fun deleteFile(fileInfo: FileTreeInfo, deleteAll: Boolean) {
         yield()
         //遍历子目录进行删除
-        fileInfo.children.forEach { child ->
-            deleteFile(child)
+        fileInfo.children.toList().forEach { child ->
+            deleteFile(child, deleteAll)
         }
-        //删除当前文件
-        val file = File(fileInfo.path)
-        if (!file.exists() || file.delete()) {
-            //更新垃圾文件统计
-            if (fileInfo.rubbish) {
-                Summary.rubbishCount--
-                Summary.rubbishSize -= fileInfo.size
+        //删除全部文件或当前文件标记为垃圾的时候执行删除流程
+        if (deleteAll || fileInfo.rubbish) {
+            //删除当前文件
+            val file = File(fileInfo.path)
+            if (!file.exists() || file.delete()) {
+                //更新垃圾文件统计
+                if (fileInfo.rubbish) {
+                    Summary.rubbishCount--
+                    Summary.rubbishSize -= fileInfo.size
+                }
+                //更新父级文件信息
+                updateParentFile(fileInfo.parent, -1, -fileInfo.size)
+                //移除父级引用
+                fileInfo.parent?.children?.remove(fileInfo)
             }
-            //更新父级文件信息
-            updateParentFile(fileInfo.parent, -1, -fileInfo.size)
-            //移除父级引用
-            fileInfo.parent?.children?.remove(fileInfo)
         }
     }
 

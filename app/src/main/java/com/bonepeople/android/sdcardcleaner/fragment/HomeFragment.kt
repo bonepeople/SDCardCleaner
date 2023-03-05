@@ -24,6 +24,7 @@ class HomeFragment : ViewBindingFragment<FragmentHomeBinding>() {
 
     override fun initView() {
         ViewTitleBinding.bind(views.titleView).run {
+            textViewTitleName.text = getString(R.string.caption_text_mine)
             imageViewTitleAction.setImageResource(R.drawable.icon_set)
             imageViewTitleAction.show()
             imageViewTitleAction.singleClick { StandardActivity.open(SettingFragment()) }
@@ -73,7 +74,33 @@ class HomeFragment : ViewBindingFragment<FragmentHomeBinding>() {
             }
             FileTreeManager.STATE.SCAN_FINISH -> {
                 views.textViewState.setText(R.string.state_scan_finish)
-                views.buttonTop.setText(R.string.caption_button_reScan)
+                views.buttonTop.setText(R.string.caption_button_rescan)
+                views.buttonLeft.setText(R.string.caption_button_startClean)
+                views.buttonRight.setText(R.string.caption_button_viewFiles)
+                views.buttonTop.singleClick { startScan() }
+                views.buttonLeft.singleClick { startClean() }
+                views.buttonRight.singleClick { viewFile() }
+                views.buttonTop.show()
+                views.buttonLeft.show()
+                views.buttonRight.show()
+            }
+            FileTreeManager.STATE.CLEAN_EXECUTING -> {
+                views.textViewState.setText(R.string.state_clean_executing)
+                views.buttonTop.setText(R.string.caption_button_stopClean)
+                views.buttonTop.singleClick { stopClean() }
+                views.buttonTop.show()
+                views.buttonLeft.gone()
+                views.buttonRight.gone()
+            }
+            FileTreeManager.STATE.CLEAN_STOPPING -> {
+                views.textViewState.setText(R.string.state_clean_stopping)
+                views.buttonTop.gone()
+                views.buttonLeft.gone()
+                views.buttonRight.gone()
+            }
+            FileTreeManager.STATE.CLEAN_FINISH -> {
+                views.textViewState.setText(R.string.state_clean_finish)
+                views.buttonTop.setText(R.string.caption_button_rescan)
                 views.buttonLeft.setText(R.string.caption_button_startClean)
                 views.buttonRight.setText(R.string.caption_button_viewFiles)
                 views.buttonTop.singleClick { startScan() }
@@ -120,11 +147,12 @@ class HomeFragment : ViewBindingFragment<FragmentHomeBinding>() {
     }
 
     private fun startClean() {
-
+        FileTreeManager.startClean()
+        autoFresh()
     }
 
     private fun stopClean() {
-
+        FileTreeManager.stopClean()
     }
 
     private fun viewFile() {
@@ -134,7 +162,7 @@ class HomeFragment : ViewBindingFragment<FragmentHomeBinding>() {
     private fun autoFresh() {
         launch {
             updateView()
-            while (FileTreeManager.currentState != FileTreeManager.STATE.SCAN_FINISH) {
+            while (FileTreeManager.currentState != FileTreeManager.STATE.SCAN_FINISH && FileTreeManager.currentState != FileTreeManager.STATE.CLEAN_FINISH) {
                 delay(500)
                 updateView()
             }

@@ -142,7 +142,7 @@ public class ScanActivity extends BaseAppCompatActivity implements View.OnClickL
                 break;
             case FileManager.STATE_SCAN_FINISH:
                 textView_state.setText(getString(R.string.state_scan_finish));
-                button_middle.setText(R.string.caption_button_reScan);
+                button_middle.setText(R.string.caption_button_rescan);
                 button_left.setText(R.string.caption_button_startClean);
                 button_right.setText(R.string.caption_button_viewFiles);
                 button_middle.setTag(new String[]{ACTION_START_SCAN});
@@ -168,7 +168,7 @@ public class ScanActivity extends BaseAppCompatActivity implements View.OnClickL
                 break;
             case FileManager.STATE_CLEAN_FINISH:
                 textView_state.setText(getString(R.string.state_clean_finish));
-                button_middle.setText(R.string.caption_button_reScan);
+                button_middle.setText(R.string.caption_button_rescan);
                 button_left.setText(R.string.caption_button_startClean);
                 button_right.setText(R.string.caption_button_viewFiles);
                 button_middle.setTag(new String[]{ACTION_START_SCAN});
@@ -180,7 +180,7 @@ public class ScanActivity extends BaseAppCompatActivity implements View.OnClickL
                 break;
             default://手动删除文件会导致状态值的变化，在手动删除文件后依旧显示扫描结束的提示信息
                 textView_state.setText(getString(R.string.state_scan_finish));
-                button_middle.setText(R.string.caption_button_reScan);
+                button_middle.setText(R.string.caption_button_rescan);
                 button_left.setText(R.string.caption_button_startClean);
                 button_right.setText(R.string.caption_button_viewFiles);
                 button_middle.setTag(new String[]{ACTION_START_SCAN});

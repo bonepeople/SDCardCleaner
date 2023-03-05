@@ -20,7 +20,7 @@
     <!--各种控件的名称-->
     <string name="caption_button_startScan">开始扫描</string>
     <string name="caption_button_stopScan">停止扫描</string>
-    <string name="caption_button_reScan">重新扫描</string>
+    <string name="caption_button_rescan">重新扫描</string>
     <string name="caption_button_startClean">开始清理</string>
     <string name="caption_button_stopClean">停止清理</string>
     <string name="caption_button_viewFiles">查看文件</string>
