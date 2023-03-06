@@ -24,9 +24,6 @@
 
         <activity
             android:name=".activity.HomeActivity"
-            android:exported="false" />
-        <activity
-            android:name=".activity.MainActivity"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -42,6 +39,5 @@
                 <data android:scheme="bone" />
             </intent-filter>
         </activity>
-        <activity android:name=".activity.ScanActivity" />
     </application>
 </manifest>

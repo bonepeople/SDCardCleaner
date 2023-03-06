@@ -7,10 +7,14 @@ import android.os.Build
 import android.os.Bundle
 import android.os.Environment
 import android.provider.Settings
+import android.widget.Toast
+import androidx.core.view.setPadding
 import com.bonepeople.android.base.ViewBindingFragment
 import com.bonepeople.android.base.activity.StandardActivity
 import com.bonepeople.android.base.databinding.ViewTitleBinding
+import com.bonepeople.android.dimensionutil.DimensionUtil
 import com.bonepeople.android.sdcardcleaner.R
+import com.bonepeople.android.sdcardcleaner.data.FileTreeInfo
 import com.bonepeople.android.sdcardcleaner.databinding.FragmentHomeBinding
 import com.bonepeople.android.sdcardcleaner.global.FileTreeManager
 import com.bonepeople.android.widget.ApplicationHolder
@@ -21,10 +25,12 @@ import kotlinx.coroutines.launch
 
 class HomeFragment : ViewBindingFragment<FragmentHomeBinding>() {
     private var state = -1
+    private var quit = false
 
     override fun initView() {
         ViewTitleBinding.bind(views.titleView).run {
             textViewTitleName.text = getString(R.string.caption_text_mine)
+            imageViewTitleAction.setPadding(DimensionUtil.getPx(16f))
             imageViewTitleAction.setImageResource(R.drawable.icon_set)
             imageViewTitleAction.show()
             imageViewTitleAction.singleClick { StandardActivity.open(SettingFragment()) }
@@ -114,10 +120,14 @@ class HomeFragment : ViewBindingFragment<FragmentHomeBinding>() {
     }
 
     private fun startScan() {
+        if (Environment.getExternalStorageState() != Environment.MEDIA_MOUNTED) {
+            AppToast.show(getString(R.string.toast_sdcard_error), Toast.LENGTH_LONG)
+            return
+        }
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
             if (Environment.isExternalStorageManager()) {
                 FileTreeManager.startScan()
-                autoFresh()
+                autoRefresh()
             } else {
                 Intent(Settings.ACTION_MANAGE_APP_ALL_FILES_ACCESS_PERMISSION)
                     .setData(Uri.parse("package:${ApplicationHolder.getPackageName()}"))
@@ -125,7 +135,7 @@ class HomeFragment : ViewBindingFragment<FragmentHomeBinding>() {
                     .onResult {
                         if (Environment.isExternalStorageManager()) {
                             FileTreeManager.startScan()
-                            autoFresh()
+                            autoRefresh()
                         }
                     }
             }
@@ -134,7 +144,7 @@ class HomeFragment : ViewBindingFragment<FragmentHomeBinding>() {
                 .onResult { allGranted, _ ->
                     if (allGranted) {
                         FileTreeManager.startScan()
-                        autoFresh()
+                        autoRefresh()
                     } else {
                         AppToast.show("需要存储空间的权限才能扫描文件")
                     }
@@ -148,7 +158,7 @@ class HomeFragment : ViewBindingFragment<FragmentHomeBinding>() {
 
     private fun startClean() {
         FileTreeManager.startClean()
-        autoFresh()
+        autoRefresh()
     }
 
     private fun stopClean() {
@@ -159,7 +169,26 @@ class HomeFragment : ViewBindingFragment<FragmentHomeBinding>() {
         StandardActivity.call(FileListFragment(FileTreeManager.Summary.rootFile)).onResult { updateView() }
     }
 
-    private fun autoFresh() {
+    override fun onBackPressed() {
+        if (quit) {
+            if (FileTreeManager.currentState == FileTreeManager.STATE.SCAN_EXECUTING) stopScan()
+            if (FileTreeManager.currentState == FileTreeManager.STATE.CLEAN_EXECUTING) stopClean()
+            FileTreeManager.Summary.rootFile = FileTreeInfo()
+            FileTreeManager.Summary.rubbishCount = 0
+            FileTreeManager.Summary.rubbishSize = 0
+            FileTreeManager.currentState = FileTreeManager.STATE.READY
+            super.onBackPressed()
+        } else {
+            AppToast.show(getString(R.string.toast_quitConfirm))
+            quit = true
+            launch {
+                delay(2000)
+                quit = false
+            }
+        }
+    }
+
+    private fun autoRefresh() {
         launch {
             updateView()
             while (FileTreeManager.currentState != FileTreeManager.STATE.SCAN_FINISH && FileTreeManager.currentState != FileTreeManager.STATE.CLEAN_FINISH) {

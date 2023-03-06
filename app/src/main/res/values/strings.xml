@@ -11,10 +11,6 @@
     <!--用于控件内容的描述-->
     <string name="contentDescription_fileIcon">文件类型图标</string>
     <string name="contentDescription_rubbishMark">待清理文件标志</string>
-    <string name="contentDescription_mine">我的文件</string>
-    <string name="contentDescription_white">白名单</string>
-    <string name="contentDescription_black">黑名单</string>
-    <string name="contentDescription_set">设置</string>
     <string name="contentDescription_close">关闭按钮</string>
 
     <!--各种控件的名称-->
@@ -29,18 +25,12 @@
     <string name="caption_button_save">取消标记</string>
     <string name="caption_button_checkAll">全选</string>
 
-    <string name="caption_text_home">新版界面</string>
     <string name="caption_text_mine">我的文件</string>
     <string name="caption_text_white">白名单</string>
     <string name="caption_text_black">黑名单</string>
     <string name="caption_text_set">设置</string>
     <string name="caption_text_about">关于</string>
     <string name="caption_text_file">我的文件</string>
-
-    <string name="caption_explain_mine">查看内部存储中的文件信息</string>
-    <string name="caption_explain_white">单独指定不被清理的文件或文件夹</string>
-    <string name="caption_explain_black">单独指定需要被清理的文件或文件夹</string>
-    <string name="caption_explain_set">进行一些基本设置</string>
 
     <!--对话框中的文字提示信息-->
     <string name="dialog_list_path_remove">移除“%1$s”？</string>
