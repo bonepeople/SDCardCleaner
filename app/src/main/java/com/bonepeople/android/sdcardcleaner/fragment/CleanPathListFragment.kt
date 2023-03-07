@@ -11,7 +11,7 @@ import com.bonepeople.android.sdcardcleaner.R
 import com.bonepeople.android.sdcardcleaner.adapter.CleanPathListAdapter
 import com.bonepeople.android.sdcardcleaner.databinding.FragmentCleanPathListBinding
 import com.bonepeople.android.sdcardcleaner.global.CleanPathManager
-import com.bonepeople.android.sdcardcleaner.service.FileManager
+import com.bonepeople.android.sdcardcleaner.global.FileTreeManager
 
 class CleanPathListFragment : ViewBindingFragment<FragmentCleanPathListBinding>() {
     private lateinit var title: ViewTitleBinding
@@ -45,7 +45,7 @@ class CleanPathListFragment : ViewBindingFragment<FragmentCleanPathListBinding>(
     }
 
     private fun onItemClick(index: Int) {
-        if (FileManager.getState() != FileManager.STATE_SCAN_EXECUTING) {
+        if (FileTreeManager.currentState != FileTreeManager.STATE.SCAN_EXECUTING) {
             AlertDialog.Builder(requireActivity())
                 .setMessage(getString(R.string.dialog_list_path_remove, listData[index]))
                 .setPositiveButton(android.R.string.ok) { _, _ ->

@@ -17,11 +17,6 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
 
-        <service
-            android:name=".service.FileManager"
-            android:enabled="true"
-            android:exported="false" />
-
         <activity
             android:name=".activity.HomeActivity"
             android:exported="true">

@@ -16,8 +16,8 @@ import java.util.Set;
 
 public class ConfigUtil {
     private static final String FILENAME = "config";
-    private static final String FIELD_SAVELIST = "saveList";
-    private static final String FIELD_CLEANLIST = "cleanList";
+    private static final String FIELD_SAVE_LIST = "saveList";
+    private static final String FIELD_CLEAN_LIST = "cleanList";
 
     /**
      * 从配置文件中读取保留文件列表
@@ -25,7 +25,7 @@ public class ConfigUtil {
     @Nullable
     public static Set<String> getSaveList(@NonNull Context context) {
         SharedPreferences sharedPreferences = context.getSharedPreferences(FILENAME, Context.MODE_PRIVATE);
-        return sharedPreferences.getStringSet(FIELD_SAVELIST, null);
+        return sharedPreferences.getStringSet(FIELD_SAVE_LIST, null);
     }
 
     /**
@@ -34,6 +34,6 @@ public class ConfigUtil {
     @Nullable
     public static Set<String> getCleanList(@NonNull Context context) {
         SharedPreferences sharedPreferences = context.getSharedPreferences(FILENAME, Context.MODE_PRIVATE);
-        return sharedPreferences.getStringSet(FIELD_CLEANLIST, null);
+        return sharedPreferences.getStringSet(FIELD_CLEAN_LIST, null);
     }
 }
