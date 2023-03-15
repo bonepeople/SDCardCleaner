@@ -38,7 +38,7 @@
         app:layout_constraintTop_toTopOf="@id/textViewState"
         tools:text="00:25.092" />
 
-    <com.bonepeople.android.sdcardcleaner.widget.StorageSummary
+    <com.bonepeople.android.sdcardcleaner.ui.view.StorageSummary
         android:id="@+id/storageSummary"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

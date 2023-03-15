@@ -1,4 +1,4 @@
-package com.bonepeople.android.sdcardcleaner.widget
+package com.bonepeople.android.sdcardcleaner.ui.view
 
 import android.content.Context
 import android.text.format.Formatter
@@ -11,7 +11,7 @@ import androidx.core.view.children
 import com.bonepeople.android.sdcardcleaner.R
 import com.bonepeople.android.sdcardcleaner.databinding.ViewStorageSummaryBinding
 import com.bonepeople.android.sdcardcleaner.global.FileTreeManager.Summary as manager
-import com.bonepeople.android.sdcardcleaner.utils.NumberUtil
+import com.bonepeople.android.sdcardcleaner.global.utils.NumberUtil
 
 class StorageSummary(context: Context, attrs: AttributeSet?) : ConstraintLayout(context, attrs) {
     private val views = ViewStorageSummaryBinding.inflate(LayoutInflater.from(context), this, true)

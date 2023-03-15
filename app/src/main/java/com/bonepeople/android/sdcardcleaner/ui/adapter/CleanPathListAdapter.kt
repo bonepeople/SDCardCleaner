@@ -1,4 +1,4 @@
-package com.bonepeople.android.sdcardcleaner.adapter
+package com.bonepeople.android.sdcardcleaner.ui.adapter
 
 import android.view.Gravity
 import android.view.ViewGroup

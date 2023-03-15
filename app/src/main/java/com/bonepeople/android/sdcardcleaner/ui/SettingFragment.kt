@@ -1,4 +1,4 @@
-package com.bonepeople.android.sdcardcleaner.fragment
+package com.bonepeople.android.sdcardcleaner.ui
 
 import android.os.Bundle
 import android.os.Environment

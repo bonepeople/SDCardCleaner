@@ -1,7 +1,7 @@
 package com.bonepeople.android.sdcardcleaner.global
 
-import com.bonepeople.android.sdcardcleaner.utils.CommonUtil
-import com.bonepeople.android.sdcardcleaner.utils.ConfigUtil
+import com.bonepeople.android.sdcardcleaner.global.utils.CommonUtil
+import com.bonepeople.android.sdcardcleaner.global.utils.ConfigUtil
 import com.bonepeople.android.widget.ApplicationHolder
 import com.bonepeople.android.widget.util.AppGson
 import com.bonepeople.android.widget.util.AppStorage

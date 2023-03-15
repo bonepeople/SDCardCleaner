@@ -1,4 +1,4 @@
-package com.bonepeople.android.sdcardcleaner.fragment
+package com.bonepeople.android.sdcardcleaner.ui
 
 import android.os.Bundle
 import com.bonepeople.android.base.ViewBindingFragment

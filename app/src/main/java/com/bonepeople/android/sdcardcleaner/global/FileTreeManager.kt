@@ -2,7 +2,7 @@ package com.bonepeople.android.sdcardcleaner.global
 
 import android.os.Environment
 import com.bonepeople.android.sdcardcleaner.data.FileTreeInfo
-import com.bonepeople.android.sdcardcleaner.utils.CommonUtil
+import com.bonepeople.android.sdcardcleaner.global.utils.CommonUtil
 import com.bonepeople.android.widget.CoroutinesHolder
 import com.bonepeople.android.widget.util.AppTime
 import kotlinx.coroutines.Job

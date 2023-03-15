@@ -1,4 +1,4 @@
-package com.bonepeople.android.sdcardcleaner.utils;
+package com.bonepeople.android.sdcardcleaner.global.utils;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;

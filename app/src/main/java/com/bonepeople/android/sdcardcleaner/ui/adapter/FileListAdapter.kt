@@ -1,4 +1,4 @@
-package com.bonepeople.android.sdcardcleaner.adapter
+package com.bonepeople.android.sdcardcleaner.ui.adapter
 
 import android.animation.ArgbEvaluator
 import android.text.format.Formatter
@@ -7,8 +7,8 @@ import com.bonepeople.android.base.ViewBindingRecyclerAdapter
 import com.bonepeople.android.sdcardcleaner.R
 import com.bonepeople.android.sdcardcleaner.data.FileTreeInfo
 import com.bonepeople.android.sdcardcleaner.databinding.ItemFileListBinding
-import com.bonepeople.android.sdcardcleaner.fragment.FileListFragment
-import com.bonepeople.android.sdcardcleaner.utils.NumberUtil
+import com.bonepeople.android.sdcardcleaner.ui.FileListFragment
+import com.bonepeople.android.sdcardcleaner.global.utils.NumberUtil
 import com.bonepeople.android.widget.util.gone
 import com.bonepeople.android.widget.util.show
 import com.bonepeople.android.widget.util.singleClick
