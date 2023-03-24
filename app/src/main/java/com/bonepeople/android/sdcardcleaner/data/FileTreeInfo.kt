@@ -10,4 +10,18 @@ class FileTreeInfo {
     var sorted = 0//当前排序类型，0-未排序，1-按文件名称排序
     var parent: FileTreeInfo? = null//父目录
     var children = ArrayList<FileTreeInfo>()//子文件列表
+    var largestFile: FileTreeInfo? = null//当前目录中最大的文件
+
+    fun updateLargestFile() {
+        largestFile = null
+        children.forEach { child ->
+            if (largestFile == null) {
+                largestFile = child
+            } else {
+                if (child.size > largestFile!!.size) {
+                    largestFile = child
+                }
+            }
+        }
+    }
 }

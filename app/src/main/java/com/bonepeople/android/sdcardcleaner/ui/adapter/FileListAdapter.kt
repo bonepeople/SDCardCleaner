@@ -24,7 +24,13 @@ class FileListAdapter(override val list: List<FileTreeInfo>, private val fragmen
     override fun onBindView(views: ItemFileListBinding, data: FileTreeInfo, position: Int, payloads: MutableList<Any>) {
         if (payloads.isEmpty()) {
             //设置文件大小比例条
-            val percent = NumberUtil.div(data.size.toDouble(), data.parent?.size?.toDouble() ?: 0.0, 2).toFloat()
+            val size = data.size.toDouble()
+            val total = data.parent?.largestFile?.size?.toDouble() ?: 0.0
+            val percent = if (size > 0 && total > 0) {
+                NumberUtil.div(size, total, 2).toFloat()
+            } else {
+                0f
+            }
             (views.viewPercent.layoutParams as ConstraintLayout.LayoutParams).matchConstraintPercentWidth = percent
             val color = evaluator.evaluate(percent, 0xFFEAD799.toInt(), 0xFFE96E3E.toInt()) as Int
             views.viewPercent.setBackgroundColor(color)

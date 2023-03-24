@@ -76,6 +76,9 @@ object FileTreeManager {
         currentState = STATE.SCAN_STOPPING
     }
 
+    /**
+     * 开始执行清理逻辑
+     */
     fun startClean() {
         currentState = STATE.CLEAN_EXECUTING
         startTime = System.currentTimeMillis()
@@ -88,11 +91,22 @@ object FileTreeManager {
         }
     }
 
+    /**
+     * 停止清理逻辑
+     */
     fun stopClean() {
         currentState = STATE.CLEAN_STOPPING
         cleanJob?.cancel()
     }
 
+    /**
+     * 扫描文件
+     * + 遍历给定文件及其子目录，将信息存储到parentFile中
+     * + 会同步更新parentFile中的统计信息
+     * @param parentFile 父级目录
+     * @param fileInfo 储存file信息的对象
+     * @param file 待遍历的文件
+     */
     private fun scanFile(parentFile: FileTreeInfo?, fileInfo: FileTreeInfo, file: File) {
         //记录基础信息
         fileInfo.parent = parentFile
@@ -117,9 +131,13 @@ object FileTreeManager {
                     scanFile(fileInfo, FileTreeInfo(), it)
                 }
             }
-            //在当前目录遍历完成后对文件夹内的文件进行排序
+            //在当前目录遍历完成后进行一些额外工作
             CoroutinesHolder.default.launch {
+                //确定文件夹内最大的文件
+                fileInfo.updateLargestFile()
+                //对文件夹内的文件进行排序
                 fileInfo.children.sortWith(nameComparator)
+                fileInfo.sorted = 1
             }
         }
     }
@@ -178,6 +196,16 @@ object FileTreeManager {
                 updateParentFile(fileInfo.parent, -1, -fileInfo.size)
                 //移除父级引用
                 fileInfo.parent?.children?.remove(fileInfo)
+                //成功删除后，递归更新上级目录中最大的文件
+                var child: FileTreeInfo = fileInfo
+                var parent: FileTreeInfo? = fileInfo.parent
+                while (parent != null) {
+                    if (parent.largestFile == child) {
+                        parent.updateLargestFile()
+                    }
+                    child = parent
+                    parent = parent.parent
+                }
             }
         }
     }
