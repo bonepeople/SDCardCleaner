@@ -8,3 +8,8 @@ navEditor.xml
 assetWizardSettings.xml
 misc.xml
 deploymentTargetDropDown.xml
+gradle.xml
+compiler.xml
+/codeStyles/codeStyleConfig.xml
+/kotlinc.xml
+/codeStyles/Project.xml
