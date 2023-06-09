@@ -9,9 +9,8 @@ import android.os.Environment
 import android.provider.Settings
 import android.widget.Toast
 import androidx.core.view.setPadding
-import com.bonepeople.android.base.ViewBindingFragment
 import com.bonepeople.android.base.activity.StandardActivity
-import com.bonepeople.android.base.databinding.ViewTitleBinding
+import com.bonepeople.android.base.viewbinding.ViewBindingFragment
 import com.bonepeople.android.dimensionutil.DimensionUtil
 import com.bonepeople.android.sdcardcleaner.R
 import com.bonepeople.android.sdcardcleaner.data.FileTreeInfo
@@ -19,7 +18,11 @@ import com.bonepeople.android.sdcardcleaner.databinding.FragmentHomeBinding
 import com.bonepeople.android.sdcardcleaner.global.FileTreeManager
 import com.bonepeople.android.widget.ApplicationHolder
 import com.bonepeople.android.widget.activity.result.launch
-import com.bonepeople.android.widget.util.*
+import com.bonepeople.android.widget.util.AppPermission
+import com.bonepeople.android.widget.util.AppToast
+import com.bonepeople.android.widget.util.AppView.gone
+import com.bonepeople.android.widget.util.AppView.show
+import com.bonepeople.android.widget.util.AppView.singleClick
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
@@ -28,12 +31,12 @@ class HomeFragment : ViewBindingFragment<FragmentHomeBinding>() {
     private var quit = false
 
     override fun initView() {
-        ViewTitleBinding.bind(views.titleView).run {
-            textViewTitleName.text = getString(R.string.caption_text_mine)
-            imageViewTitleAction.setPadding(DimensionUtil.getPx(16f))
-            imageViewTitleAction.setImageResource(R.drawable.icon_set)
-            imageViewTitleAction.show()
-            imageViewTitleAction.singleClick { StandardActivity.open(SettingFragment()) }
+        views.titleView.title = getString(R.string.caption_text_mine)
+        views.titleView.views.imageViewTitleAction.run {
+            setPadding(DimensionUtil.getPx(16f))
+            setImageResource(R.drawable.icon_set)
+            singleClick { StandardActivity.open(SettingFragment()) }
+            show()
         }
     }
 
@@ -64,6 +67,7 @@ class HomeFragment : ViewBindingFragment<FragmentHomeBinding>() {
                 views.buttonLeft.gone()
                 views.buttonRight.gone()
             }
+
             FileTreeManager.STATE.SCAN_EXECUTING -> {
                 views.textViewState.setText(R.string.state_scan_executing)
                 views.buttonTop.setText(R.string.caption_button_stopScan)
@@ -72,12 +76,14 @@ class HomeFragment : ViewBindingFragment<FragmentHomeBinding>() {
                 views.buttonLeft.gone()
                 views.buttonRight.gone()
             }
+
             FileTreeManager.STATE.SCAN_STOPPING -> {
                 views.textViewState.setText(R.string.state_scan_stopping)
                 views.buttonTop.gone()
                 views.buttonLeft.gone()
                 views.buttonRight.gone()
             }
+
             FileTreeManager.STATE.SCAN_FINISH -> {
                 views.textViewState.setText(R.string.state_scan_finish)
                 views.buttonTop.setText(R.string.caption_button_rescan)
@@ -90,6 +96,7 @@ class HomeFragment : ViewBindingFragment<FragmentHomeBinding>() {
                 views.buttonLeft.show()
                 views.buttonRight.show()
             }
+
             FileTreeManager.STATE.CLEAN_EXECUTING -> {
                 views.textViewState.setText(R.string.state_clean_executing)
                 views.buttonTop.setText(R.string.caption_button_stopClean)
@@ -98,12 +105,14 @@ class HomeFragment : ViewBindingFragment<FragmentHomeBinding>() {
                 views.buttonLeft.gone()
                 views.buttonRight.gone()
             }
+
             FileTreeManager.STATE.CLEAN_STOPPING -> {
                 views.textViewState.setText(R.string.state_clean_stopping)
                 views.buttonTop.gone()
                 views.buttonLeft.gone()
                 views.buttonRight.gone()
             }
+
             FileTreeManager.STATE.CLEAN_FINISH -> {
                 views.textViewState.setText(R.string.state_clean_finish)
                 views.buttonTop.setText(R.string.caption_button_rescan)

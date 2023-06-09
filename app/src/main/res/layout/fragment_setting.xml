@@ -5,9 +5,11 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <include
+    <com.bonepeople.android.base.view.TitleView
         android:id="@+id/titleView"
-        layout="@layout/view_title" />
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
         android:id="@+id/textViewWhite"

@@ -5,7 +5,7 @@ import android.view.ViewGroup
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.bonepeople.android.sdcardcleaner.R
-import com.bonepeople.android.widget.util.singleClick
+import com.bonepeople.android.widget.util.AppView.singleClick
 
 class CleanPathListAdapter(private val list: List<String>, private val clickAction: (Int) -> Unit) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {

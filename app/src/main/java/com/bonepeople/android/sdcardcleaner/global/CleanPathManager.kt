@@ -18,8 +18,8 @@ object CleanPathManager {
 
     private fun transferData() {
         if (!AppStorage.getBoolean(Keys.ALREADY_TRANSFER_CLEAN_PATH)) {
-            val saveList = ConfigUtil.getSaveList(ApplicationHolder.instance)
-            val cleanList = ConfigUtil.getCleanList(ApplicationHolder.instance)
+            val saveList = ConfigUtil.getSaveList(ApplicationHolder.app)
+            val cleanList = ConfigUtil.getCleanList(ApplicationHolder.app)
 
             if (!saveList.isNullOrEmpty()) {
                 saveList.toList().sortedWith { str1, str2 -> CommonUtil.comparePath(str1, str2) }.let {

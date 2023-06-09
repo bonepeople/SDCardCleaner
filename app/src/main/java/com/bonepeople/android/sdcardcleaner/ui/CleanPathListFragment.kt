@@ -5,8 +5,7 @@ import android.os.Environment
 import androidx.appcompat.app.AlertDialog
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.bonepeople.android.base.ViewBindingFragment
-import com.bonepeople.android.base.databinding.ViewTitleBinding
+import com.bonepeople.android.base.viewbinding.ViewBindingFragment
 import com.bonepeople.android.sdcardcleaner.R
 import com.bonepeople.android.sdcardcleaner.ui.adapter.CleanPathListAdapter
 import com.bonepeople.android.sdcardcleaner.databinding.FragmentCleanPathListBinding
@@ -14,12 +13,10 @@ import com.bonepeople.android.sdcardcleaner.global.CleanPathManager
 import com.bonepeople.android.sdcardcleaner.global.FileTreeManager
 
 class CleanPathListFragment : ViewBindingFragment<FragmentCleanPathListBinding>() {
-    private lateinit var title: ViewTitleBinding
     private val listData = arrayListOf<String>()
     private val adapter = CleanPathListAdapter(listData, this::onItemClick)
     private var mode = WHITE
     override fun initView() {
-        title = ViewTitleBinding.bind(views.titleView)
         views.recyclerView.layoutManager = LinearLayoutManager(activity)
         views.recyclerView.addItemDecoration(DividerItemDecoration(activity, DividerItemDecoration.VERTICAL))
     }
@@ -29,13 +26,14 @@ class CleanPathListFragment : ViewBindingFragment<FragmentCleanPathListBinding>(
         val basicPath = Environment.getExternalStorageDirectory().path
         when (mode) {
             WHITE -> {
-                title.textViewTitleName.setText(R.string.caption_text_white)
+                views.titleView.title = getString(R.string.caption_text_white)
                 CleanPathManager.whiteList.forEach {
                     listData.add(it.replace(basicPath, getString(R.string.str_path_rootFile)))
                 }
             }
+
             BLACK -> {
-                title.textViewTitleName.setText(R.string.caption_text_black)
+                views.titleView.title = getString(R.string.caption_text_black)
                 CleanPathManager.blackList.forEach {
                     listData.add(it.replace(basicPath, getString(R.string.str_path_rootFile)))
                 }

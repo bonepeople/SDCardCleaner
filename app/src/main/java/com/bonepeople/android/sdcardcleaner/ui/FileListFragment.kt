@@ -5,9 +5,8 @@ import android.os.Bundle
 import androidx.appcompat.app.AlertDialog
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.bonepeople.android.base.ViewBindingFragment
 import com.bonepeople.android.base.activity.StandardActivity
-import com.bonepeople.android.base.databinding.ViewTitleBinding
+import com.bonepeople.android.base.viewbinding.ViewBindingFragment
 import com.bonepeople.android.sdcardcleaner.R
 import com.bonepeople.android.sdcardcleaner.ui.adapter.FileListAdapter
 import com.bonepeople.android.sdcardcleaner.data.FileTreeInfo
@@ -15,7 +14,10 @@ import com.bonepeople.android.sdcardcleaner.databinding.FragmentFileListBinding
 import com.bonepeople.android.sdcardcleaner.global.CleanPathManager
 import com.bonepeople.android.sdcardcleaner.global.FileTreeManager
 import com.bonepeople.android.widget.CoroutinesHolder
-import com.bonepeople.android.widget.util.*
+import com.bonepeople.android.widget.util.AppView.gone
+import com.bonepeople.android.widget.util.AppView.hide
+import com.bonepeople.android.widget.util.AppView.show
+import com.bonepeople.android.widget.util.AppView.singleClick
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -42,9 +44,7 @@ class FileListFragment(private val file: FileTreeInfo) : ViewBindingFragment<Fra
         } else {
             file.name
         }
-        ViewTitleBinding.bind(views.titleView).run {
-            textViewTitleName.text = title
-        }
+        views.titleView.title = title
         views.textViewPath.text = file.path.replace(FileTreeManager.Summary.rootFile.path, getString(R.string.str_path_rootFile))
         if (file.children.isEmpty()) {
             views.textViewEmpty.show()

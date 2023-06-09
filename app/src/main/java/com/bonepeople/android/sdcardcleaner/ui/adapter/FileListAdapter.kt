@@ -3,15 +3,15 @@ package com.bonepeople.android.sdcardcleaner.ui.adapter
 import android.animation.ArgbEvaluator
 import android.text.format.Formatter
 import androidx.constraintlayout.widget.ConstraintLayout
-import com.bonepeople.android.base.ViewBindingRecyclerAdapter
+import com.bonepeople.android.base.viewbinding.ViewBindingRecyclerAdapter
 import com.bonepeople.android.sdcardcleaner.R
 import com.bonepeople.android.sdcardcleaner.data.FileTreeInfo
 import com.bonepeople.android.sdcardcleaner.databinding.ItemFileListBinding
 import com.bonepeople.android.sdcardcleaner.ui.FileListFragment
 import com.bonepeople.android.sdcardcleaner.global.utils.NumberUtil
-import com.bonepeople.android.widget.util.gone
-import com.bonepeople.android.widget.util.show
-import com.bonepeople.android.widget.util.singleClick
+import com.bonepeople.android.widget.util.AppView.gone
+import com.bonepeople.android.widget.util.AppView.show
+import com.bonepeople.android.widget.util.AppView.singleClick
 
 class FileListAdapter(override val list: List<FileTreeInfo>, private val fragment: FileListFragment) : ViewBindingRecyclerAdapter<ItemFileListBinding, FileTreeInfo>() {
     var multiSelect = false
