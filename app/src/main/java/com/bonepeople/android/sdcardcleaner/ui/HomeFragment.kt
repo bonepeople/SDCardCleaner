@@ -145,6 +145,8 @@ class HomeFragment : ViewBindingFragment<FragmentHomeBinding>() {
                         if (Environment.isExternalStorageManager()) {
                             FileTreeManager.startScan()
                             autoRefresh()
+                        } else {
+                            AppToast.show(getString(R.string.toast_sdcard_permission))
                         }
                     }
             }
@@ -155,7 +157,7 @@ class HomeFragment : ViewBindingFragment<FragmentHomeBinding>() {
                         FileTreeManager.startScan()
                         autoRefresh()
                     } else {
-                        AppToast.show("需要存储空间的权限才能扫描文件")
+                        AppToast.show(getString(R.string.toast_sdcard_permission))
                     }
                 }
         }

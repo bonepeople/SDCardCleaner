@@ -1,0 +1,72 @@
+<resources>
+    <string name="app_name">StorageStats</string>
+    <string name="app_version">v%1$s\nReleased on %2$s</string>
+    <string name="str_path_rootFile">Internal Storage</string>
+
+    <!--Toast展示的信息-->
+    <string name="toast_quitConfirm">Press again to exit the app</string>
+    <string name="toast_sdcard_permission">Storage permission is required to scan files</string>
+    <string name="toast_sdcard_error">Internal storage is unavailable</string>
+    <string name="toast_comingSoon">Coming soon</string>
+
+    <!--用于控件内容的描述-->
+    <string name="contentDescription_fileIcon">File Type Icon</string>
+    <string name="contentDescription_rubbishMark">Pending Cleanup Marker</string>
+    <string name="contentDescription_close">Close Button</string>
+
+    <!--各种控件的名称-->
+    <string name="caption_button_startScan">Start Scan</string>
+    <string name="caption_button_stopScan">Stop Scan</string>
+    <string name="caption_button_rescan">Rescan</string>
+    <string name="caption_button_startClean">Start Clean</string>
+    <string name="caption_button_stopClean">Stop Clean</string>
+    <string name="caption_button_viewFiles">View Files</string>
+    <string name="caption_button_delete">Delete</string>
+    <string name="caption_button_clean">Mark Junk</string>
+    <string name="caption_button_save">Remove Mark</string>
+    <string name="caption_button_checkAll">Select All</string>
+
+    <string name="caption_text_mine">My Files</string>
+    <string name="caption_text_white">Whitelist</string>
+    <string name="caption_text_black">Blacklist</string>
+    <string name="caption_text_set">Settings</string>
+    <string name="caption_text_about">About</string>
+    <string name="caption_text_file">My Files</string>
+
+    <!--对话框中的文字提示信息-->
+    <string name="dialog_list_path_remove">Remove "%1$s"?</string>
+
+    <string name="dialog_list_file_delete_title">Delete Confirmation</string>
+    <string name="dialog_list_file_delete_message">This action will delete all files in the selected folder, regardless of whether they are in the whitelist.</string>
+    <string name="dialog_list_file_deleting">Deleting Files</string>
+    <string name="dialog_list_file_updating">Updating Files</string>
+
+    <!--用于显示各种状态的描述-->
+    <string name="state_emptyView">Nothing Here</string>
+    <string name="state_ready">Scan not yet performed</string>
+    <string name="state_scan_executing">Scanning files…</string>
+    <string name="state_scan_stopping">Stopping scan</string>
+    <string name="state_scan_finish">Scan completed</string>
+    <string name="state_clean_executing">Cleaning files…</string>
+    <string name="state_clean_stopping">Stopping clean</string>
+    <string name="state_clean_finish">Clean completed</string>
+    <string name="state_fileCount_system">System Usage: %1$s</string>
+    <string name="state_fileCount_blank">Available Space: %1$s</string>
+    <string name="state_fileCount_file">Scanned Files: %1$s (%2$d items)</string>
+    <string name="state_fileCount_rubbish">Pending Cleanup: %1$s (%2$d items)</string>
+    <string name="state_directory_size">%1$s | %2$d items</string>
+
+    <!--页面中的静态文本-->
+    <string name="text_about_subject_feature">Key Features</string>
+    <string name="text_about_subject_require">Requirements</string>
+    <string name="text_about_subject_source">Source</string>
+    <string name="text_about_subject_statement">Disclaimer</string>
+    <string name="text_about_content_feature1">Analyzes space and file count in the internal storage</string>
+    <string name="text_about_content_feature2">Quickly cleans target files</string>
+    <string name="text_about_content_require1">Requires Android 6.0 and above</string>
+    <string name="text_about_content_require2">Requires permission to read and write to device storage</string>
+    <string name="text_about_content_source1">Software Author: bonepeople</string>
+    <string name="text_about_content_source2">Source Code: https://github.com/bonepeople/SDCardCleaner</string>
+    <string name="text_about_content_source3">This software is licensed under GNU General Public License v3.0</string>
+    <string name="text_about_content_statement">This software provides basic operations such as viewing and cleaning storage space. It will not perform any unauthorized actions, and the consequences of file deletion are the user\'s responsibility.</string>
+</resources>

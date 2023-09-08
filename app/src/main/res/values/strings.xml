@@ -5,6 +5,7 @@
 
     <!--Toast展示的信息-->
     <string name="toast_quitConfirm">再按一次退出应用</string>
+    <string name="toast_sdcard_permission">需要存储空间的权限才能扫描文件</string>
     <string name="toast_sdcard_error">内部存储不可用</string>
     <string name="toast_comingSoon">敬请期待</string>
 
