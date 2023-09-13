@@ -7,9 +7,10 @@ import com.bonepeople.android.sdcardcleaner.databinding.ActivityHomeBinding
 
 class HomeActivity : ViewBindingActivity<ActivityHomeBinding>() {
     override fun initView() {
-        supportFragmentManager.beginTransaction().apply {
-            add(R.id.fragmentContainerView, HomeFragment())
-            commit()
+        var fragment = supportFragmentManager.findFragmentByTag("HomeFragment")
+        if (fragment == null) {
+            fragment = HomeFragment()
+            supportFragmentManager.beginTransaction().add(R.id.fragmentContainerView, fragment, "HomeFragment").commit()
         }
     }
 
