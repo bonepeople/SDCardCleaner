@@ -41,6 +41,10 @@
     <string name="dialog_list_file_deleting">Deleting Files</string>
     <string name="dialog_list_file_updating">Updating Files</string>
 
+    <!--页面弹窗中的文字提示信息-->
+    <string name="popup_sort_selector_name">Sort By FileName</string>
+    <string name="popup_sort_selector_size">Sort By FileSize</string>
+
     <!--用于显示各种状态的描述-->
     <string name="state_emptyView">Nothing Here</string>
     <string name="state_ready">Scan not yet performed</string>

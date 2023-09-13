@@ -2,6 +2,7 @@ package com.bonepeople.android.sdcardcleaner.ui
 
 import android.app.ProgressDialog
 import android.os.Bundle
+import android.view.Gravity
 import androidx.appcompat.app.AlertDialog
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -13,6 +14,7 @@ import com.bonepeople.android.sdcardcleaner.data.FileTreeInfo
 import com.bonepeople.android.sdcardcleaner.databinding.FragmentFileListBinding
 import com.bonepeople.android.sdcardcleaner.global.CleanPathManager
 import com.bonepeople.android.sdcardcleaner.global.FileTreeManager
+import com.bonepeople.android.sdcardcleaner.ui.view.SortSelectorPopupWindow
 import com.bonepeople.android.widget.CoroutinesHolder
 import com.bonepeople.android.widget.util.AppView.gone
 import com.bonepeople.android.widget.util.AppView.hide
@@ -26,6 +28,29 @@ class FileListFragment(private val file: FileTreeInfo) : ViewBindingFragment<Fra
     private val adapter = FileListAdapter(file.children, this)
 
     override fun initView() {
+        views.titleView.onActionClick {
+            SortSelectorPopupWindow(requireContext()).onSelected { sortType ->
+                if (file.sorted == sortType) return@onSelected //选择想用的排序方式，不再重复排序
+                when (sortType) {
+                    FileTreeInfo.SORT_TYPE_NAME -> {
+                        launch {
+                            file.children.sortWith(FileTreeManager.nameComparator)
+                            adapter.refresh()
+                        }
+                    }
+
+                    FileTreeInfo.SORT_TYPE_SIZE -> {
+                        launch {
+                            file.children.sortByDescending { it.size }
+                            adapter.refresh()
+                        }
+                    }
+
+                    else -> return@onSelected
+                }
+                file.sorted = sortType
+            }.showAsDropDown(views.titleView, 0, 0, Gravity.END)
+        }
         views.recyclerView.layoutManager = LinearLayoutManager(activity)
         views.recyclerView.addItemDecoration(DividerItemDecoration(activity, DividerItemDecoration.VERTICAL))
         views.textViewDelete.singleClick { deleteFiles() }

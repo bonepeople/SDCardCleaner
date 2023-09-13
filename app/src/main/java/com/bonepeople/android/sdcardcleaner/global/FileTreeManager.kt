@@ -30,7 +30,7 @@ object FileTreeManager {
         var rubbishSize = 0L
     }
 
-    private val nameComparator = Comparator<FileTreeInfo> { file1, file2 ->
+    val nameComparator = Comparator<FileTreeInfo> { file1, file2 ->
         if (file1.directory && file2.directory) {
             CommonUtil.comparePath(file1.name, file2.name)
         } else if (file1.directory) {

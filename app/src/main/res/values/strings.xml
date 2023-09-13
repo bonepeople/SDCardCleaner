@@ -41,6 +41,10 @@
     <string name="dialog_list_file_deleting">正在删除文件</string>
     <string name="dialog_list_file_updating">正在更新文件</string>
 
+    <!--页面弹窗中的文字提示信息-->
+    <string name="popup_sort_selector_name">按文件名排序</string>
+    <string name="popup_sort_selector_size">按文件大小排序</string>
+
     <!--用于显示各种状态的描述-->
     <string name="state_emptyView">空空如也</string>
     <string name="state_ready">还未进行扫描</string>
