@@ -14,6 +14,7 @@ import com.bonepeople.android.base.viewbinding.ViewBindingFragment
 import com.bonepeople.android.dimensionutil.DimensionUtil
 import com.bonepeople.android.sdcardcleaner.R
 import com.bonepeople.android.sdcardcleaner.data.FileTreeInfo
+import com.bonepeople.android.sdcardcleaner.data.GlobalSummaryInfo
 import com.bonepeople.android.sdcardcleaner.databinding.FragmentHomeBinding
 import com.bonepeople.android.sdcardcleaner.global.FileTreeManager
 import com.bonepeople.android.widget.ApplicationHolder
@@ -53,7 +54,15 @@ class HomeFragment : ViewBindingFragment<FragmentHomeBinding>() {
             else -> FileTreeManager.getProgressTimeString()
         }
         views.textViewTime.text = time
-        views.storageSummary.updateView()
+        val summaryInfo = GlobalSummaryInfo().apply {
+            totalSpace = FileTreeManager.Summary.totalSpace
+            freeSpace = FileTreeManager.Summary.freeSpace
+            fileCount = FileTreeManager.Summary.rootFile.fileCount
+            fileSize = FileTreeManager.Summary.rootFile.size
+            rubbishCount = FileTreeManager.Summary.rubbishCount
+            rubbishSize = FileTreeManager.Summary.rubbishSize
+        }
+        views.storageSummary.updateView(summaryInfo)
     }
 
     private fun updateState() {
