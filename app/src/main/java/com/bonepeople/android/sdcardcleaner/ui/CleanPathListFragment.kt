@@ -11,6 +11,7 @@ import com.bonepeople.android.sdcardcleaner.ui.adapter.CleanPathListAdapter
 import com.bonepeople.android.sdcardcleaner.databinding.FragmentCleanPathListBinding
 import com.bonepeople.android.sdcardcleaner.global.CleanPathManager
 import com.bonepeople.android.sdcardcleaner.global.FileTreeManager
+import com.bonepeople.android.widget.util.AppToast
 
 class CleanPathListFragment : ViewBindingFragment<FragmentCleanPathListBinding>() {
     private val listData = arrayListOf<String>()
@@ -38,6 +39,10 @@ class CleanPathListFragment : ViewBindingFragment<FragmentCleanPathListBinding>(
                     listData.add(it.replace(basicPath, getString(R.string.str_path_rootFile)))
                 }
             }
+
+            else -> {
+                AppToast.show("mode error")
+            }
         }
         views.recyclerView.adapter = adapter
     }
@@ -62,20 +67,13 @@ class CleanPathListFragment : ViewBindingFragment<FragmentCleanPathListBinding>(
     }
 
     companion object {
-        private const val WHITE = 1
-        private const val BLACK = 2
-        fun getWhiteList(): CleanPathListFragment {
-            return CleanPathListFragment().apply {
-                arguments = Bundle().apply {
-                    putInt("mode", WHITE)
-                }
-            }
-        }
+        const val WHITE = 1
+        const val BLACK = 2
 
-        fun getBlackList(): CleanPathListFragment {
+        fun newInstance(mode: Int): CleanPathListFragment {
             return CleanPathListFragment().apply {
                 arguments = Bundle().apply {
-                    putInt("mode", BLACK)
+                    putInt("mode", mode)
                 }
             }
         }

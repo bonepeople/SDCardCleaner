@@ -20,8 +20,8 @@ import java.io.FileOutputStream
 class SettingFragment : ViewBindingFragment<FragmentSettingBinding>() {
     override fun initView() {
         views.titleView.title = getString(R.string.caption_text_set)
-        views.textViewWhite.singleClick { StandardActivity.open(CleanPathListFragment.getWhiteList()) }
-        views.textViewBlack.singleClick { StandardActivity.open(CleanPathListFragment.getBlackList()) }
+        views.textViewWhite.singleClick { StandardActivity.open(CleanPathListFragment.newInstance(CleanPathListFragment.WHITE)) }
+        views.textViewBlack.singleClick { StandardActivity.open(CleanPathListFragment.newInstance(CleanPathListFragment.BLACK)) }
         views.textViewAbout.singleClick { StandardActivity.open(AboutFragment()) }
         views.textViewVersion.run {
             val versionName = if (ApplicationHolder.debug) "${ApplicationHolder.getVersionName()} - debug" else ApplicationHolder.getVersionName()
