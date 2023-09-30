@@ -1,38 +1,17 @@
 package com.bonepeople.android.sdcardcleaner.global
 
 import com.bonepeople.android.sdcardcleaner.global.utils.CommonUtil
-import com.bonepeople.android.sdcardcleaner.global.utils.ConfigUtil
-import com.bonepeople.android.widget.ApplicationHolder
 import com.bonepeople.android.widget.util.AppGson
 import com.bonepeople.android.widget.util.AppStorage
 
 object CleanPathManager {
     val whiteList: ArrayList<String> by lazy {
-        transferData()
+        AppStorage.remove(Keys.ALREADY_TRANSFER_CLEAN_PATH)
         AppGson.toObject(AppStorage.getString(Keys.WHITE_LIST, "[]"))
     }
     val blackList: ArrayList<String> by lazy {
-        transferData()
+        AppStorage.remove(Keys.ALREADY_TRANSFER_CLEAN_PATH)
         AppGson.toObject(AppStorage.getString(Keys.BLACK_LIST, "[]"))
-    }
-
-    private fun transferData() {
-        if (!AppStorage.getBoolean(Keys.ALREADY_TRANSFER_CLEAN_PATH)) {
-            val saveList = ConfigUtil.getSaveList(ApplicationHolder.app)
-            val cleanList = ConfigUtil.getCleanList(ApplicationHolder.app)
-
-            if (!saveList.isNullOrEmpty()) {
-                saveList.toList().sortedWith { str1, str2 -> CommonUtil.comparePath(str1, str2) }.let {
-                    AppStorage.putString(Keys.WHITE_LIST, AppGson.toJson(it))
-                }
-            }
-            if (!cleanList.isNullOrEmpty()) {
-                cleanList.toList().sortedWith { str1, str2 -> CommonUtil.comparePath(str1, str2) }.let {
-                    AppStorage.putString(Keys.BLACK_LIST, AppGson.toJson(it))
-                }
-            }
-            AppStorage.putBoolean(Keys.ALREADY_TRANSFER_CLEAN_PATH, true)
-        }
     }
 
     fun addWhiteList(newList: List<String>) {
