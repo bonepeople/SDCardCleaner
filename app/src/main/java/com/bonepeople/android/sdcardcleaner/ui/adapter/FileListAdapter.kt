@@ -12,6 +12,7 @@ import com.bonepeople.android.sdcardcleaner.global.utils.NumberUtil
 import com.bonepeople.android.widget.util.AppView.gone
 import com.bonepeople.android.widget.util.AppView.show
 import com.bonepeople.android.widget.util.AppView.singleClick
+import com.bonepeople.android.widget.util.AppView.switchShow
 
 class FileListAdapter(override val list: List<FileTreeInfo>, private val fragment: FileListFragment) : ViewBindingRecyclerAdapter<ItemFileListBinding, FileTreeInfo>() {
     var multiSelect = false
@@ -35,11 +36,7 @@ class FileListAdapter(override val list: List<FileTreeInfo>, private val fragmen
             val color = evaluator.evaluate(percent, 0xFFEAD799.toInt(), 0xFFE96E3E.toInt()) as Int
             views.viewPercent.setBackgroundColor(color)
             //设置清理标志
-            if (data.rubbish) {
-                views.imageViewRubbish.show()
-            } else {
-                views.imageViewRubbish.gone()
-            }
+            views.imageViewRubbish.switchShow(data.rubbish)
             //设置类型图标
             if (data.directory) {
                 views.imageViewType.setImageResource(R.drawable.icon_directory)

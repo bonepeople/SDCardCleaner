@@ -1,6 +1,5 @@
 package com.bonepeople.android.sdcardcleaner.ui
 
-import android.os.Bundle
 import android.os.Environment
 import com.bonepeople.android.base.activity.StandardActivity
 import com.bonepeople.android.base.viewbinding.ViewBindingFragment
@@ -30,12 +29,8 @@ class SettingFragment : ViewBindingFragment<FragmentSettingBinding>() {
         }
     }
 
-    override fun initData(savedInstanceState: Bundle?) {
-
-    }
-
     private fun createFiles() {
-        CoroutinesHolder.default.launch {
+        CoroutinesHolder.io.launch {
             loadingDialog.show()
             val root = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOCUMENTS)
             AppLog.debug(root.absolutePath)

@@ -4,10 +4,12 @@ import android.app.ProgressDialog
 import android.os.Bundle
 import android.view.Gravity
 import androidx.appcompat.app.AlertDialog
+import androidx.core.view.setPadding
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.bonepeople.android.base.activity.StandardActivity
 import com.bonepeople.android.base.viewbinding.ViewBindingFragment
+import com.bonepeople.android.dimensionutil.DimensionUtil
 import com.bonepeople.android.sdcardcleaner.R
 import com.bonepeople.android.sdcardcleaner.ui.adapter.FileListAdapter
 import com.bonepeople.android.sdcardcleaner.data.FileTreeInfo
@@ -16,10 +18,9 @@ import com.bonepeople.android.sdcardcleaner.global.CleanPathManager
 import com.bonepeople.android.sdcardcleaner.global.FileTreeManager
 import com.bonepeople.android.sdcardcleaner.ui.view.SortSelectorPopupWindow
 import com.bonepeople.android.widget.CoroutinesHolder
-import com.bonepeople.android.widget.util.AppView.gone
-import com.bonepeople.android.widget.util.AppView.hide
-import com.bonepeople.android.widget.util.AppView.show
 import com.bonepeople.android.widget.util.AppView.singleClick
+import com.bonepeople.android.widget.util.AppView.switchShow
+import com.bonepeople.android.widget.util.AppView.switchVisible
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -28,6 +29,7 @@ class FileListFragment(private val file: FileTreeInfo) : ViewBindingFragment<Fra
     private val adapter = FileListAdapter(file.children, this)
 
     override fun initView() {
+        views.titleView.views.imageViewTitleAction.setPadding(DimensionUtil.getPx(16f))
         views.titleView.onActionClick {
             SortSelectorPopupWindow(requireContext()).onSelected { sortType ->
                 if (file.sorted == sortType) return@onSelected //选择想用的排序方式，不再重复排序
@@ -71,14 +73,9 @@ class FileListFragment(private val file: FileTreeInfo) : ViewBindingFragment<Fra
         }
         views.titleView.title = title
         views.textViewPath.text = file.path.replace(FileTreeManager.Summary.rootFile.path, getString(R.string.str_path_rootFile))
-        if (file.children.isEmpty()) {
-            views.textViewEmpty.show()
-            views.recyclerView.hide()
-        } else {
-            views.textViewEmpty.hide()
-            views.recyclerView.show()
-            views.recyclerView.adapter = adapter
-        }
+        views.textViewEmpty.switchVisible(file.children.isEmpty())
+        views.recyclerView.switchVisible(file.children.isNotEmpty())
+        views.recyclerView.adapter = adapter
     }
 
     override fun onBackPressed() {
@@ -104,11 +101,7 @@ class FileListFragment(private val file: FileTreeInfo) : ViewBindingFragment<Fra
     fun setMultiSelect(selecting: Boolean) {
         adapter.multiSelect = selecting
         adapter.notifyItemRangeChanged(0, adapter.itemCount, "CheckBox")
-        if (selecting) {
-            views.linearLayoutButtonBar.show()
-        } else {
-            views.linearLayoutButtonBar.gone()
-        }
+        views.linearLayoutButtonBar.switchShow(selecting)
     }
 
     /**
@@ -138,7 +131,7 @@ class FileListFragment(private val file: FileTreeInfo) : ViewBindingFragment<Fra
             progressDialog.max = adapter.checkedSet.size
             progressDialog.show()
             //删除文件的协程
-            job = CoroutinesHolder.default.launch {
+            job = CoroutinesHolder.io.launch {
                 adapter.checkedSet.forEach { position ->
                     FileTreeManager.deleteFile(file.children[position], true)
                     notifyItems.add(position - notifyItems.size)

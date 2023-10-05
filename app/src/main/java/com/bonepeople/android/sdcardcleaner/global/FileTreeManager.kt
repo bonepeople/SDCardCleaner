@@ -57,7 +57,7 @@ object FileTreeManager {
      */
     fun startScan() {
         currentState = STATE.SCAN_EXECUTING
-        CoroutinesHolder.default.launch {
+        CoroutinesHolder.io.launch {
             startTime = System.currentTimeMillis()
             Summary.rubbishCount = 0
             Summary.rubbishSize = 0
@@ -82,7 +82,7 @@ object FileTreeManager {
     fun startClean() {
         currentState = STATE.CLEAN_EXECUTING
         startTime = System.currentTimeMillis()
-        cleanJob = CoroutinesHolder.default.launch {
+        cleanJob = CoroutinesHolder.io.launch {
             deleteFile(Summary.rootFile, false)
         }
         cleanJob?.invokeOnCompletion {
