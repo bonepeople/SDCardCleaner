@@ -6,6 +6,8 @@ import com.bonepeople.android.sdcardcleaner.global.utils.CommonUtil
 import com.bonepeople.android.widget.CoroutinesHolder
 import com.bonepeople.android.widget.util.AppTime
 import kotlinx.coroutines.Job
+import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.yield
 import java.io.File
@@ -26,8 +28,8 @@ object FileTreeManager {
         val totalSpace by lazy { Environment.getExternalStorageDirectory().totalSpace }
         val freeSpace by lazy { Environment.getExternalStorageDirectory().freeSpace }
         var rootFile: FileTreeInfo = FileTreeInfo()
-        var rubbishCount = 0L
-        var rubbishSize = 0L
+        var rubbishCount = 0L //多线程操作时需要注意线程安全
+        var rubbishSize = 0L //多线程操作时需要注意线程安全
     }
 
     val nameComparator = Comparator<FileTreeInfo> { file1, file2 ->
@@ -44,6 +46,7 @@ object FileTreeManager {
     var currentState = STATE.READY
     private var startTime = 0L
     private var endTime = 0L
+    private var scanJob: Job? = null
     private var cleanJob: Job? = null
 
     fun getProgressTimeString(): String {
@@ -57,13 +60,16 @@ object FileTreeManager {
      */
     fun startScan() {
         currentState = STATE.SCAN_EXECUTING
-        CoroutinesHolder.io.launch {
-            startTime = System.currentTimeMillis()
+        startTime = System.currentTimeMillis()
+        scanJob = CoroutinesHolder.io.launch {
             Summary.rubbishCount = 0
             Summary.rubbishSize = 0
             val file = Environment.getExternalStorageDirectory()
             Summary.rootFile = FileTreeInfo()
+            //使用Dispatchers.IO调度器开启的协程占用的线程数是有上限的，在所有线程都被使用时，新的协程会等待进行中协程释放线程
             scanFile(null, Summary.rootFile, file)
+        }
+        scanJob?.invokeOnCompletion {
             currentState = STATE.SCAN_FINISH
             endTime = System.currentTimeMillis()
         }
@@ -74,6 +80,7 @@ object FileTreeManager {
      */
     fun stopScan() {
         currentState = STATE.SCAN_STOPPING
+        scanJob?.cancel()
     }
 
     /**
@@ -107,7 +114,7 @@ object FileTreeManager {
      * @param fileInfo 储存file信息的对象
      * @param file 待遍历的文件
      */
-    private fun scanFile(parentFile: FileTreeInfo?, fileInfo: FileTreeInfo, file: File) {
+    private suspend fun scanFile(parentFile: FileTreeInfo?, fileInfo: FileTreeInfo, file: File) {
         //记录基础信息
         fileInfo.parent = parentFile
         fileInfo.name = file.name
@@ -117,18 +124,37 @@ object FileTreeManager {
         //垃圾文件的判断
         fileInfo.rubbish = checkRubbish(fileInfo)
         if (fileInfo.rubbish) {
-            Summary.rubbishCount++
-            Summary.rubbishSize += fileInfo.size
+            synchronized(Summary) {
+                Summary.rubbishCount++
+                Summary.rubbishSize += fileInfo.size
+            }
         }
         //将自身添加到上级目录中
-        parentFile?.children?.add(fileInfo)
+        parentFile?.children?.let {
+            synchronized(it) {
+                it.add(fileInfo)
+            }
+        }
         //更新上级目录的信息
         updateParentFile(fileInfo.parent, 1, fileInfo.size)
         //如果当前是文件夹，对下级所有文件依次遍历
         if (fileInfo.directory) {
-            file.listFiles()?.forEach {
-                if (currentState == STATE.SCAN_EXECUTING) {
-                    scanFile(fileInfo, FileTreeInfo(), it)
+            //在协程取消的时候忽略CancellationException异常，使后面的逻辑正常执行
+            runCatching {
+                //使用coroutineScope创建一个协程作用域，在子协程全部完成后才会继续执行
+                //协程取消的检查点位于coroutineScope的末端，已取消的协程会在coroutineScope结束后抛出异常
+                coroutineScope {
+                    //已取消的协程也可以正常进入coroutineScope，为防止无意义的遍历，在协程被取消时提前返回
+                    if (!isActive) return@coroutineScope
+                    //遍历当前目录下的所有文件
+                    file.listFiles()?.forEach {
+                        //为防止无意义的遍历，在协程被取消时提前返回
+                        //不提前返回也不会产生异常，已处于取消状态的coroutineScope不会再创建新的协程
+                        if (!isActive) return@coroutineScope
+                        launch {
+                            scanFile(fileInfo, FileTreeInfo(), it)
+                        }
+                    }
                 }
             }
             //在当前目录遍历完成后进行一些额外工作
@@ -165,8 +191,10 @@ object FileTreeManager {
      */
     private fun updateParentFile(parentFile: FileTreeInfo?, count: Int, size: Long) {
         parentFile?.let {
-            it.size += size
-            it.fileCount += count
+            synchronized(it) {
+                it.size += size
+                it.fileCount += count
+            }
             updateParentFile(it.parent, count, size)
         }
     }
