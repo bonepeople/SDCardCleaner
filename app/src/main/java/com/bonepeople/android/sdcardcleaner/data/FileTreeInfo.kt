@@ -7,6 +7,8 @@ class FileTreeInfo {
     var fileCount = 0//文件夹内文件的总数量，包括子文件夹 //多线程操作时需要注意线程安全
     var directory = false//是否是文件夹
     var rubbish = false//是否需要清理
+    var rubbishSize = 0L //垃圾文件大小
+    var rubbishCount = 0 //垃圾文件数量
     var sorted = SORT_TYPE_NONE//当前排序类型
     var parent: FileTreeInfo? = null//父目录
     var children = ArrayList<FileTreeInfo>()//子文件列表 //多线程操作时需要注意线程安全

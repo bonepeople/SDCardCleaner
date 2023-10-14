@@ -28,8 +28,6 @@ object FileTreeManager {
         val totalSpace by lazy { Environment.getExternalStorageDirectory().totalSpace }
         val freeSpace by lazy { Environment.getExternalStorageDirectory().freeSpace }
         var rootFile: FileTreeInfo = FileTreeInfo()
-        var rubbishCount = 0L //多线程操作时需要注意线程安全
-        var rubbishSize = 0L //多线程操作时需要注意线程安全
     }
 
     val nameComparator = Comparator<FileTreeInfo> { file1, file2 ->
@@ -62,8 +60,6 @@ object FileTreeManager {
         currentState = STATE.SCAN_EXECUTING
         startTime = System.currentTimeMillis()
         scanJob = CoroutinesHolder.io.launch {
-            Summary.rubbishCount = 0
-            Summary.rubbishSize = 0
             val file = Environment.getExternalStorageDirectory()
             Summary.rootFile = FileTreeInfo()
             //使用Dispatchers.IO调度器开启的协程占用的线程数是有上限的，在所有线程都被使用时，新的协程会等待进行中协程释放线程
@@ -123,20 +119,16 @@ object FileTreeManager {
         fileInfo.size = if (fileInfo.directory) 0 else file.length()
         //垃圾文件的判断
         fileInfo.rubbish = checkRubbish(fileInfo)
-        if (fileInfo.rubbish) {
-            synchronized(Summary) {
-                Summary.rubbishCount++
-                Summary.rubbishSize += fileInfo.size
-            }
-        }
         //将自身添加到上级目录中
         parentFile?.children?.let {
             synchronized(it) {
                 it.add(fileInfo)
             }
         }
-        //更新上级目录的信息
+        //更新上级目录的统计信息
         updateParentFile(fileInfo.parent, 1, fileInfo.size)
+        //更新上级目录的垃圾信息
+        if (fileInfo.rubbish) updateParentRubbish(fileInfo.parent, 1, fileInfo.size)
         //如果当前是文件夹，对下级所有文件依次遍历
         if (fileInfo.directory) {
             //在协程取消的时候忽略CancellationException异常，使后面的逻辑正常执行
@@ -185,7 +177,7 @@ object FileTreeManager {
     }
 
     /**
-     * 更新父级文件信息
+     * 更新父级文件的统计信息
      * @param count 文件数量变化
      * @param size 文件大小变化
      */
@@ -196,6 +188,21 @@ object FileTreeManager {
                 it.fileCount += count
             }
             updateParentFile(it.parent, count, size)
+        }
+    }
+
+    /**
+     * 更新父级文件的垃圾信息
+     * @param count 文件数量变化
+     * @param size 文件大小变化
+     */
+    private fun updateParentRubbish(parentFile: FileTreeInfo?, count: Int, size: Long) {
+        parentFile?.let {
+            synchronized(it) {
+                it.rubbishSize += size
+                it.rubbishCount += count
+            }
+            updateParentRubbish(it.parent, count, size)
         }
     }
 
@@ -215,13 +222,10 @@ object FileTreeManager {
             //删除当前文件
             val file = File(fileInfo.path)
             if (!file.exists() || file.delete()) {
-                //更新垃圾文件统计
-                if (fileInfo.rubbish) {
-                    Summary.rubbishCount--
-                    Summary.rubbishSize -= fileInfo.size
-                }
-                //更新父级文件信息
+                //更新上级目录的统计信息
                 updateParentFile(fileInfo.parent, -1, -fileInfo.size)
+                //更新上级目录的垃圾信息
+                if (fileInfo.rubbish) updateParentRubbish(fileInfo.parent, -1, -fileInfo.size)
                 //移除父级引用
                 fileInfo.parent?.children?.remove(fileInfo)
                 //成功删除后，递归更新上级目录中最大的文件
@@ -246,16 +250,12 @@ object FileTreeManager {
         val rubbish = checkRubbish(fileInfo)
         //更新垃圾文件的统计结果
         if (fileInfo.rubbish && !rubbish) {//该文件由清理变为保留
-            Summary.rubbishCount--
-            if (!fileInfo.directory) {//只统计文件的大小
-                Summary.rubbishSize -= fileInfo.size
-            }
+            //上级目录的垃圾数量减1，当前为文件夹垃圾大小减少0，当前是文件垃圾大小减少文件大小
+            updateParentRubbish(fileInfo.parent, -1, if (fileInfo.directory) 0 else -fileInfo.size)
         }
         if (!fileInfo.rubbish && rubbish) {//该文件由保留变为清理
-            Summary.rubbishCount++
-            if (!fileInfo.directory) {//只统计文件的大小
-                Summary.rubbishSize += fileInfo.size
-            }
+            //上级目录的垃圾数量加1，当前为文件夹垃圾大小增加0，当前是文件垃圾大小增加文件大小
+            updateParentRubbish(fileInfo.parent, 1, if (fileInfo.directory) 0 else fileInfo.size)
         }
         //更新清理状态
         fileInfo.rubbish = rubbish

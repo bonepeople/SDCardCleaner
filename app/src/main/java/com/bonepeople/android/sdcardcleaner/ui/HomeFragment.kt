@@ -55,8 +55,8 @@ class HomeFragment : ViewBindingFragment<FragmentHomeBinding>() {
             freeSpace = FileTreeManager.Summary.freeSpace
             fileCount = FileTreeManager.Summary.rootFile.fileCount
             fileSize = FileTreeManager.Summary.rootFile.size
-            rubbishCount = FileTreeManager.Summary.rubbishCount
-            rubbishSize = FileTreeManager.Summary.rubbishSize
+            rubbishCount = FileTreeManager.Summary.rootFile.rubbishCount
+            rubbishSize = FileTreeManager.Summary.rootFile.rubbishSize
         }
         views.storageSummary.updateView(summaryInfo)
     }
@@ -190,8 +190,6 @@ class HomeFragment : ViewBindingFragment<FragmentHomeBinding>() {
             if (FileTreeManager.currentState == FileTreeManager.STATE.SCAN_EXECUTING) stopScan()
             if (FileTreeManager.currentState == FileTreeManager.STATE.CLEAN_EXECUTING) stopClean()
             FileTreeManager.Summary.rootFile = FileTreeInfo()
-            FileTreeManager.Summary.rubbishCount = 0
-            FileTreeManager.Summary.rubbishSize = 0
             FileTreeManager.currentState = FileTreeManager.STATE.READY
             super.onBackPressed()
         } else {

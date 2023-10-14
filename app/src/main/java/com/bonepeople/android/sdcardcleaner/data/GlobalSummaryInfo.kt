@@ -7,7 +7,7 @@ class GlobalSummaryInfo {
     var freeSpace = 0L //剩余空间
     var fileCount = 0 //文件个数
     var fileSize = 0L //文件大小
-    var rubbishCount = 0L //垃圾文件个数
+    var rubbishCount = 0 //垃圾文件个数
     var rubbishSize = 0L //垃圾文件大小
 
     fun getSystemSize(): Long {
