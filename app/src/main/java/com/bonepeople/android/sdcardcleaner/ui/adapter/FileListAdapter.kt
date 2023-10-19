@@ -36,7 +36,7 @@ class FileListAdapter(override val list: List<FileTreeInfo>, private val fragmen
             val color = evaluator.evaluate(percent, 0xFFEAD799.toInt(), 0xFFE96E3E.toInt()) as Int
             views.viewPercent.setBackgroundColor(color)
             //设置清理标志
-            views.imageViewRubbish.switchShow(data.rubbish)
+            views.imageViewRubbish.switchShow(data.cleanState.enable)
             //设置类型图标
             if (data.directory) {
                 views.imageViewType.setImageResource(R.drawable.icon_directory)

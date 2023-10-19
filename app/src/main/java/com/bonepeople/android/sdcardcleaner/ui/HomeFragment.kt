@@ -55,8 +55,8 @@ class HomeFragment : ViewBindingFragment<FragmentHomeBinding>() {
             freeSpace = FileTreeManager.Summary.freeSpace
             fileCount = FileTreeManager.Summary.rootFile.fileCount
             fileSize = FileTreeManager.Summary.rootFile.size
-            rubbishCount = FileTreeManager.Summary.rootFile.rubbishCount
-            rubbishSize = FileTreeManager.Summary.rootFile.rubbishSize
+            rubbishCount = FileTreeManager.Summary.rootFile.cleanState.count
+            rubbishSize = FileTreeManager.Summary.rootFile.cleanState.size
         }
         views.storageSummary.updateView(summaryInfo)
     }

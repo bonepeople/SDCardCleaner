@@ -1,14 +1,15 @@
 package com.bonepeople.android.sdcardcleaner.data
 
+/**
+ * 文件信息
+ */
 class FileTreeInfo {
     var name = ""//文件名
     var path = ""//文件路径
     var size = 0L//文件大小 //多线程操作时需要注意线程安全
     var fileCount = 0//文件夹内文件的总数量，包括子文件夹 //多线程操作时需要注意线程安全
     var directory = false//是否是文件夹
-    var rubbish = false//是否需要清理
-    var rubbishSize = 0L //垃圾文件大小
-    var rubbishCount = 0 //垃圾文件数量
+    var cleanState = CleanStateInfo() //该文件的自动清理信息
     var sorted = SORT_TYPE_NONE//当前排序类型
     var parent: FileTreeInfo? = null//父目录
     var children = ArrayList<FileTreeInfo>()//子文件列表 //多线程操作时需要注意线程安全
@@ -31,5 +32,14 @@ class FileTreeInfo {
         const val SORT_TYPE_NONE = 0//未排序
         const val SORT_TYPE_NAME = 1//按文件名称排序
         const val SORT_TYPE_SIZE = 2//按文件大小排序
+    }
+
+    /**
+     * 自动清理信息
+     */
+    class CleanStateInfo {
+        var enable: Boolean = false
+        var count: Int = 0
+        var size: Long = 0L
     }
 }

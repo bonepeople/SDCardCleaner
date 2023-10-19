@@ -178,7 +178,7 @@ class FileListFragment(private val file: FileTreeInfo) : ViewBindingFragment<Fra
         CoroutinesHolder.default.launch {
             delay(500)
             adapter.checkedSet.forEach { position ->
-                FileTreeManager.updateRubbish(file.children[position])
+                FileTreeManager.updateCleanState(file.children[position])
                 notifyItems.add(position)
                 progressDialog.incrementProgressBy(1)
             }

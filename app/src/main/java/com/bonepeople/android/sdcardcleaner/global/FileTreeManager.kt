@@ -117,8 +117,8 @@ object FileTreeManager {
         fileInfo.path = file.absolutePath
         fileInfo.directory = file.isDirectory
         fileInfo.size = if (fileInfo.directory) 0 else file.length()
-        //垃圾文件的判断
-        fileInfo.rubbish = checkRubbish(fileInfo)
+        //更新当前文件的自动清理标志
+        fileInfo.cleanState.enable = getCleanState(fileInfo)
         //将自身添加到上级目录中
         parentFile?.children?.let {
             synchronized(it) {
@@ -127,8 +127,8 @@ object FileTreeManager {
         }
         //更新上级目录的统计信息
         updateParentFile(fileInfo.parent, 1, fileInfo.size)
-        //更新上级目录的垃圾信息
-        if (fileInfo.rubbish) updateParentRubbish(fileInfo.parent, 1, fileInfo.size)
+        //更新上级目录自动清理的统计信息
+        if (fileInfo.cleanState.enable) updateParentCleanState(fileInfo.parent, 1, fileInfo.size)
         //如果当前是文件夹，对下级所有文件依次遍历
         if (fileInfo.directory) {
             //在协程取消的时候忽略CancellationException异常，使后面的逻辑正常执行
@@ -161,16 +161,16 @@ object FileTreeManager {
     }
 
     /**
-     * 垃圾文件的判断
+     * 判断当前文件是否需要被清理
      * + 根据全局的白名单黑名单和父级文件的标记判断当前文件是否需要被清理
      * + 调用此方法前需要确保父级标记为最新状态
      */
-    private fun checkRubbish(fileInfo: FileTreeInfo): Boolean {
+    private fun getCleanState(fileInfo: FileTreeInfo): Boolean {
         //在白名单中，不会被清理
         if (CleanPathManager.whiteList.contains(fileInfo.path))
             return false
         //在黑名单中或父级文件夹被标记为清理，本文件需要被清理
-        if (CleanPathManager.blackList.contains(fileInfo.path) || fileInfo.parent?.rubbish == true)
+        if (CleanPathManager.blackList.contains(fileInfo.path) || fileInfo.parent?.cleanState?.enable == true)
             return true
         //不在任何名单中，默认不需要被清理
         return false
@@ -192,24 +192,24 @@ object FileTreeManager {
     }
 
     /**
-     * 更新父级文件的垃圾信息
+     * 更新父级文件自动清理的统计信息
      * @param count 文件数量变化
      * @param size 文件大小变化
      */
-    private fun updateParentRubbish(parentFile: FileTreeInfo?, count: Int, size: Long) {
+    private fun updateParentCleanState(parentFile: FileTreeInfo?, count: Int, size: Long) {
         parentFile?.let {
-            synchronized(it) {
-                it.rubbishSize += size
-                it.rubbishCount += count
+            synchronized(it.cleanState) {
+                it.cleanState.size += size
+                it.cleanState.count += count
             }
-            updateParentRubbish(it.parent, count, size)
+            updateParentCleanState(it.parent, count, size)
         }
     }
 
     /**
      * 删除指定目录的文件
      * + 包括子目录文件
-     * @param deleteAll 是否删除全部文件，false-仅删除标记为垃圾的文件
+     * @param deleteAll 是否删除全部文件，false-仅删除标记为自动清理的文件
      */
     suspend fun deleteFile(fileInfo: FileTreeInfo, deleteAll: Boolean) {
         yield()
@@ -217,15 +217,15 @@ object FileTreeManager {
         fileInfo.children.toList().forEach { child ->
             deleteFile(child, deleteAll)
         }
-        //删除全部文件或当前文件标记为垃圾的时候执行删除流程
-        if (deleteAll || fileInfo.rubbish) {
+        //删除全部文件或当前文件标记为自动清理的时候执行删除流程
+        if (deleteAll || fileInfo.cleanState.enable) {
             //删除当前文件
             val file = File(fileInfo.path)
             if (!file.exists() || file.delete()) {
                 //更新上级目录的统计信息
                 updateParentFile(fileInfo.parent, -1, -fileInfo.size)
-                //更新上级目录的垃圾信息
-                if (fileInfo.rubbish) updateParentRubbish(fileInfo.parent, -1, -fileInfo.size)
+                //更新上级目录自动清理的统计信息
+                if (fileInfo.cleanState.enable) updateParentCleanState(fileInfo.parent, -1, -fileInfo.size)
                 //移除父级引用
                 fileInfo.parent?.children?.remove(fileInfo)
                 //成功删除后，递归更新上级目录中最大的文件
@@ -245,23 +245,23 @@ object FileTreeManager {
     /**
      * 更新文件及子文件的待清理状态
      */
-    fun updateRubbish(fileInfo: FileTreeInfo) {
+    fun updateCleanState(fileInfo: FileTreeInfo) {
         //获取最新清理状态
-        val rubbish = checkRubbish(fileInfo)
-        //更新垃圾文件的统计结果
-        if (fileInfo.rubbish && !rubbish) {//该文件由清理变为保留
-            //上级目录的垃圾数量减1，当前为文件夹垃圾大小减少0，当前是文件垃圾大小减少文件大小
-            updateParentRubbish(fileInfo.parent, -1, if (fileInfo.directory) 0 else -fileInfo.size)
+        val clean = getCleanState(fileInfo)
+        //更新上级目录自动清理的统计信息
+        if (fileInfo.cleanState.enable && !clean) { //该文件由清理变为保留
+            //上级目录的待清理文件数量减1，当前是文件夹待清理文件大小减少0，当前是文件待清理文件大小减少文件大小
+            updateParentCleanState(fileInfo.parent, -1, if (fileInfo.directory) 0 else -fileInfo.size)
         }
-        if (!fileInfo.rubbish && rubbish) {//该文件由保留变为清理
-            //上级目录的垃圾数量加1，当前为文件夹垃圾大小增加0，当前是文件垃圾大小增加文件大小
-            updateParentRubbish(fileInfo.parent, 1, if (fileInfo.directory) 0 else fileInfo.size)
+        if (!fileInfo.cleanState.enable && clean) { //该文件由保留变为清理
+            //上级目录的待清理文件数量加1，当前是文件夹待清理文件大小增加0，当前是文件待清理文件大小增加文件大小
+            updateParentCleanState(fileInfo.parent, 1, if (fileInfo.directory) 0 else fileInfo.size)
         }
         //更新清理状态
-        fileInfo.rubbish = rubbish
+        fileInfo.cleanState.enable = clean
         //递归更新子项
         fileInfo.children.forEach { child ->
-            updateRubbish(child)
+            updateCleanState(child)
         }
     }
 }
