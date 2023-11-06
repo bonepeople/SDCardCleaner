@@ -12,24 +12,24 @@
         android:layout_height="wrap_content"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <Button
-        android:id="@+id/buttonTop"
-        android:layout_width="wrap_content"
+    <com.bonepeople.android.sdcardcleaner.ui.view.StorageSummary
+        android:id="@+id/storageSummary"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginHorizontal="@dimen/pagePadding"
         android:layout_marginTop="@dimen/pagePadding"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toBottomOf="@id/titleView" />
 
     <TextView
         android:id="@+id/textViewState"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginTop="35dp"
+        android:text="@string/state_ready"
         app:layout_constraintEnd_toStartOf="@id/textViewTime"
         app:layout_constraintHorizontal_chainStyle="packed"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/buttonTop"
-        tools:text="state" />
+        app:layout_constraintTop_toBottomOf="@id/storageSummary" />
 
     <TextView
         android:id="@+id/textViewTime"
@@ -40,29 +40,34 @@
         app:layout_constraintTop_toTopOf="@id/textViewState"
         tools:text="00:25.092" />
 
-    <com.bonepeople.android.sdcardcleaner.ui.view.StorageSummary
-        android:id="@+id/storageSummary"
-        android:layout_width="match_parent"
+    <Button
+        android:id="@+id/buttonScan"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginHorizontal="@dimen/pagePadding"
-        android:layout_marginTop="35dp"
+        android:layout_marginTop="20dp"
+        android:text="@string/caption_button_startScan"
+        app:layout_constraintEnd_toStartOf="@id/buttonClean"
+        app:layout_constraintHorizontal_chainStyle="packed"
+        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/textViewState" />
 
     <Button
-        android:id="@+id/buttonLeft"
+        android:id="@+id/buttonClean"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="32dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toLeftOf="@+id/buttonRight" />
+        android:enabled="false"
+        android:text="@string/caption_button_startClean"
+        app:layout_constraintEnd_toStartOf="@id/buttonView"
+        app:layout_constraintStart_toEndOf="@id/buttonScan"
+        app:layout_constraintTop_toTopOf="@id/buttonScan" />
 
     <Button
-        android:id="@+id/buttonRight"
+        android:id="@+id/buttonView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="32dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintLeft_toRightOf="@+id/buttonLeft"
-        app:layout_constraintRight_toRightOf="parent" />
+        android:enabled="false"
+        android:text="@string/caption_button_viewFiles"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@id/buttonClean"
+        app:layout_constraintTop_toTopOf="@id/buttonScan" />
 </androidx.constraintlayout.widget.ConstraintLayout>

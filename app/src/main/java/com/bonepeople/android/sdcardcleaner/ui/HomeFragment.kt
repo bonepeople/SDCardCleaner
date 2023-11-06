@@ -9,6 +9,7 @@ import android.provider.Settings
 import android.widget.Toast
 import androidx.core.view.setPadding
 import com.bonepeople.android.base.activity.StandardActivity
+import com.bonepeople.android.base.util.CoroutineExtension.launchOnIO
 import com.bonepeople.android.base.viewbinding.ViewBindingFragment
 import com.bonepeople.android.dimensionutil.DimensionUtil
 import com.bonepeople.android.sdcardcleaner.R
@@ -19,15 +20,16 @@ import com.bonepeople.android.sdcardcleaner.global.FileTreeManager
 import com.bonepeople.android.widget.ApplicationHolder
 import com.bonepeople.android.widget.activity.result.launch
 import com.bonepeople.android.widget.util.AppPermission
+import com.bonepeople.android.widget.util.AppTime
 import com.bonepeople.android.widget.util.AppToast
-import com.bonepeople.android.widget.util.AppView.gone
 import com.bonepeople.android.widget.util.AppView.show
 import com.bonepeople.android.widget.util.AppView.singleClick
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
 class HomeFragment : ViewBindingFragment<FragmentHomeBinding>() {
-    private var state = -1
+    private var scanJob: Job? = null
     private var quit = false
 
     override fun initView() {
@@ -38,18 +40,13 @@ class HomeFragment : ViewBindingFragment<FragmentHomeBinding>() {
             singleClick { StandardActivity.open(SettingFragment()) }
             show()
         }
-        updateView()
+        updateSummary()
+        views.buttonScan.singleClick { if (scanJob?.isActive == true) stopScan() else checkScanPermission { startScan() } }
+        views.buttonClean.singleClick { if (scanJob?.isActive == true) stopClean() else startClean() }
+        views.buttonView.singleClick { StandardActivity.call(FileListFragment(FileTreeManager.Summary.rootFile)).onResult { updateSummary() } }
     }
 
-    private fun updateView() {
-        if (state != FileTreeManager.currentState) {
-            updateState()
-        }
-        val time = when (state) {
-            FileTreeManager.STATE.READY -> ""
-            else -> FileTreeManager.getProgressTimeString()
-        }
-        views.textViewTime.text = time
+    private fun updateSummary() {
         val summaryInfo = GlobalSummaryInfo().apply {
             totalSpace = FileTreeManager.Summary.totalSpace
             freeSpace = FileTreeManager.Summary.freeSpace
@@ -61,95 +58,26 @@ class HomeFragment : ViewBindingFragment<FragmentHomeBinding>() {
         views.storageSummary.updateView(summaryInfo)
     }
 
-    private fun updateState() {
-        state = FileTreeManager.currentState
-        when (state) {
-            FileTreeManager.STATE.READY -> {
-                views.textViewState.setText(R.string.state_ready)
-                views.buttonTop.setText(R.string.caption_button_startScan)
-                views.buttonTop.singleClick { startScan() }
-                views.buttonTop.show()
-                views.buttonLeft.gone()
-                views.buttonRight.gone()
-            }
-
-            FileTreeManager.STATE.SCAN_EXECUTING -> {
-                views.textViewState.setText(R.string.state_scan_executing)
-                views.buttonTop.setText(R.string.caption_button_stopScan)
-                views.buttonTop.singleClick { stopScan() }
-                views.buttonTop.show()
-                views.buttonLeft.gone()
-                views.buttonRight.gone()
-            }
-
-            FileTreeManager.STATE.SCAN_STOPPING -> {
-                views.textViewState.setText(R.string.state_scan_stopping)
-                views.buttonTop.gone()
-                views.buttonLeft.gone()
-                views.buttonRight.gone()
-            }
-
-            FileTreeManager.STATE.SCAN_FINISH -> {
-                views.textViewState.setText(R.string.state_scan_finish)
-                views.buttonTop.setText(R.string.caption_button_rescan)
-                views.buttonLeft.setText(R.string.caption_button_startClean)
-                views.buttonRight.setText(R.string.caption_button_viewFiles)
-                views.buttonTop.singleClick { startScan() }
-                views.buttonLeft.singleClick { startClean() }
-                views.buttonRight.singleClick { viewFile() }
-                views.buttonTop.show()
-                views.buttonLeft.show()
-                views.buttonRight.show()
-            }
-
-            FileTreeManager.STATE.CLEAN_EXECUTING -> {
-                views.textViewState.setText(R.string.state_clean_executing)
-                views.buttonTop.setText(R.string.caption_button_stopClean)
-                views.buttonTop.singleClick { stopClean() }
-                views.buttonTop.show()
-                views.buttonLeft.gone()
-                views.buttonRight.gone()
-            }
-
-            FileTreeManager.STATE.CLEAN_STOPPING -> {
-                views.textViewState.setText(R.string.state_clean_stopping)
-                views.buttonTop.gone()
-                views.buttonLeft.gone()
-                views.buttonRight.gone()
-            }
-
-            FileTreeManager.STATE.CLEAN_FINISH -> {
-                views.textViewState.setText(R.string.state_clean_finish)
-                views.buttonTop.setText(R.string.caption_button_rescan)
-                views.buttonLeft.setText(R.string.caption_button_startClean)
-                views.buttonRight.setText(R.string.caption_button_viewFiles)
-                views.buttonTop.singleClick { startScan() }
-                views.buttonLeft.singleClick { startClean() }
-                views.buttonRight.singleClick { viewFile() }
-                views.buttonTop.show()
-                views.buttonLeft.show()
-                views.buttonRight.show()
-            }
-        }
+    private fun updateProcessTime(startTime: Long) {
+        val time = System.currentTimeMillis() - startTime
+        views.textViewTime.text = getString(R.string.state_process_time, AppTime.getTimeString(time))
     }
 
-    private fun startScan() {
+    private fun checkScanPermission(grantedAction: () -> Unit) {
         if (Environment.getExternalStorageState() != Environment.MEDIA_MOUNTED) {
             AppToast.show(getString(R.string.toast_sdcard_error), Toast.LENGTH_LONG)
             return
         }
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
             if (Environment.isExternalStorageManager()) {
-                FileTreeManager.startScan()
-                autoRefresh()
+                grantedAction()
             } else {
                 Intent(Settings.ACTION_MANAGE_APP_ALL_FILES_ACCESS_PERMISSION)
                     .setData(Uri.parse("package:${ApplicationHolder.getPackageName()}"))
                     .launch()
                     .onResult {
                         if (Environment.isExternalStorageManager()) {
-                            FileTreeManager.startScan()
-                            autoRefresh()
+                            grantedAction()
                         } else {
                             AppToast.show(getString(R.string.toast_sdcard_permission))
                         }
@@ -159,8 +87,7 @@ class HomeFragment : ViewBindingFragment<FragmentHomeBinding>() {
             AppPermission.request(Manifest.permission.WRITE_EXTERNAL_STORAGE)
                 .onResult { allGranted, _ ->
                     if (allGranted) {
-                        FileTreeManager.startScan()
-                        autoRefresh()
+                        grantedAction()
                     } else {
                         AppToast.show(getString(R.string.toast_sdcard_permission))
                     }
@@ -168,29 +95,89 @@ class HomeFragment : ViewBindingFragment<FragmentHomeBinding>() {
         }
     }
 
+    @Suppress("DEPRECATION")
+    private fun startScan() {
+        views.textViewState.text = getString(R.string.state_scan_executing)
+        views.buttonScan.text = getString(R.string.caption_button_stopScan)
+        views.buttonClean.isEnabled = false
+        views.buttonView.isEnabled = false
+        val startTime = System.currentTimeMillis()
+        scanJob = launch {
+            launchOnIO {
+                val file = Environment.getExternalStorageDirectory()
+                FileTreeManager.Summary.rootFile = FileTreeInfo()
+                //使用Dispatchers.IO调度器开启的协程占用的线程数是有上限的，在所有线程都被使用时，新的协程会等待进行中协程释放线程
+                FileTreeManager.scanFile(null, FileTreeManager.Summary.rootFile, file)
+                scanJob?.cancel()
+            }
+            launch {
+                while (true) {
+                    delay(500)
+                    updateProcessTime(startTime)
+                    updateSummary()
+                }
+            }
+        }
+        scanJob?.invokeOnCompletion {
+            launch {
+                views.textViewState.text = getString(R.string.state_scan_finish)
+                views.buttonScan.text = getString(R.string.caption_button_startScan)
+                views.buttonScan.isEnabled = true
+                views.buttonClean.isEnabled = true
+                views.buttonView.isEnabled = true
+                updateProcessTime(startTime)
+                updateSummary()
+            }
+        }
+    }
+
     private fun stopScan() {
-        FileTreeManager.stopScan()
+        views.textViewState.text = getString(R.string.state_scan_stopping)
+        views.buttonScan.isEnabled = false
+        scanJob?.cancel()
     }
 
     private fun startClean() {
-        FileTreeManager.startClean()
-        autoRefresh()
+        views.textViewState.text = getString(R.string.state_clean_executing)
+        views.buttonClean.text = getString(R.string.caption_button_stopClean)
+        views.buttonScan.isEnabled = false
+        views.buttonView.isEnabled = false
+        val startTime = System.currentTimeMillis()
+        scanJob = launch {
+            launchOnIO {
+                FileTreeManager.deleteFile(FileTreeManager.Summary.rootFile, false)
+                scanJob?.cancel()
+            }
+            launch {
+                while (true) {
+                    delay(500)
+                    updateProcessTime(startTime)
+                    updateSummary()
+                }
+            }
+        }
+        scanJob?.invokeOnCompletion {
+            launch {
+                views.textViewState.text = getString(R.string.state_clean_finish)
+                views.buttonClean.text = getString(R.string.caption_button_startClean)
+                views.buttonScan.isEnabled = true
+                views.buttonClean.isEnabled = true
+                views.buttonView.isEnabled = true
+                updateProcessTime(startTime)
+                updateSummary()
+            }
+        }
     }
 
     private fun stopClean() {
-        FileTreeManager.stopClean()
-    }
-
-    private fun viewFile() {
-        StandardActivity.call(FileListFragment(FileTreeManager.Summary.rootFile)).onResult { updateView() }
+        views.textViewState.text = getString(R.string.state_clean_stopping)
+        views.buttonClean.isEnabled = false
+        scanJob?.cancel()
     }
 
     override fun onBackPressed() {
         if (quit) {
-            if (FileTreeManager.currentState == FileTreeManager.STATE.SCAN_EXECUTING) stopScan()
-            if (FileTreeManager.currentState == FileTreeManager.STATE.CLEAN_EXECUTING) stopClean()
             FileTreeManager.Summary.rootFile = FileTreeInfo()
-            FileTreeManager.currentState = FileTreeManager.STATE.READY
             super.onBackPressed()
         } else {
             AppToast.show(getString(R.string.toast_quitConfirm))
@@ -199,18 +186,6 @@ class HomeFragment : ViewBindingFragment<FragmentHomeBinding>() {
                 delay(2000)
                 quit = false
             }
-        }
-    }
-
-    private fun autoRefresh() {
-        launch {
-            updateView()
-            while (FileTreeManager.currentState != FileTreeManager.STATE.SCAN_FINISH && FileTreeManager.currentState != FileTreeManager.STATE.CLEAN_FINISH) {
-                delay(500)
-                updateView()
-            }
-            delay(500)
-            updateView()
         }
     }
 }

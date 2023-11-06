@@ -17,7 +17,6 @@
     <!--各种控件的名称-->
     <string name="caption_button_startScan">开始扫描</string>
     <string name="caption_button_stopScan">停止扫描</string>
-    <string name="caption_button_rescan">重新扫描</string>
     <string name="caption_button_startClean">开始清理</string>
     <string name="caption_button_stopClean">停止清理</string>
     <string name="caption_button_viewFiles">查看文件</string>
@@ -59,6 +58,7 @@
     <string name="state_fileCount_file">已扫描文件：%1$s (%2$d项)</string>
     <string name="state_fileCount_rubbish">待清理文件：%1$s (%2$d项)</string>
     <string name="state_directory_size">%1$s | %2$d项</string>
+    <string name="state_process_time">(%1$s秒)</string>
 
     <!--页面中的静态文本-->
     <string name="text_about_subject_feature">主要功能</string>

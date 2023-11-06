@@ -110,7 +110,7 @@ object FileTreeManager {
      * @param fileInfo 储存file信息的对象
      * @param file 待遍历的文件
      */
-    private suspend fun scanFile(parentFile: FileTreeInfo?, fileInfo: FileTreeInfo, file: File) {
+    suspend fun scanFile(parentFile: FileTreeInfo?, fileInfo: FileTreeInfo, file: File) {
         //记录基础信息
         fileInfo.parent = parentFile
         fileInfo.name = file.name

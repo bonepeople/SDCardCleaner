@@ -17,7 +17,6 @@
     <!--各种控件的名称-->
     <string name="caption_button_startScan">Start Scan</string>
     <string name="caption_button_stopScan">Stop Scan</string>
-    <string name="caption_button_rescan">Rescan</string>
     <string name="caption_button_startClean">Start Clean</string>
     <string name="caption_button_stopClean">Stop Clean</string>
     <string name="caption_button_viewFiles">View Files</string>
@@ -59,6 +58,7 @@
     <string name="state_fileCount_file">Scanned Files: %1$s (%2$d items)</string>
     <string name="state_fileCount_rubbish">Pending Cleanup: %1$s (%2$d items)</string>
     <string name="state_directory_size">%1$s | %2$d items</string>
+    <string name="state_process_time">(%1$s s)</string>
 
     <!--页面中的静态文本-->
     <string name="text_about_subject_feature">Key Features</string>
