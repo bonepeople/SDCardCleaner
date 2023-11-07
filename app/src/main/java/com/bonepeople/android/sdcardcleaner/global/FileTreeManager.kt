@@ -4,103 +4,38 @@ import android.os.Environment
 import com.bonepeople.android.sdcardcleaner.data.FileTreeInfo
 import com.bonepeople.android.sdcardcleaner.global.utils.CommonUtil
 import com.bonepeople.android.widget.CoroutinesHolder
-import com.bonepeople.android.widget.util.AppTime
-import kotlinx.coroutines.Job
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.yield
 import java.io.File
 
-@Suppress("DEPRECATION")
+/**
+ * 文件树管理器
+ */
 object FileTreeManager {
-    object STATE {
-        const val READY = 0
-        const val SCAN_EXECUTING = 1
-        const val SCAN_STOPPING = 2
-        const val SCAN_FINISH = 3
-        const val CLEAN_EXECUTING = 4
-        const val CLEAN_STOPPING = 5
-        const val CLEAN_FINISH = 6
-    }
-
+    /**
+     * 统计信息
+     */
+    @Suppress("deprecation")
     object Summary {
-        val totalSpace by lazy { Environment.getExternalStorageDirectory().totalSpace }
-        val freeSpace by lazy { Environment.getExternalStorageDirectory().freeSpace }
-        var rootFile: FileTreeInfo = FileTreeInfo()
+        val totalSpace by lazy { Environment.getExternalStorageDirectory().totalSpace } //总空间
+        val freeSpace by lazy { Environment.getExternalStorageDirectory().freeSpace } //剩余空间
+        var rootFile: FileTreeInfo = FileTreeInfo() //根目录
     }
 
     val nameComparator = Comparator<FileTreeInfo> { file1, file2 ->
-        if (file1.directory && file2.directory) {
+        if (file1.directory && file2.directory) { //两个对比项都是文件夹，按照文件夹名称排序
             CommonUtil.comparePath(file1.name, file2.name)
-        } else if (file1.directory) {
+        } else if (file1.directory) { //file1是文件夹，file2是文件，file1排在前面
             -1
-        } else if (file2.directory) {
+        } else if (file2.directory) { //file2是文件夹，file1是文件，file2排在前面
             1
-        } else {
+        } else { //两个对比项都是文件，按照文件名称排序
             CommonUtil.comparePath(file1.name, file2.name)
         }
     }
-    var currentState = STATE.READY
-    private var startTime = 0L
-    private var endTime = 0L
-    private var scanJob: Job? = null
-    private var cleanJob: Job? = null
-
-    fun getProgressTimeString(): String {
-        if (currentState != STATE.SCAN_FINISH && currentState != STATE.CLEAN_FINISH) endTime = System.currentTimeMillis()
-        val time = endTime - startTime
-        return "(${AppTime.getTimeString(time)}秒)"
-    }
-
-    /**
-     * 开始扫描文件
-     */
-    fun startScan() {
-        currentState = STATE.SCAN_EXECUTING
-        startTime = System.currentTimeMillis()
-        scanJob = CoroutinesHolder.io.launch {
-            val file = Environment.getExternalStorageDirectory()
-            Summary.rootFile = FileTreeInfo()
-            //使用Dispatchers.IO调度器开启的协程占用的线程数是有上限的，在所有线程都被使用时，新的协程会等待进行中协程释放线程
-            scanFile(null, Summary.rootFile, file)
-        }
-        scanJob?.invokeOnCompletion {
-            currentState = STATE.SCAN_FINISH
-            endTime = System.currentTimeMillis()
-        }
-    }
-
-    /**
-     * 停止扫描文件
-     */
-    fun stopScan() {
-        currentState = STATE.SCAN_STOPPING
-        scanJob?.cancel()
-    }
-
-    /**
-     * 开始执行清理逻辑
-     */
-    fun startClean() {
-        currentState = STATE.CLEAN_EXECUTING
-        startTime = System.currentTimeMillis()
-        cleanJob = CoroutinesHolder.io.launch {
-            deleteFile(Summary.rootFile, false)
-        }
-        cleanJob?.invokeOnCompletion {
-            currentState = STATE.CLEAN_FINISH
-            endTime = System.currentTimeMillis()
-        }
-    }
-
-    /**
-     * 停止清理逻辑
-     */
-    fun stopClean() {
-        currentState = STATE.CLEAN_STOPPING
-        cleanJob?.cancel()
-    }
+    var scanning = false //是否正在扫描
 
     /**
      * 扫描文件

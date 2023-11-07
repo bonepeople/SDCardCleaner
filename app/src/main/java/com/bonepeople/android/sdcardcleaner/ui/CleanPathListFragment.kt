@@ -22,6 +22,7 @@ class CleanPathListFragment : ViewBindingFragment<FragmentCleanPathListBinding>(
         views.recyclerView.addItemDecoration(DividerItemDecoration(activity, DividerItemDecoration.VERTICAL))
     }
 
+    @Suppress("deprecation")
     override fun initData(savedInstanceState: Bundle?) {
         mode = arguments?.getInt("mode", WHITE) ?: WHITE
         val basicPath = Environment.getExternalStorageDirectory().path
@@ -48,7 +49,7 @@ class CleanPathListFragment : ViewBindingFragment<FragmentCleanPathListBinding>(
     }
 
     private fun onItemClick(index: Int) {
-        if (FileTreeManager.currentState != FileTreeManager.STATE.SCAN_EXECUTING) {
+        if (!FileTreeManager.scanning) {
             AlertDialog.Builder(requireActivity())
                 .setMessage(getString(R.string.dialog_list_path_remove, listData[index]))
                 .setPositiveButton(android.R.string.ok) { _, _ ->

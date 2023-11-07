@@ -29,7 +29,7 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
 class HomeFragment : ViewBindingFragment<FragmentHomeBinding>() {
-    private var scanJob: Job? = null
+    private var coroutineJob: Job? = null
     private var quit = false
 
     override fun initView() {
@@ -41,11 +41,14 @@ class HomeFragment : ViewBindingFragment<FragmentHomeBinding>() {
             show()
         }
         updateSummary()
-        views.buttonScan.singleClick { if (scanJob?.isActive == true) stopScan() else checkScanPermission { startScan() } }
-        views.buttonClean.singleClick { if (scanJob?.isActive == true) stopClean() else startClean() }
+        views.buttonScan.singleClick { if (coroutineJob?.isActive == true) stopScan() else checkScanPermission { startScan() } }
+        views.buttonClean.singleClick { if (coroutineJob?.isActive == true) stopClean() else startClean() }
         views.buttonView.singleClick { StandardActivity.call(FileListFragment(FileTreeManager.Summary.rootFile)).onResult { updateSummary() } }
     }
 
+    /**
+     * 更新统计信息
+     */
     private fun updateSummary() {
         val summaryInfo = GlobalSummaryInfo().apply {
             totalSpace = FileTreeManager.Summary.totalSpace
@@ -58,11 +61,17 @@ class HomeFragment : ViewBindingFragment<FragmentHomeBinding>() {
         views.storageSummary.updateView(summaryInfo)
     }
 
+    /**
+     * 更新处理时间
+     */
     private fun updateProcessTime(startTime: Long) {
         val time = System.currentTimeMillis() - startTime
         views.textViewTime.text = getString(R.string.state_process_time, AppTime.getTimeString(time))
     }
 
+    /**
+     * 检查扫描权限并在权限被授予时执行指定操作
+     */
     private fun checkScanPermission(grantedAction: () -> Unit) {
         if (Environment.getExternalStorageState() != Environment.MEDIA_MOUNTED) {
             AppToast.show(getString(R.string.toast_sdcard_error), Toast.LENGTH_LONG)
@@ -95,22 +104,27 @@ class HomeFragment : ViewBindingFragment<FragmentHomeBinding>() {
         }
     }
 
-    @Suppress("DEPRECATION")
+    /**
+     * 开始扫描文件
+     */
+    @Suppress("deprecation")
     private fun startScan() {
+        //更新界面，状态信息、按钮名称、按钮状态
         views.textViewState.text = getString(R.string.state_scan_executing)
         views.buttonScan.text = getString(R.string.caption_button_stopScan)
         views.buttonClean.isEnabled = false
         views.buttonView.isEnabled = false
-        val startTime = System.currentTimeMillis()
-        scanJob = launch {
-            launchOnIO {
+        val startTime = System.currentTimeMillis() //记录开始时间
+        FileTreeManager.scanning = true //设置扫描状态为true
+        coroutineJob = launch {
+            launchOnIO { //开启IO协程扫描文件
                 val file = Environment.getExternalStorageDirectory()
                 FileTreeManager.Summary.rootFile = FileTreeInfo()
                 //使用Dispatchers.IO调度器开启的协程占用的线程数是有上限的，在所有线程都被使用时，新的协程会等待进行中协程释放线程
                 FileTreeManager.scanFile(null, FileTreeManager.Summary.rootFile, file)
-                scanJob?.cancel()
+                coroutineJob?.cancel()
             }
-            launch {
+            launch { //开启UI协程更新界面，每500毫秒更新一次
                 while (true) {
                     delay(500)
                     updateProcessTime(startTime)
@@ -118,37 +132,45 @@ class HomeFragment : ViewBindingFragment<FragmentHomeBinding>() {
                 }
             }
         }
-        scanJob?.invokeOnCompletion {
+        coroutineJob?.invokeOnCompletion { //协程执行完毕后，更新界面
             launch {
                 views.textViewState.text = getString(R.string.state_scan_finish)
                 views.buttonScan.text = getString(R.string.caption_button_startScan)
                 views.buttonScan.isEnabled = true
                 views.buttonClean.isEnabled = true
                 views.buttonView.isEnabled = true
+                FileTreeManager.scanning = false
                 updateProcessTime(startTime)
                 updateSummary()
             }
         }
     }
 
+    /**
+     * 停止扫描文件
+     */
     private fun stopScan() {
         views.textViewState.text = getString(R.string.state_scan_stopping)
         views.buttonScan.isEnabled = false
-        scanJob?.cancel()
+        coroutineJob?.cancel()
     }
 
+    /**
+     * 开始执行清理逻辑
+     */
     private fun startClean() {
+        //更新界面，状态信息、按钮名称、按钮状态
         views.textViewState.text = getString(R.string.state_clean_executing)
         views.buttonClean.text = getString(R.string.caption_button_stopClean)
         views.buttonScan.isEnabled = false
         views.buttonView.isEnabled = false
-        val startTime = System.currentTimeMillis()
-        scanJob = launch {
-            launchOnIO {
+        val startTime = System.currentTimeMillis() //记录开始时间
+        coroutineJob = launch {
+            launchOnIO { //开启IO协程清理文件
                 FileTreeManager.deleteFile(FileTreeManager.Summary.rootFile, false)
-                scanJob?.cancel()
+                coroutineJob?.cancel()
             }
-            launch {
+            launch { //开启UI协程更新界面，每500毫秒更新一次
                 while (true) {
                     delay(500)
                     updateProcessTime(startTime)
@@ -156,7 +178,7 @@ class HomeFragment : ViewBindingFragment<FragmentHomeBinding>() {
                 }
             }
         }
-        scanJob?.invokeOnCompletion {
+        coroutineJob?.invokeOnCompletion { //协程执行完毕后，更新界面
             launch {
                 views.textViewState.text = getString(R.string.state_clean_finish)
                 views.buttonClean.text = getString(R.string.caption_button_startClean)
@@ -169,17 +191,22 @@ class HomeFragment : ViewBindingFragment<FragmentHomeBinding>() {
         }
     }
 
+    /**
+     * 停止清理逻辑
+     */
     private fun stopClean() {
         views.textViewState.text = getString(R.string.state_clean_stopping)
         views.buttonClean.isEnabled = false
-        scanJob?.cancel()
+        coroutineJob?.cancel()
     }
 
     override fun onBackPressed() {
         if (quit) {
+            //退出时清空数据
             FileTreeManager.Summary.rootFile = FileTreeInfo()
             super.onBackPressed()
         } else {
+            //2秒内再次点击返回键退出
             AppToast.show(getString(R.string.toast_quitConfirm))
             quit = true
             launch {
