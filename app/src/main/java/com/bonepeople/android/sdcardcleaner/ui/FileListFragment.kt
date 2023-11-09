@@ -36,14 +36,14 @@ class FileListFragment(private val file: FileTreeInfo) : ViewBindingFragment<Fra
                 when (sortType) {
                     FileTreeInfo.SORT_TYPE_NAME -> {
                         launch {
-                            file.children.sortWith(FileTreeManager.nameComparator)
+                            file.children.sortWith(FileTreeInfo.NameAscComparator)
                             adapter.refresh()
                         }
                     }
 
                     FileTreeInfo.SORT_TYPE_SIZE -> {
                         launch {
-                            file.children.sortByDescending { it.size }
+                            file.children.sortWith(FileTreeInfo.FileSizeDescComparator)
                             adapter.refresh()
                         }
                     }

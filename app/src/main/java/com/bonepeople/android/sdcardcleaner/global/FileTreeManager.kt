@@ -2,7 +2,6 @@ package com.bonepeople.android.sdcardcleaner.global
 
 import android.os.Environment
 import com.bonepeople.android.sdcardcleaner.data.FileTreeInfo
-import com.bonepeople.android.sdcardcleaner.global.utils.CommonUtil
 import com.bonepeople.android.widget.CoroutinesHolder
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.isActive
@@ -24,17 +23,6 @@ object FileTreeManager {
         var rootFile: FileTreeInfo = FileTreeInfo() //根目录
     }
 
-    val nameComparator = Comparator<FileTreeInfo> { file1, file2 ->
-        if (file1.directory && file2.directory) { //两个对比项都是文件夹，按照文件夹名称排序
-            CommonUtil.comparePath(file1.name, file2.name)
-        } else if (file1.directory) { //file1是文件夹，file2是文件，file1排在前面
-            -1
-        } else if (file2.directory) { //file2是文件夹，file1是文件，file2排在前面
-            1
-        } else { //两个对比项都是文件，按照文件名称排序
-            CommonUtil.comparePath(file1.name, file2.name)
-        }
-    }
     var scanning = false //是否正在扫描
 
     /**
@@ -89,7 +77,7 @@ object FileTreeManager {
                 //确定文件夹内最大的文件
                 fileInfo.updateLargestFile()
                 //对文件夹内的文件进行排序
-                fileInfo.children.sortWith(nameComparator)
+                fileInfo.children.sortWith(FileTreeInfo.NameAscComparator)
                 fileInfo.sorted = 1
             }
         }
