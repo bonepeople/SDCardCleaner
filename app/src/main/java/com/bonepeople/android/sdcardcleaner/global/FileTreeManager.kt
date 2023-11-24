@@ -8,6 +8,7 @@ import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.yield
 import java.io.File
+import java.io.FileInputStream
 
 /**
  * 文件树管理器
@@ -80,6 +81,11 @@ object FileTreeManager {
                 fileInfo.children.sortWith(FileTreeInfo.NameAscComparator)
                 fileInfo.sorted = 1
             }
+        } else {
+            //判断文件类型
+            CoroutinesHolder.io.launch {
+                fileInfo.image = checkImageType(file)
+            }
         }
     }
 
@@ -126,6 +132,34 @@ object FileTreeManager {
                 it.cleanState.count += count
             }
             updateParentCleanState(it.parent, count, size)
+        }
+    }
+
+    /**
+     * 检查文件是否为图片
+     */
+    private fun checkImageType(file: File): Boolean {
+        val bytes = ByteArray(8)
+        runCatching {
+            val fileInputStream = FileInputStream(file)
+            fileInputStream.read(bytes)
+            fileInputStream.close()
+        }
+
+        fun ByteArray.startsWith(prefix: ByteArray): Boolean {
+            for (i in prefix.indices) {
+                if (this[i] != prefix[i]) return false
+            }
+            return true
+        }
+
+        return when {
+            bytes.startsWith(byteArrayOf(0xFF.toByte(), 0xD8.toByte())) -> true // JPEG
+            bytes.startsWith(byteArrayOf(0x89.toByte(), 0x50.toByte(), 0x4E.toByte(), 0x47.toByte())) -> true // PNG
+            bytes.startsWith(byteArrayOf(0x47.toByte(), 0x49.toByte(), 0x46.toByte())) -> true // GIF
+            bytes.startsWith(byteArrayOf(0x42.toByte(), 0x4D.toByte())) -> true // BMP
+            bytes.startsWith(byteArrayOf(0x00.toByte(), 0x00.toByte(), 0x01.toByte(), 0x00.toByte())) -> true // ICO
+            else -> false
         }
     }
 

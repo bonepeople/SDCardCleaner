@@ -3,6 +3,7 @@ package com.bonepeople.android.sdcardcleaner.ui.adapter
 import android.animation.ArgbEvaluator
 import android.text.format.Formatter
 import androidx.constraintlayout.widget.ConstraintLayout
+import coil.load
 import com.bonepeople.android.base.viewbinding.ViewBindingRecyclerAdapter
 import com.bonepeople.android.sdcardcleaner.R
 import com.bonepeople.android.sdcardcleaner.data.FileTreeInfo
@@ -41,7 +42,11 @@ class FileListAdapter(override val list: List<FileTreeInfo>, private val fragmen
             if (data.directory) {
                 views.imageViewType.setImageResource(R.drawable.icon_directory)
             } else {
-                views.imageViewType.setImageResource(R.drawable.icon_file)
+                if (data.image) {
+                    views.imageViewType.load(data.path)
+                } else {
+                    views.imageViewType.setImageResource(R.drawable.icon_file)
+                }
             }
             //设置基本信息
             views.textViewName.text = data.name

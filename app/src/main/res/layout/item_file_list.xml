@@ -12,6 +12,7 @@
         android:layout_height="25dp"
         android:layout_marginStart="10dp"
         android:contentDescription="@string/contentDescription_fileIcon"
+        android:scaleType="centerCrop"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
