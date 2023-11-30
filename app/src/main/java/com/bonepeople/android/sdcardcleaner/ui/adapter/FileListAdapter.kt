@@ -13,7 +13,6 @@ import com.bonepeople.android.sdcardcleaner.global.utils.NumberUtil
 import com.bonepeople.android.widget.util.AppView.gone
 import com.bonepeople.android.widget.util.AppView.show
 import com.bonepeople.android.widget.util.AppView.singleClick
-import com.bonepeople.android.widget.util.AppView.switchShow
 
 class FileListAdapter(override val list: List<FileTreeInfo>, private val fragment: FileListFragment) : ViewBindingRecyclerAdapter<ItemFileListBinding, FileTreeInfo>() {
     var multiSelect = false
@@ -37,15 +36,29 @@ class FileListAdapter(override val list: List<FileTreeInfo>, private val fragmen
             val color = evaluator.evaluate(percent, 0xFFEAD799.toInt(), 0xFFE96E3E.toInt()) as Int
             views.viewPercent.setBackgroundColor(color)
             //设置清理标志
-            views.imageViewRubbish.switchShow(data.cleanState.enable)
+            when {
+                data.cleanState.enable -> { //当前文件需要被清理
+                    views.imageViewRubbish.show()
+                    views.imageViewRubbish.alpha = 1f
+                }
+
+                data.cleanState.count > 0 -> { //当前文件不需要被清理，但内部包含需要被清理的文件
+                    views.imageViewRubbish.show()
+                    views.imageViewRubbish.alpha = 0.2f
+                }
+
+                else -> { //当前文件不需要被清理，内部也不包含需要被清理的文件
+                    views.imageViewRubbish.gone()
+                }
+            }
             //设置类型图标
             if (data.directory) {
-                views.imageViewType.setImageResource(R.drawable.icon_directory)
+                views.imageViewType.load(R.drawable.icon_directory)
             } else {
                 if (data.image) {
                     views.imageViewType.load(data.path)
                 } else {
-                    views.imageViewType.setImageResource(R.drawable.icon_file)
+                    views.imageViewType.load(R.drawable.icon_file)
                 }
             }
             //设置基本信息
