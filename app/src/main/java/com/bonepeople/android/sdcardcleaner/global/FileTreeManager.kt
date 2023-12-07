@@ -39,8 +39,8 @@ object FileTreeManager {
         fileInfo.parent = parentFile
         fileInfo.name = file.name
         fileInfo.path = file.absolutePath
-        fileInfo.directory = file.isDirectory
-        fileInfo.size = if (fileInfo.directory) 0 else file.length()
+        if (file.isDirectory) fileInfo.type = FileTreeInfo.FILE_TYPE_DIRECTORY
+        fileInfo.size = if (fileInfo.type == FileTreeInfo.FILE_TYPE_DIRECTORY) 0 else file.length()
         //更新当前文件的自动清理标志
         fileInfo.cleanState.enable = getCleanState(fileInfo)
         //将自身添加到上级目录中
@@ -54,7 +54,7 @@ object FileTreeManager {
         //更新上级目录自动清理的统计信息
         if (fileInfo.cleanState.enable) updateParentCleanState(fileInfo.parent, 1, fileInfo.size)
         //如果当前是文件夹，对下级所有文件依次遍历
-        if (fileInfo.directory) {
+        if (fileInfo.type == FileTreeInfo.FILE_TYPE_DIRECTORY) {
             //在协程取消的时候忽略CancellationException异常，使后面的逻辑正常执行
             runCatching {
                 //使用coroutineScope创建一个协程作用域，在子协程全部完成后才会继续执行
@@ -84,7 +84,7 @@ object FileTreeManager {
         } else {
             //判断文件类型
             CoroutinesHolder.io.launch {
-                fileInfo.image = checkImageType(file)
+                if (checkImageType(file)) fileInfo.type = FileTreeInfo.FILE_TYPE_IMAGE
             }
         }
     }
@@ -208,11 +208,11 @@ object FileTreeManager {
         //更新上级目录自动清理的统计信息
         if (fileInfo.cleanState.enable && !clean) { //该文件由清理变为保留
             //上级目录的待清理文件数量减1，当前是文件夹待清理文件大小减少0，当前是文件待清理文件大小减少文件大小
-            updateParentCleanState(fileInfo.parent, -1, if (fileInfo.directory) 0 else -fileInfo.size)
+            updateParentCleanState(fileInfo.parent, -1, if (fileInfo.type == FileTreeInfo.FILE_TYPE_DIRECTORY) 0 else -fileInfo.size)
         }
         if (!fileInfo.cleanState.enable && clean) { //该文件由保留变为清理
             //上级目录的待清理文件数量加1，当前是文件夹待清理文件大小增加0，当前是文件待清理文件大小增加文件大小
-            updateParentCleanState(fileInfo.parent, 1, if (fileInfo.directory) 0 else fileInfo.size)
+            updateParentCleanState(fileInfo.parent, 1, if (fileInfo.type == FileTreeInfo.FILE_TYPE_DIRECTORY) 0 else fileInfo.size)
         }
         //更新清理状态
         fileInfo.cleanState.enable = clean
