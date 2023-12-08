@@ -53,13 +53,14 @@ class FileListAdapter(override val list: List<FileTreeInfo>, private val fragmen
             }
             //设置类型图标
             when (data.type) {
-                FileTreeInfo.FILE_TYPE_DIRECTORY -> views.imageViewType.load(R.drawable.icon_directory)
-                FileTreeInfo.FILE_TYPE_IMAGE -> views.imageViewType.load(data.path)
+                FileTreeInfo.FileType.DIRECTORY -> views.imageViewType.load(R.drawable.icon_directory)
+                FileTreeInfo.FileType.IMAGE -> views.imageViewType.load(data.path)
+                FileTreeInfo.FileType.VIDEO -> views.imageViewType.load(data.path)
                 else -> views.imageViewType.load(R.drawable.icon_file)
             }
             //设置基本信息
             views.textViewName.text = data.name
-            views.textViewDescription.text = if (data.type == FileTreeInfo.FILE_TYPE_DIRECTORY) {
+            views.textViewDescription.text = if (data.type == FileTreeInfo.FileType.DIRECTORY) {
                 views.root.context.getString(R.string.state_directory_size, Formatter.formatFileSize(views.root.context, data.size), data.fileCount)
             } else {
                 Formatter.formatFileSize(views.root.context, data.size)

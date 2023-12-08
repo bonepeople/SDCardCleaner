@@ -6,15 +6,15 @@ import com.bonepeople.android.sdcardcleaner.global.utils.CommonUtil
  * 文件信息
  */
 class FileTreeInfo {
-    var name = "" //文件名
-    var path = "" //文件路径
-    var size = 0L //文件大小 //多线程操作时需要注意线程安全
-    var fileCount = 0 //文件夹内文件的总数量，包括子文件夹 //多线程操作时需要注意线程安全
-    var type = FILE_TYPE_UNKNOWN //文件类型
-    var cleanState = CleanStateInfo() //该文件的自动清理信息
-    var sorted = SORT_TYPE_NONE //当前排序类型
+    var name: String = "" //文件名
+    var path: String = "" //文件路径
+    var size: Long = 0L //文件大小 //多线程操作时需要注意线程安全
+    var fileCount: Int = 0 //文件夹内文件的总数量，包括子文件夹 //多线程操作时需要注意线程安全
+    var type: Int = FileType.UNKNOWN //文件类型
+    var cleanState: CleanStateInfo = CleanStateInfo() //该文件的自动清理信息
+    var sorted: Int = SORT_TYPE_NONE //当前排序类型
     var parent: FileTreeInfo? = null //父目录
-    var children = ArrayList<FileTreeInfo>() //子文件列表 //多线程操作时需要注意线程安全
+    var children: ArrayList<FileTreeInfo> = ArrayList() //子文件列表 //多线程操作时需要注意线程安全
     var largestFile: FileTreeInfo? = null //当前目录中最大的文件
 
     fun updateLargestFile() {
@@ -35,11 +35,11 @@ class FileTreeInfo {
      */
     object NameAscComparator : Comparator<FileTreeInfo> {
         override fun compare(file1: FileTreeInfo, file2: FileTreeInfo): Int {
-            return if (file1.type == FILE_TYPE_DIRECTORY && file2.type == FILE_TYPE_DIRECTORY) { //两个对比项都是文件夹，按照文件夹名称排序
+            return if (file1.type == FileType.DIRECTORY && file2.type == FileType.DIRECTORY) { //两个对比项都是文件夹，按照文件夹名称排序
                 CommonUtil.comparePath(file1.name, file2.name)
-            } else if (file1.type == FILE_TYPE_DIRECTORY) { //file1是文件夹，file2是文件，file1排在前面
+            } else if (file1.type == FileType.DIRECTORY) { //file1是文件夹，file2是文件，file1排在前面
                 -1
-            } else if (file2.type == FILE_TYPE_DIRECTORY) { //file2是文件夹，file1是文件，file2排在前面
+            } else if (file2.type == FileType.DIRECTORY) { //file2是文件夹，file1是文件，file2排在前面
                 1
             } else { //两个对比项都是文件，按照文件名称排序
                 CommonUtil.comparePath(file1.name, file2.name)
@@ -62,12 +62,14 @@ class FileTreeInfo {
         const val SORT_TYPE_NONE = 0//未排序
         const val SORT_TYPE_NAME = 1//按文件名称排序
         const val SORT_TYPE_SIZE = 2//按文件大小排序
+    }
 
-        //文件类型
-        const val FILE_TYPE_UNKNOWN = 0//未知类型
-        const val FILE_TYPE_DIRECTORY = 1//文件夹
-        const val FILE_TYPE_IMAGE = 2//图片类型
-        const val FILE_TYPE_VIDEO = 3//视频类型
+    //文件类型
+    object FileType {
+        const val UNKNOWN = 0//未知类型
+        const val DIRECTORY = 1//文件夹
+        const val IMAGE = 2//图片类型
+        const val VIDEO = 3//视频类型
     }
 
     /**

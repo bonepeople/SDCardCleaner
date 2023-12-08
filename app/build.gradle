@@ -70,4 +70,6 @@ dependencies {
 
     // Coil https://github.com/coil-kt/coil
     implementation("io.coil-kt:coil:2.1.0")
+    // To add video frame support, import the extension library:
+    implementation("io.coil-kt:coil-video:2.1.0")
 }

@@ -39,8 +39,8 @@ object FileTreeManager {
         fileInfo.parent = parentFile
         fileInfo.name = file.name
         fileInfo.path = file.absolutePath
-        if (file.isDirectory) fileInfo.type = FileTreeInfo.FILE_TYPE_DIRECTORY
-        fileInfo.size = if (fileInfo.type == FileTreeInfo.FILE_TYPE_DIRECTORY) 0 else file.length()
+        if (file.isDirectory) fileInfo.type = FileTreeInfo.FileType.DIRECTORY
+        fileInfo.size = if (fileInfo.type == FileTreeInfo.FileType.DIRECTORY) 0 else file.length()
         //更新当前文件的自动清理标志
         fileInfo.cleanState.enable = getCleanState(fileInfo)
         //将自身添加到上级目录中
@@ -54,7 +54,7 @@ object FileTreeManager {
         //更新上级目录自动清理的统计信息
         if (fileInfo.cleanState.enable) updateParentCleanState(fileInfo.parent, 1, fileInfo.size)
         //如果当前是文件夹，对下级所有文件依次遍历
-        if (fileInfo.type == FileTreeInfo.FILE_TYPE_DIRECTORY) {
+        if (fileInfo.type == FileTreeInfo.FileType.DIRECTORY) {
             //在协程取消的时候忽略CancellationException异常，使后面的逻辑正常执行
             runCatching {
                 //使用coroutineScope创建一个协程作用域，在子协程全部完成后才会继续执行
@@ -84,7 +84,7 @@ object FileTreeManager {
         } else {
             //判断文件类型
             CoroutinesHolder.io.launch {
-                if (checkImageType(file)) fileInfo.type = FileTreeInfo.FILE_TYPE_IMAGE
+                fileInfo.type = checkFileType(file)
             }
         }
     }
@@ -136,10 +136,10 @@ object FileTreeManager {
     }
 
     /**
-     * 检查文件是否为图片
+     * 检查文件的类型
      */
-    private fun checkImageType(file: File): Boolean {
-        val bytes = ByteArray(8)
+    private fun checkFileType(file: File): Int {
+        val bytes = ByteArray(12)
         runCatching {
             val fileInputStream = FileInputStream(file)
             fileInputStream.read(bytes)
@@ -153,13 +153,27 @@ object FileTreeManager {
             return true
         }
 
+        fun ByteArray.containsAtAnyPosition(sequence: ByteArray): Boolean {
+            outer@ for (i in this.indices) {
+                for (j in sequence.indices) {
+                    if (i + j >= this.size || this[i + j] != sequence[j]) continue@outer
+                }
+                return true
+            }
+            return false
+        }
+
         return when {
-            bytes.startsWith(byteArrayOf(0xFF.toByte(), 0xD8.toByte())) -> true // JPEG
-            bytes.startsWith(byteArrayOf(0x89.toByte(), 0x50.toByte(), 0x4E.toByte(), 0x47.toByte())) -> true // PNG
-            bytes.startsWith(byteArrayOf(0x47.toByte(), 0x49.toByte(), 0x46.toByte())) -> true // GIF
-            bytes.startsWith(byteArrayOf(0x42.toByte(), 0x4D.toByte())) -> true // BMP
-            bytes.startsWith(byteArrayOf(0x00.toByte(), 0x00.toByte(), 0x01.toByte(), 0x00.toByte())) -> true // ICO
-            else -> false
+            bytes.startsWith(byteArrayOf(0xFF.toByte(), 0xD8.toByte())) -> FileTreeInfo.FileType.IMAGE // JPEG
+            bytes.startsWith(byteArrayOf(0x89.toByte(), 0x50.toByte(), 0x4E.toByte(), 0x47.toByte())) -> FileTreeInfo.FileType.IMAGE // PNG
+            bytes.startsWith(byteArrayOf(0x47.toByte(), 0x49.toByte(), 0x46.toByte())) -> FileTreeInfo.FileType.IMAGE // GIF
+            bytes.startsWith(byteArrayOf(0x42.toByte(), 0x4D.toByte())) -> FileTreeInfo.FileType.IMAGE // BMP
+            bytes.startsWith(byteArrayOf(0x00.toByte(), 0x00.toByte(), 0x01.toByte(), 0x00.toByte())) -> FileTreeInfo.FileType.IMAGE // ICO
+            bytes.startsWith(byteArrayOf(0x00.toByte(), 0x00.toByte(), 0x01.toByte(), 0xBA.toByte())) -> FileTreeInfo.FileType.VIDEO // MPEG
+            bytes.startsWith(byteArrayOf(0x1A.toByte(), 0x45.toByte(), 0xDF.toByte(), 0xA3.toByte())) -> FileTreeInfo.FileType.VIDEO // MKV
+            bytes.startsWith(byteArrayOf(0x52.toByte(), 0x49.toByte(), 0x46.toByte(), 0x46.toByte())) -> FileTreeInfo.FileType.VIDEO // AVI
+            bytes.containsAtAnyPosition(byteArrayOf(0x66.toByte(), 0x74.toByte(), 0x79.toByte(), 0x70.toByte())) -> FileTreeInfo.FileType.VIDEO // MP4
+            else -> FileTreeInfo.FileType.UNKNOWN
         }
     }
 
@@ -208,11 +222,11 @@ object FileTreeManager {
         //更新上级目录自动清理的统计信息
         if (fileInfo.cleanState.enable && !clean) { //该文件由清理变为保留
             //上级目录的待清理文件数量减1，当前是文件夹待清理文件大小减少0，当前是文件待清理文件大小减少文件大小
-            updateParentCleanState(fileInfo.parent, -1, if (fileInfo.type == FileTreeInfo.FILE_TYPE_DIRECTORY) 0 else -fileInfo.size)
+            updateParentCleanState(fileInfo.parent, -1, if (fileInfo.type == FileTreeInfo.FileType.DIRECTORY) 0 else -fileInfo.size)
         }
         if (!fileInfo.cleanState.enable && clean) { //该文件由保留变为清理
             //上级目录的待清理文件数量加1，当前是文件夹待清理文件大小增加0，当前是文件待清理文件大小增加文件大小
-            updateParentCleanState(fileInfo.parent, 1, if (fileInfo.type == FileTreeInfo.FILE_TYPE_DIRECTORY) 0 else fileInfo.size)
+            updateParentCleanState(fileInfo.parent, 1, if (fileInfo.type == FileTreeInfo.FileType.DIRECTORY) 0 else fileInfo.size)
         }
         //更新清理状态
         fileInfo.cleanState.enable = clean

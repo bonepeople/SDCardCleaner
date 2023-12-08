@@ -92,7 +92,7 @@ class FileListFragment(private val file: FileTreeInfo) : ViewBindingFragment<Fra
             adapter.notifyItemChanged(position, "CheckBox")
         } else {//处于浏览状态
             val child = file.children[position]
-            if (child.type == FileTreeInfo.FILE_TYPE_DIRECTORY) {
+            if (child.type == FileTreeInfo.FileType.DIRECTORY) {
                 StandardActivity.call(FileListFragment(child)).onResult { adapter.refresh() }
             }
         }
