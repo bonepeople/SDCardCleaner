@@ -7,11 +7,9 @@ import android.os.Build
 import android.os.Environment
 import android.provider.Settings
 import android.widget.Toast
-import androidx.core.view.setPadding
 import com.bonepeople.android.base.activity.StandardActivity
 import com.bonepeople.android.base.util.CoroutineExtension.launchOnIO
 import com.bonepeople.android.base.viewbinding.ViewBindingFragment
-import com.bonepeople.android.dimensionutil.DimensionUtil
 import com.bonepeople.android.sdcardcleaner.R
 import com.bonepeople.android.sdcardcleaner.data.FileTreeInfo
 import com.bonepeople.android.sdcardcleaner.data.GlobalSummaryInfo
@@ -35,7 +33,6 @@ class HomeFragment : ViewBindingFragment<FragmentHomeBinding>() {
     override fun initView() {
         views.titleView.title = getString(R.string.caption_text_mine)
         views.titleView.views.imageViewTitleAction.run {
-            setPadding(DimensionUtil.getPx(16f))
             setImageResource(R.drawable.icon_set)
             singleClick { StandardActivity.open(SettingFragment()) }
             show()

@@ -4,12 +4,11 @@ import android.app.ProgressDialog
 import android.os.Bundle
 import android.view.Gravity
 import androidx.appcompat.app.AlertDialog
-import androidx.core.view.setPadding
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.bonepeople.android.base.activity.StandardActivity
 import com.bonepeople.android.base.viewbinding.ViewBindingFragment
-import com.bonepeople.android.dimensionutil.DimensionUtil
 import com.bonepeople.android.sdcardcleaner.R
 import com.bonepeople.android.sdcardcleaner.ui.adapter.FileListAdapter
 import com.bonepeople.android.sdcardcleaner.data.FileTreeInfo
@@ -29,7 +28,6 @@ class FileListFragment(private val file: FileTreeInfo) : ViewBindingFragment<Fra
     private val adapter = FileListAdapter(file.children, this)
 
     override fun initView() {
-        views.titleView.views.imageViewTitleAction.setPadding(DimensionUtil.getPx(16f))
         views.titleView.onActionClick {
             SortSelectorPopupWindow(requireContext()).onSelected { sortType ->
                 if (file.sorted == sortType) return@onSelected //选择想用的排序方式，不再重复排序
@@ -74,8 +72,9 @@ class FileListFragment(private val file: FileTreeInfo) : ViewBindingFragment<Fra
         views.titleView.title = title
         views.textViewPath.text = file.path.replace(FileTreeManager.Summary.rootFile.path, getString(R.string.str_path_rootFile))
         views.textViewEmpty.switchVisible(file.children.isEmpty())
-        views.recyclerView.switchVisible(file.children.isNotEmpty())
-        views.recyclerView.adapter = adapter
+        views.recyclerView.switchVisible(file.children.isNotEmpty()) { recyclerView: RecyclerView ->
+            recyclerView.adapter = adapter
+        }
     }
 
     override fun onBackPressed() {

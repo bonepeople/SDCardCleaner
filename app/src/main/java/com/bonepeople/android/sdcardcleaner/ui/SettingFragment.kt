@@ -15,6 +15,7 @@ import com.bonepeople.android.widget.util.AppView.singleClick
 import kotlinx.coroutines.launch
 import java.io.File
 import java.io.FileOutputStream
+import java.util.TimeZone
 
 class SettingFragment : ViewBindingFragment<FragmentSettingBinding>() {
     override fun initView() {
@@ -24,7 +25,7 @@ class SettingFragment : ViewBindingFragment<FragmentSettingBinding>() {
         views.textViewAbout.singleClick { StandardActivity.open(AboutFragment()) }
         views.textViewVersion.run {
             val versionName = if (ApplicationHolder.debug) "${ApplicationHolder.getVersionName()} - debug" else ApplicationHolder.getVersionName()
-            val buildTime = AppTime.getDateTimeString(App.BUILD_TIME)
+            val buildTime = AppTime.getDateTimeString(App.BUILD_TIME, timeZone = TimeZone.getTimeZone("GMT+8"))
             text = getString(R.string.app_version, versionName, buildTime)
         }
     }

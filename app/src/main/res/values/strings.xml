@@ -1,6 +1,6 @@
 <resources>
     <string name="app_name">存储统计</string>
-    <string name="app_version">v%1$s\n于%2$s发布</string>
+    <string name="app_version">v%1$s\n于%2$s(北京)发布</string>
     <string name="str_path_rootFile">内部存储</string>
 
     <!--Toast展示的信息-->

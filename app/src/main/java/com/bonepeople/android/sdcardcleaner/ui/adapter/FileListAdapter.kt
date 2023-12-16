@@ -22,7 +22,7 @@ class FileListAdapter(override val list: List<FileTreeInfo>, private val fragmen
         }
     val checkedSet = HashSet<Int>()
 
-    override fun onBindView(views: ItemFileListBinding, data: FileTreeInfo, position: Int, payloads: MutableList<Any>) {
+    override fun onBindView(views: ItemFileListBinding, data: FileTreeInfo, position: Int, payloads: List<Any>) {
         if (payloads.isEmpty()) {
             //设置文件大小比例条
             val size = data.size.toDouble()
