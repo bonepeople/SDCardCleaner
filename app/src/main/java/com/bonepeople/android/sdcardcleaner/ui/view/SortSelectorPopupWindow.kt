@@ -25,11 +25,11 @@ class SortSelectorPopupWindow(context: Context) : PopupWindow(context) {
         isFocusable = true
 
         views.textViewFileName.singleClick {
-            selectAction(FileTreeInfo.SORT_TYPE_NAME)
+            selectAction(FileTreeInfo.SortType.NAME_ASC)
             dismiss()
         }
         views.textViewFileSize.singleClick {
-            selectAction(FileTreeInfo.SORT_TYPE_SIZE)
+            selectAction(FileTreeInfo.SortType.SIZE_DESC)
             dismiss()
         }
     }

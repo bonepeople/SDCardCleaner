@@ -12,7 +12,7 @@ class FileTreeInfo {
     var fileCount: Int = 0 //文件夹内文件的总数量，包括子文件夹 //多线程操作时需要注意线程安全
     var type: Int = FileType.UNKNOWN //文件类型
     var cleanState: CleanStateInfo = CleanStateInfo() //该文件的自动清理信息
-    var sorted: Int = SORT_TYPE_NONE //当前排序类型
+    var sorted: Int = SortType.NONE //当前排序类型
     var parent: FileTreeInfo? = null //父目录
     var children: ArrayList<FileTreeInfo> = ArrayList() //子文件列表 //多线程操作时需要注意线程安全
     var largestFile: FileTreeInfo? = null //当前目录中最大的文件
@@ -28,6 +28,21 @@ class FileTreeInfo {
                 }
             }
         }
+    }
+
+    //排序类型
+    object SortType {
+        const val NONE = 0//未排序
+        const val NAME_ASC = 1//按文件名称升序排序
+        const val SIZE_DESC = 2//按文件大小降序排序
+    }
+
+    //文件类型
+    object FileType {
+        const val UNKNOWN = 0//未知类型
+        const val DIRECTORY = 1//文件夹
+        const val IMAGE = 2//图片类型
+        const val VIDEO = 3//视频类型
     }
 
     /**
@@ -55,21 +70,6 @@ class FileTreeInfo {
             if (file1.size == file2.size) return 0
             return if (file1.size < file2.size) -1 else 1
         }
-    }
-
-    companion object {
-        //排序类型
-        const val SORT_TYPE_NONE = 0//未排序
-        const val SORT_TYPE_NAME = 1//按文件名称排序
-        const val SORT_TYPE_SIZE = 2//按文件大小排序
-    }
-
-    //文件类型
-    object FileType {
-        const val UNKNOWN = 0//未知类型
-        const val DIRECTORY = 1//文件夹
-        const val IMAGE = 2//图片类型
-        const val VIDEO = 3//视频类型
     }
 
     /**

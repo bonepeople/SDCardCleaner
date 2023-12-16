@@ -32,14 +32,14 @@ class FileListFragment(private val file: FileTreeInfo) : ViewBindingFragment<Fra
             SortSelectorPopupWindow(requireContext()).onSelected { sortType ->
                 if (file.sorted == sortType) return@onSelected //选择想用的排序方式，不再重复排序
                 when (sortType) {
-                    FileTreeInfo.SORT_TYPE_NAME -> {
+                    FileTreeInfo.SortType.NAME_ASC -> {
                         launch {
                             file.children.sortWith(FileTreeInfo.NameAscComparator)
                             adapter.refresh()
                         }
                     }
 
-                    FileTreeInfo.SORT_TYPE_SIZE -> {
+                    FileTreeInfo.SortType.SIZE_DESC -> {
                         launch {
                             file.children.sortWith(FileTreeInfo.FileSizeDescComparator)
                             adapter.refresh()
