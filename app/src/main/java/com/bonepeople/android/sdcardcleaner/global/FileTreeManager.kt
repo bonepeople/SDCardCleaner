@@ -173,6 +173,7 @@ object FileTreeManager {
             bytes.startsWith(byteArrayOf(0x1A.toByte(), 0x45.toByte(), 0xDF.toByte(), 0xA3.toByte())) -> FileTreeInfo.FileType.VIDEO // MKV
             bytes.startsWith(byteArrayOf(0x52.toByte(), 0x49.toByte(), 0x46.toByte(), 0x46.toByte())) -> FileTreeInfo.FileType.VIDEO // AVI
             bytes.containsAtAnyPosition(byteArrayOf(0x66.toByte(), 0x74.toByte(), 0x79.toByte(), 0x70.toByte())) -> FileTreeInfo.FileType.VIDEO // MP4
+            bytes.startsWith(byteArrayOf(0x50.toByte(), 0x4B.toByte())) -> FileTreeInfo.FileType.ANDROID // APK
             else -> FileTreeInfo.FileType.UNKNOWN
         }
     }

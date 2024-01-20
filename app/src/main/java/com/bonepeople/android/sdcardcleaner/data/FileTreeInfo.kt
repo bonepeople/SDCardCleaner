@@ -39,10 +39,11 @@ class FileTreeInfo {
 
     //文件类型
     object FileType {
-        const val UNKNOWN = 0//未知类型
+        const val UNKNOWN = 0//未知
         const val DIRECTORY = 1//文件夹
-        const val IMAGE = 2//图片类型
-        const val VIDEO = 3//视频类型
+        const val IMAGE = 2//图片
+        const val VIDEO = 3//视频
+        const val ANDROID = 4//安卓apk安装包
     }
 
     /**

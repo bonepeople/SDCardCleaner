@@ -56,14 +56,14 @@ class FileListAdapter(override val list: List<FileTreeInfo>, private val fragmen
                 FileTreeInfo.FileType.DIRECTORY -> views.imageViewType.load(R.drawable.icon_directory)
                 FileTreeInfo.FileType.IMAGE -> views.imageViewType.load(data.path)
                 FileTreeInfo.FileType.VIDEO -> views.imageViewType.load(data.path)
+                FileTreeInfo.FileType.ANDROID -> views.imageViewType.load(R.drawable.icon_file)
                 else -> views.imageViewType.load(R.drawable.icon_file)
             }
             //设置基本信息
             views.textViewName.text = data.name
-            views.textViewDescription.text = if (data.type == FileTreeInfo.FileType.DIRECTORY) {
-                views.root.context.getString(R.string.state_directory_size, Formatter.formatFileSize(views.root.context, data.size), data.fileCount)
-            } else {
-                Formatter.formatFileSize(views.root.context, data.size)
+            views.textViewDescription.text = when (data.type) {
+                FileTreeInfo.FileType.DIRECTORY -> views.root.context.getString(R.string.state_directory_size, Formatter.formatFileSize(views.root.context, data.size), data.fileCount)
+                else -> Formatter.formatFileSize(views.root.context, data.size)
             }
             views.root.singleClick(50) { fragment.clickFile(position) }
             views.root.setOnLongClickListener {
