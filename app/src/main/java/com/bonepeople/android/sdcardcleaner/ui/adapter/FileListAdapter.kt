@@ -1,6 +1,8 @@
 package com.bonepeople.android.sdcardcleaner.ui.adapter
 
 import android.animation.ArgbEvaluator
+import android.content.pm.PackageInfo
+import android.content.pm.PackageManager
 import android.text.format.Formatter
 import androidx.constraintlayout.widget.ConstraintLayout
 import coil.load
@@ -10,6 +12,7 @@ import com.bonepeople.android.sdcardcleaner.data.FileTreeInfo
 import com.bonepeople.android.sdcardcleaner.databinding.ItemFileListBinding
 import com.bonepeople.android.sdcardcleaner.ui.FileListFragment
 import com.bonepeople.android.sdcardcleaner.global.utils.NumberUtil
+import com.bonepeople.android.widget.ApplicationHolder
 import com.bonepeople.android.widget.util.AppView.gone
 import com.bonepeople.android.widget.util.AppView.show
 import com.bonepeople.android.widget.util.AppView.singleClick
@@ -56,15 +59,22 @@ class FileListAdapter(override val list: List<FileTreeInfo>, private val fragmen
                 FileTreeInfo.FileType.DIRECTORY -> views.imageViewType.load(R.drawable.icon_directory)
                 FileTreeInfo.FileType.IMAGE -> views.imageViewType.load(data.path)
                 FileTreeInfo.FileType.VIDEO -> views.imageViewType.load(data.path)
-                FileTreeInfo.FileType.ANDROID -> views.imageViewType.load(R.drawable.icon_file)
+                FileTreeInfo.FileType.ANDROID -> views.imageViewType.load(R.drawable.icon_android)
                 else -> views.imageViewType.load(R.drawable.icon_file)
             }
             //设置基本信息
             views.textViewName.text = data.name
             views.textViewDescription.text = when (data.type) {
                 FileTreeInfo.FileType.DIRECTORY -> views.root.context.getString(R.string.state_directory_size, Formatter.formatFileSize(views.root.context, data.size), data.fileCount)
-                else -> Formatter.formatFileSize(views.root.context, data.size)
-            }
+                FileTreeInfo.FileType.ANDROID -> {
+                    ApplicationHolder.app.packageManager.getPackageArchiveInfo(data.path, PackageManager.GET_ACTIVITIES)?.let { packageInfo: PackageInfo ->
+                        val appName = packageInfo.applicationInfo.apply { publicSourceDir = data.path }.loadLabel(ApplicationHolder.app.packageManager)
+                        Formatter.formatFileSize(views.root.context, data.size) + " [${appName}-${packageInfo.versionName}]"
+                    }
+                }
+
+                else -> null
+            } ?: Formatter.formatFileSize(views.root.context, data.size)
             views.root.singleClick(50) { fragment.clickFile(position) }
             views.root.setOnLongClickListener {
                 if (multiSelect) {
