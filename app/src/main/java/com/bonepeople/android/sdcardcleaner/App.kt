@@ -4,11 +4,16 @@ import android.graphics.drawable.ColorDrawable
 import android.os.Build
 import coil.ImageLoader
 import coil.ImageLoaderFactory
+import coil.decode.DecodeResult
+import coil.decode.Decoder
 import coil.decode.GifDecoder
 import coil.decode.ImageDecoderDecoder
 import coil.decode.VideoFrameDecoder
+import coil.fetch.SourceResult
+import coil.request.Options
 import com.bonepeople.android.base.manager.BaseApp
 import com.bonepeople.android.base.view.TitleView
+import com.bonepeople.android.widget.ApplicationHolder
 
 class App : BaseApp(), ImageLoaderFactory {
     override val appName = "SDCardCleaner"
@@ -35,10 +40,27 @@ class App : BaseApp(), ImageLoaderFactory {
                 } else {
                     add(GifDecoder.Factory())
                 }
+                add(ApkDecoder.Factory())
             }.build()
     }
 
     companion object {
         const val BUILD_TIME = BuildConfig.buildTime
+    }
+
+    class ApkDecoder(private val path: String) : Decoder {
+        override suspend fun decode(): DecodeResult? {
+            return kotlin.runCatching {
+                ApplicationHolder.app.packageManager.getPackageArchiveInfo(path, 0)!!.applicationInfo.apply { publicSourceDir = path }.loadIcon(ApplicationHolder.app.packageManager)
+            }.getOrNull()?.let {
+                DecodeResult(it, false)
+            }
+        }
+
+        class Factory : Decoder.Factory {
+            override fun create(result: SourceResult, options: Options, imageLoader: ImageLoader): Decoder? {
+                return if (result.mimeType == "application/vnd.android.package-archive" || result.mimeType == null) ApkDecoder(result.source.fileOrNull().toString()) else null
+            }
+        }
     }
 }

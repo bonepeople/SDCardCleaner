@@ -59,7 +59,7 @@ class FileListAdapter(override val list: List<FileTreeInfo>, private val fragmen
                 FileTreeInfo.FileType.DIRECTORY -> views.imageViewType.load(R.drawable.icon_directory)
                 FileTreeInfo.FileType.IMAGE -> views.imageViewType.load(data.path)
                 FileTreeInfo.FileType.VIDEO -> views.imageViewType.load(data.path)
-                FileTreeInfo.FileType.ANDROID -> views.imageViewType.load(R.drawable.icon_android)
+                FileTreeInfo.FileType.ANDROID -> views.imageViewType.load(data.path)
                 else -> views.imageViewType.load(R.drawable.icon_file)
             }
             //设置基本信息
