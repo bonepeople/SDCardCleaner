@@ -1,8 +1,11 @@
 package com.bonepeople.android.sdcardcleaner.ui
 
 import android.app.ProgressDialog
+import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
 import android.view.Gravity
+import android.webkit.MimeTypeMap
 import androidx.appcompat.app.AlertDialog
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -17,6 +20,7 @@ import com.bonepeople.android.sdcardcleaner.global.CleanPathManager
 import com.bonepeople.android.sdcardcleaner.global.FileTreeManager
 import com.bonepeople.android.sdcardcleaner.ui.view.SortSelectorPopupWindow
 import com.bonepeople.android.widget.CoroutinesHolder
+import com.bonepeople.android.widget.util.AppToast
 import com.bonepeople.android.widget.util.AppView.singleClick
 import com.bonepeople.android.widget.util.AppView.switchShow
 import com.bonepeople.android.widget.util.AppView.switchVisible
@@ -91,8 +95,18 @@ class FileListFragment(private val file: FileTreeInfo) : ViewBindingFragment<Fra
             adapter.notifyItemChanged(position, "CheckBox")
         } else {//处于浏览状态
             val child = file.children[position]
-            if (child.type == FileTreeInfo.FileType.DIRECTORY) {
+            if (child.type == FileTreeInfo.FileType.DIRECTORY) { //文件夹
                 StandardActivity.call(FileListFragment(child)).onResult { adapter.refresh() }
+            } else { //文件
+                kotlin.runCatching {
+                    val uri = Uri.parse(child.path)
+                    val intent = Intent(Intent.ACTION_VIEW)
+                    val mimeType = MimeTypeMap.getSingleton().getMimeTypeFromExtension(MimeTypeMap.getFileExtensionFromUrl(child.path))
+                    intent.setDataAndType(uri, mimeType)
+                    startActivity(intent)
+                }.getOrElse {
+                    AppToast.show("cannot open")
+                }
             }
         }
     }
