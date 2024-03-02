@@ -5,18 +5,18 @@ import com.bonepeople.android.sdcardcleaner.global.utils.CommonUtil
 /**
  * 文件信息
  */
-class FileTreeInfo {
-    var name: String = "" //文件名
-    var path: String = "" //文件路径
-    var size: Long = 0L //文件大小 //多线程操作时需要注意线程安全
-    var fileCount: Int = 0 //文件夹内文件的总数量，包括子文件夹 //多线程操作时需要注意线程安全
-    var type: Int = FileType.UNKNOWN //文件类型
-    var cleanState: CleanStateInfo = CleanStateInfo() //该文件的自动清理信息
-    var sorted: Int = SortType.NONE //当前排序类型
-    var parent: FileTreeInfo? = null //父目录
-    var children: ArrayList<FileTreeInfo> = ArrayList() //子文件列表 //多线程操作时需要注意线程安全
+data class FileTreeInfo(
+    var name: String = "", //文件名
+    var path: String = "", //文件路径
+    var size: Long = 0L, //文件大小 //多线程操作时需要注意线程安全
+    var fileCount: Int = 0, //文件夹内文件的总数量，包括子文件夹 //多线程操作时需要注意线程安全
+    var type: Int = FileType.UNKNOWN, //文件类型
+    val cleanState: CleanStateInfo = CleanStateInfo(), //该文件的自动清理信息
+    var sorted: Int = SortType.NONE, //当前排序类型
+    var parent: FileTreeInfo? = null, //父目录
+    val children: ArrayList<FileTreeInfo> = ArrayList(), //子文件列表 //多线程操作时需要注意线程安全
     var largestFile: FileTreeInfo? = null //当前目录中最大的文件
-
+) {
     fun updateLargestFile() {
         largestFile = null
         children.forEach { child ->
@@ -76,9 +76,9 @@ class FileTreeInfo {
     /**
      * 自动清理信息
      */
-    class CleanStateInfo {
-        var enable: Boolean = false
-        var count: Int = 0
-        var size: Long = 0L
-    }
+    data class CleanStateInfo(
+        var enable: Boolean = false,
+        var count: Int = 0,
+        var size: Long = 0
+    )
 }

@@ -47,14 +47,14 @@ class HomeFragment : ViewBindingFragment<FragmentHomeBinding>() {
      * 更新统计信息
      */
     private fun updateSummary() {
-        val summaryInfo = GlobalSummaryInfo().apply {
-            totalSpace = FileTreeManager.Summary.totalSpace
-            freeSpace = FileTreeManager.Summary.freeSpace
-            fileCount = FileTreeManager.Summary.rootFile.fileCount
-            fileSize = FileTreeManager.Summary.rootFile.size
-            rubbishCount = FileTreeManager.Summary.rootFile.cleanState.count
+        val summaryInfo = GlobalSummaryInfo(
+            totalSpace = FileTreeManager.Summary.totalSpace,
+            freeSpace = FileTreeManager.Summary.freeSpace,
+            fileCount = FileTreeManager.Summary.rootFile.fileCount,
+            fileSize = FileTreeManager.Summary.rootFile.size,
+            rubbishCount = FileTreeManager.Summary.rootFile.cleanState.count,
             rubbishSize = FileTreeManager.Summary.rootFile.cleanState.size
-        }
+        )
         views.storageSummary.updateView(summaryInfo)
     }
 
