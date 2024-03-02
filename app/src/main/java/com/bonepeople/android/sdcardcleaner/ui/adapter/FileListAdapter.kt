@@ -16,6 +16,7 @@ import com.bonepeople.android.widget.ApplicationHolder
 import com.bonepeople.android.widget.util.AppView.gone
 import com.bonepeople.android.widget.util.AppView.show
 import com.bonepeople.android.widget.util.AppView.singleClick
+import java.util.TreeSet
 
 class FileListAdapter(override val list: List<FileTreeInfo>, private val fragment: FileListFragment) : ViewBindingRecyclerAdapter<ItemFileListBinding, FileTreeInfo>() {
     var multiSelect = false
@@ -23,7 +24,7 @@ class FileListAdapter(override val list: List<FileTreeInfo>, private val fragmen
             field = value
             if (value) checkedSet.clear()
         }
-    val checkedSet = HashSet<Int>()
+    val checkedSet = TreeSet<Int>()
 
     override fun onBindView(views: ItemFileListBinding, data: FileTreeInfo, position: Int, payloads: List<Any>) {
         if (payloads.isEmpty()) {
