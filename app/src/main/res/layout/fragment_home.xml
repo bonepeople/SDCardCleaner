@@ -40,34 +40,74 @@
         app:layout_constraintTop_toTopOf="@id/textViewState"
         tools:text="00:25.092" />
 
-    <Button
-        android:id="@+id/buttonScan"
+    <androidx.cardview.widget.CardView
+        android:id="@+id/cardViewScan"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="20dp"
-        android:text="@string/caption_button_startScan"
-        app:layout_constraintEnd_toStartOf="@id/buttonClean"
-        app:layout_constraintHorizontal_chainStyle="packed"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/textViewState" />
-
-    <Button
-        android:id="@+id/buttonClean"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:enabled="false"
-        android:text="@string/caption_button_startClean"
-        app:layout_constraintEnd_toStartOf="@id/buttonView"
-        app:layout_constraintStart_toEndOf="@id/buttonScan"
-        app:layout_constraintTop_toTopOf="@id/buttonScan" />
-
-    <Button
-        android:id="@+id/buttonView"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:enabled="false"
-        android:text="@string/caption_button_viewFiles"
+        android:foreground="?selectableItemBackgroundBorderless"
+        app:cardBackgroundColor="#FFC107"
+        app:cardCornerRadius="8dp"
+        app:cardElevation="20dp"
+        app:contentPadding="10dp"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@id/buttonClean"
-        app:layout_constraintTop_toTopOf="@id/buttonScan" />
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/textViewState">
+
+        <TextView
+            android:id="@+id/textViewScan"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:drawablePadding="10dp"
+            android:gravity="center"
+            android:paddingHorizontal="20dp"
+            android:paddingVertical="8dp"
+            android:text="@string/caption_button_startScan"
+            app:drawableStartCompat="@drawable/home_scan" />
+    </androidx.cardview.widget.CardView>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@color/colorPrimary"
+        app:layout_constraintBottom_toTopOf="@id/textViewClean" />
+
+    <TextView
+        android:id="@+id/textViewClean"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:enabled="false"
+        android:foreground="?selectableItemBackgroundBorderless"
+        android:gravity="center"
+        android:paddingHorizontal="20dp"
+        android:paddingVertical="5dp"
+        android:text="@string/caption_button_startClean"
+        app:drawableTopCompat="@drawable/home_clean"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@id/textViewBrowse"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <View
+        android:layout_width="1dp"
+        android:layout_height="0dp"
+        android:background="@color/colorPrimary"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@id/textViewClean" />
+
+    <TextView
+        android:id="@+id/textViewBrowse"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:enabled="false"
+        android:foreground="?selectableItemBackgroundBorderless"
+        android:gravity="center"
+        android:paddingHorizontal="20dp"
+        android:paddingVertical="5dp"
+        android:text="@string/caption_button_browse"
+        app:drawableTopCompat="@drawable/home_browse"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@id/textViewClean" />
 </androidx.constraintlayout.widget.ConstraintLayout>

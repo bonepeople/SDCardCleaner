@@ -19,7 +19,7 @@
     <string name="caption_button_stopScan">停止扫描</string>
     <string name="caption_button_startClean">开始清理</string>
     <string name="caption_button_stopClean">停止清理</string>
-    <string name="caption_button_viewFiles">查看文件</string>
+    <string name="caption_button_browse">浏览文件</string>
     <string name="caption_button_delete">删除</string>
     <string name="caption_button_clean">标记为垃圾</string>
     <string name="caption_button_save">取消标记</string>

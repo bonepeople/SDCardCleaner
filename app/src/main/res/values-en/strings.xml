@@ -19,7 +19,7 @@
     <string name="caption_button_stopScan">Stop Scan</string>
     <string name="caption_button_startClean">Start Clean</string>
     <string name="caption_button_stopClean">Stop Clean</string>
-    <string name="caption_button_viewFiles">View Files</string>
+    <string name="caption_button_browse">Browse Files</string>
     <string name="caption_button_delete">Delete</string>
     <string name="caption_button_clean">Mark Junk</string>
     <string name="caption_button_save">Remove Mark</string>
