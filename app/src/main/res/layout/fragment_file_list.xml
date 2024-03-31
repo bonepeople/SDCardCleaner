@@ -126,6 +126,7 @@
             android:id="@+id/checkBoxAll"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:background="?android:attr/selectableItemBackgroundBorderless"
             android:button="@null"
             android:drawableEnd="?android:attr/listChoiceIndicatorMultiple"
             android:text="@string/caption_button_checkAll"
