@@ -7,6 +7,7 @@ import android.os.Bundle
 import android.view.Gravity
 import android.webkit.MimeTypeMap
 import androidx.appcompat.app.AlertDialog
+import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -37,14 +38,14 @@ class FileListFragment(private val file: FileTreeInfo) : ViewBindingFragment<Fra
                 if (file.sorted == sortType) return@onSelected //选择想用的排序方式，不再重复排序
                 when (sortType) {
                     FileTreeInfo.SortType.NAME_ASC -> {
-                        launch {
+                        viewLifecycleOwner.lifecycleScope.launch {
                             file.children.sortWith(FileTreeInfo.NameAscComparator)
                             adapter.refresh()
                         }
                     }
 
                     FileTreeInfo.SortType.SIZE_DESC -> {
-                        launch {
+                        viewLifecycleOwner.lifecycleScope.launch {
                             file.children.sortWith(FileTreeInfo.FileSizeDescComparator)
                             adapter.refresh()
                         }

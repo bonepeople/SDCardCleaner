@@ -7,6 +7,7 @@ import android.os.Build
 import android.os.Environment
 import android.provider.Settings
 import android.widget.Toast
+import androidx.lifecycle.lifecycleScope
 import com.bonepeople.android.base.activity.StandardActivity
 import com.bonepeople.android.base.util.CoroutineExtension.launchOnIO
 import com.bonepeople.android.base.viewbinding.ViewBindingFragment
@@ -113,7 +114,7 @@ class HomeFragment : ViewBindingFragment<FragmentHomeBinding>() {
         views.textViewBrowse.isEnabled = false
         val startTime = System.currentTimeMillis() //记录开始时间
         FileTreeManager.scanning = true //设置扫描状态为true
-        coroutineJob = launch {
+        coroutineJob = viewLifecycleOwner.lifecycleScope.launch {
             launchOnIO { //开启IO协程扫描文件
                 val file = Environment.getExternalStorageDirectory()
                 FileTreeManager.Summary.rootFile = FileTreeInfo()
@@ -130,7 +131,7 @@ class HomeFragment : ViewBindingFragment<FragmentHomeBinding>() {
             }
         }
         coroutineJob?.invokeOnCompletion { //协程执行完毕后，更新界面
-            launch {
+            viewLifecycleOwner.lifecycleScope.launch {
                 views.textViewState.text = getString(R.string.state_scan_finish)
                 views.textViewScan.text = getString(R.string.caption_button_startScan)
                 views.cardViewScan.isEnabled = true
@@ -165,7 +166,7 @@ class HomeFragment : ViewBindingFragment<FragmentHomeBinding>() {
         views.cardViewScan.alpha = 0.3f
         views.textViewBrowse.isEnabled = false
         val startTime = System.currentTimeMillis() //记录开始时间
-        coroutineJob = launch {
+        coroutineJob = viewLifecycleOwner.lifecycleScope.launch {
             launchOnIO { //开启IO协程清理文件
                 FileTreeManager.deleteFile(FileTreeManager.Summary.rootFile, false)
                 coroutineJob?.cancel()
@@ -179,7 +180,7 @@ class HomeFragment : ViewBindingFragment<FragmentHomeBinding>() {
             }
         }
         coroutineJob?.invokeOnCompletion { //协程执行完毕后，更新界面
-            launch {
+            viewLifecycleOwner.lifecycleScope.launch {
                 views.textViewState.text = getString(R.string.state_clean_finish)
                 views.textViewClean.text = getString(R.string.caption_button_startClean)
                 views.cardViewScan.isEnabled = true
@@ -210,7 +211,7 @@ class HomeFragment : ViewBindingFragment<FragmentHomeBinding>() {
             //2秒内再次点击返回键退出
             AppToast.show(getString(R.string.toast_quitConfirm))
             quit = true
-            launch {
+            viewLifecycleOwner.lifecycleScope.launch {
                 delay(2000)
                 quit = false
             }

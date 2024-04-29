@@ -34,7 +34,7 @@ class SettingFragment : ViewBindingFragment<FragmentSettingBinding>() {
         CoroutinesHolder.io.launch {
             loadingDialog.show()
             val root = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOCUMENTS)
-            AppLog.debug(root.absolutePath)
+            AppLog.defaultLog.debug(root.absolutePath)
             repeat(10) {
                 val dir = File(root, AppRandom.randomString(5))
                 dir.mkdirs()
