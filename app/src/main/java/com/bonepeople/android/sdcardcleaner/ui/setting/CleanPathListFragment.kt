@@ -1,4 +1,4 @@
-package com.bonepeople.android.sdcardcleaner.ui
+package com.bonepeople.android.sdcardcleaner.ui.setting
 
 import android.os.Bundle
 import android.os.Environment
@@ -7,7 +7,6 @@ import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.bonepeople.android.base.viewbinding.ViewBindingFragment
 import com.bonepeople.android.sdcardcleaner.R
-import com.bonepeople.android.sdcardcleaner.ui.adapter.CleanPathListAdapter
 import com.bonepeople.android.sdcardcleaner.databinding.FragmentCleanPathListBinding
 import com.bonepeople.android.sdcardcleaner.global.CleanPathManager
 import com.bonepeople.android.sdcardcleaner.global.FileTreeManager

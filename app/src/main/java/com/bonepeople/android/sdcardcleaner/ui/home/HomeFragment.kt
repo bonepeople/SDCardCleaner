@@ -1,4 +1,4 @@
-package com.bonepeople.android.sdcardcleaner.ui
+package com.bonepeople.android.sdcardcleaner.ui.home
 
 import android.Manifest
 import android.content.Intent
@@ -16,6 +16,8 @@ import com.bonepeople.android.sdcardcleaner.data.FileTreeInfo
 import com.bonepeople.android.sdcardcleaner.data.GlobalSummaryInfo
 import com.bonepeople.android.sdcardcleaner.databinding.FragmentHomeBinding
 import com.bonepeople.android.sdcardcleaner.global.FileTreeManager
+import com.bonepeople.android.sdcardcleaner.ui.explorer.FileListFragment
+import com.bonepeople.android.sdcardcleaner.ui.setting.SettingFragment
 import com.bonepeople.android.widget.ApplicationHolder
 import com.bonepeople.android.widget.activity.result.launch
 import com.bonepeople.android.widget.util.AppPermission

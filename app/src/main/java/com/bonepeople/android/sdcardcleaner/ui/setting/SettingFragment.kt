@@ -1,4 +1,4 @@
-package com.bonepeople.android.sdcardcleaner.ui
+package com.bonepeople.android.sdcardcleaner.ui.setting
 
 import android.os.Environment
 import com.bonepeople.android.base.activity.StandardActivity

@@ -1,4 +1,4 @@
-package com.bonepeople.android.sdcardcleaner.ui
+package com.bonepeople.android.sdcardcleaner.ui.explorer
 
 import android.app.ProgressDialog
 import android.content.Intent
@@ -14,12 +14,10 @@ import androidx.recyclerview.widget.RecyclerView
 import com.bonepeople.android.base.activity.StandardActivity
 import com.bonepeople.android.base.viewbinding.ViewBindingFragment
 import com.bonepeople.android.sdcardcleaner.R
-import com.bonepeople.android.sdcardcleaner.ui.adapter.FileListAdapter
 import com.bonepeople.android.sdcardcleaner.data.FileTreeInfo
 import com.bonepeople.android.sdcardcleaner.databinding.FragmentFileListBinding
 import com.bonepeople.android.sdcardcleaner.global.CleanPathManager
 import com.bonepeople.android.sdcardcleaner.global.FileTreeManager
-import com.bonepeople.android.sdcardcleaner.ui.view.SortSelectorPopupWindow
 import com.bonepeople.android.widget.CoroutinesHolder
 import com.bonepeople.android.widget.util.AppToast
 import com.bonepeople.android.widget.util.AppView.singleClick

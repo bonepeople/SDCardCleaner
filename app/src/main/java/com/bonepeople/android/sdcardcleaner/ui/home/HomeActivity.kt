@@ -1,4 +1,4 @@
-package com.bonepeople.android.sdcardcleaner.ui
+package com.bonepeople.android.sdcardcleaner.ui.home
 
 import com.bonepeople.android.base.viewbinding.ViewBindingActivity
 import com.bonepeople.android.sdcardcleaner.R

@@ -1,4 +1,4 @@
-package com.bonepeople.android.sdcardcleaner.ui.view
+package com.bonepeople.android.sdcardcleaner.ui.explorer
 
 import android.content.Context
 import android.graphics.drawable.ColorDrawable

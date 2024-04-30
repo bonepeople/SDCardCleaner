@@ -1,4 +1,4 @@
-package com.bonepeople.android.sdcardcleaner.ui.view
+package com.bonepeople.android.sdcardcleaner.ui.home
 
 import android.content.Context
 import android.text.format.Formatter
