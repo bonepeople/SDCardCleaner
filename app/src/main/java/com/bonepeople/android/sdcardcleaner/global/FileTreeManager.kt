@@ -236,4 +236,20 @@ object FileTreeManager {
             updateCleanState(child)
         }
     }
+
+    object Holder {
+        private val fileTreeInfoMap = mutableMapOf<String, FileTreeInfo>()
+
+        fun put(fileInfo: FileTreeInfo) {
+            fileTreeInfoMap[fileInfo.path] = fileInfo
+        }
+
+        fun get(path: String): FileTreeInfo? {
+            return fileTreeInfoMap[path]
+        }
+
+        fun remove(path: String) {
+            fileTreeInfoMap.remove(path)
+        }
+    }
 }

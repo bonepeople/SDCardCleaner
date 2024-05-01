@@ -7,6 +7,7 @@ import android.os.Bundle
 import android.view.Gravity
 import android.webkit.MimeTypeMap
 import androidx.appcompat.app.AlertDialog
+import androidx.core.os.bundleOf
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -27,31 +28,32 @@ import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
-class FileListFragment(private val file: FileTreeInfo) : ViewBindingFragment<FragmentFileListBinding>() {
-    private val adapter = FileListAdapter(file.children, this)
+class FileListFragment : ViewBindingFragment<FragmentFileListBinding>() {
+    private val fileInfo: FileTreeInfo by lazy { FileTreeManager.Holder.get(arguments?.getString("path") ?: "") ?: FileTreeInfo() }
+    private val adapter by lazy { FileListAdapter(fileInfo.children, this) }
 
     override fun initView() {
         views.titleView.onActionClick {
             SortSelectorPopupWindow(requireContext()).onSelected { sortType ->
-                if (file.sorted == sortType) return@onSelected //选择想用的排序方式，不再重复排序
+                if (fileInfo.sorted == sortType) return@onSelected //选择想用的排序方式，不再重复排序
                 when (sortType) {
                     FileTreeInfo.SortType.NAME_ASC -> {
                         viewLifecycleOwner.lifecycleScope.launch {
-                            file.children.sortWith(FileTreeInfo.NameAscComparator)
+                            fileInfo.children.sortWith(FileTreeInfo.NameAscComparator)
                             adapter.refresh()
                         }
                     }
 
                     FileTreeInfo.SortType.SIZE_DESC -> {
                         viewLifecycleOwner.lifecycleScope.launch {
-                            file.children.sortWith(FileTreeInfo.FileSizeDescComparator)
+                            fileInfo.children.sortWith(FileTreeInfo.FileSizeDescComparator)
                             adapter.refresh()
                         }
                     }
 
                     else -> return@onSelected
                 }
-                file.sorted = sortType
+                fileInfo.sorted = sortType
             }.showAsDropDown(views.titleView, 0, 0, Gravity.END)
         }
         views.recyclerView.layoutManager = LinearLayoutManager(activity)
@@ -67,15 +69,15 @@ class FileListFragment(private val file: FileTreeInfo) : ViewBindingFragment<Fra
     }
 
     override fun initData(savedInstanceState: Bundle?) {
-        val title = if (file.path == FileTreeManager.Summary.rootFile.path) {
+        val title = if (fileInfo.path == FileTreeManager.Summary.rootFile.path) {
             getString(R.string.caption_text_mine)
         } else {
-            file.name
+            fileInfo.name
         }
         views.titleView.title = title
-        views.textViewPath.text = file.path.replace(FileTreeManager.Summary.rootFile.path, getString(R.string.str_path_rootFile))
-        views.textViewEmpty.switchVisible(file.children.isEmpty())
-        views.recyclerView.switchVisible(file.children.isNotEmpty()) { recyclerView: RecyclerView ->
+        views.textViewPath.text = fileInfo.path.replace(FileTreeManager.Summary.rootFile.path, getString(R.string.str_path_rootFile))
+        views.textViewEmpty.switchVisible(fileInfo.children.isEmpty())
+        views.recyclerView.switchVisible(fileInfo.children.isNotEmpty()) { recyclerView: RecyclerView ->
             recyclerView.adapter = adapter
         }
     }
@@ -88,14 +90,19 @@ class FileListFragment(private val file: FileTreeInfo) : ViewBindingFragment<Fra
         }
     }
 
+    override fun onDestroy() {
+        FileTreeManager.Holder.remove(fileInfo.path)
+        super.onDestroy()
+    }
+
     fun clickFile(position: Int) {
         if (adapter.multiSelect) {//处于多选状态
             views.checkBoxAll.isChecked = adapter.updateCheckSet(position)
             adapter.notifyItemChanged(position, "CheckBox")
         } else {//处于浏览状态
-            val child = file.children[position]
+            val child = fileInfo.children[position]
             if (child.type == FileTreeInfo.FileType.DIRECTORY) { //文件夹
-                StandardActivity.call(FileListFragment(child)).onResult { adapter.refresh() }
+                StandardActivity.call(newInstance(child)).onResult { adapter.refresh() }
             } else { //文件
                 kotlin.runCatching {
                     val uri = Uri.parse(child.path)
@@ -145,7 +152,7 @@ class FileListFragment(private val file: FileTreeInfo) : ViewBindingFragment<Fra
             //删除文件的协程
             job = CoroutinesHolder.io.launch {
                 adapter.checkedSet.forEach { position ->
-                    FileTreeManager.deleteFile(file.children[position - notifyItems.size], true)
+                    FileTreeManager.deleteFile(fileInfo.children[position - notifyItems.size], true)
                     notifyItems.add(position - notifyItems.size)
                     progressDialog.incrementProgressBy(1)
                 }
@@ -170,7 +177,7 @@ class FileListFragment(private val file: FileTreeInfo) : ViewBindingFragment<Fra
         setMultiSelect(false)
         if (adapter.checkedSet.isEmpty()) return
         val paths = adapter.checkedSet.map { position ->
-            file.children[position].path
+            fileInfo.children[position].path
         }
         if (rubbish) {
             CleanPathManager.addBlackList(paths)//添加黑名单
@@ -190,7 +197,7 @@ class FileListFragment(private val file: FileTreeInfo) : ViewBindingFragment<Fra
         CoroutinesHolder.default.launch {
             delay(500)
             adapter.checkedSet.forEach { position ->
-                FileTreeManager.updateCleanState(file.children[position])
+                FileTreeManager.updateCleanState(fileInfo.children[position])
                 notifyItems.add(position)
                 progressDialog.incrementProgressBy(1)
             }
@@ -201,6 +208,13 @@ class FileListFragment(private val file: FileTreeInfo) : ViewBindingFragment<Fra
                 }
                 progressDialog.dismiss()
             }
+        }
+    }
+
+    companion object {
+        fun newInstance(file: FileTreeInfo) = FileListFragment().apply {
+            FileTreeManager.Holder.put(file)   // rootFile.path: /storage/emulated/0
+            arguments = bundleOf("path" to file.path)
         }
     }
 }

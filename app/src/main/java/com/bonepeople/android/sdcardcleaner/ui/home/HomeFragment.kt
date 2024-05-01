@@ -43,7 +43,7 @@ class HomeFragment : ViewBindingFragment<FragmentHomeBinding>() {
         updateSummary()
         views.cardViewScan.singleClick { if (coroutineJob?.isActive == true) stopScan() else checkScanPermission { startScan() } }
         views.textViewClean.singleClick { if (coroutineJob?.isActive == true) stopClean() else startClean() }
-        views.textViewBrowse.singleClick { StandardActivity.call(FileListFragment(FileTreeManager.Summary.rootFile)).onResult { updateSummary() } }
+        views.textViewBrowse.singleClick { StandardActivity.call(FileListFragment.newInstance(FileTreeManager.Summary.rootFile)).onResult { updateSummary() } }
     }
 
     /**
