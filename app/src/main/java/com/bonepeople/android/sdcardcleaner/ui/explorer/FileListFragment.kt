@@ -1,6 +1,5 @@
 package com.bonepeople.android.sdcardcleaner.ui.explorer
 
-import android.app.ProgressDialog
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
@@ -140,21 +139,16 @@ class FileListFragment : ViewBindingFragment<FragmentFileListBinding>() {
             var job: Job? = null
             val notifyItems = ArrayList<Int>()
             //弹出删除进度对话框
-            val progressDialog = ProgressDialog(requireActivity())
-            progressDialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL)
-            progressDialog.setCancelable(false)
-            progressDialog.setMessage(getString(R.string.dialog_list_file_deleting))
-            progressDialog.setButton(ProgressDialog.BUTTON_NEGATIVE, getString(android.R.string.cancel)) { _, _ ->
-                job?.cancel()
-            }
-            progressDialog.max = adapter.checkedSet.size
-            progressDialog.show()
+            val progressDialogFragment = ProgressDialogFragment().setTitle(getString(R.string.dialog_list_file_deleting)).onCancel { job?.cancel() }
+            progressDialogFragment.setManagerAndTag(childFragmentManager, "progressDialog")
+            progressDialogFragment.show()
             //删除文件的协程
             job = CoroutinesHolder.io.launch {
+                var count = 0f
                 adapter.checkedSet.forEach { position ->
                     FileTreeManager.deleteFile(fileInfo.children[position - notifyItems.size], true)
                     notifyItems.add(position - notifyItems.size)
-                    progressDialog.incrementProgressBy(1)
+                    progressDialogFragment.setPercent(++count / adapter.checkedSet.size)
                 }
             }
             //文件删除流程结束后进行刷新
@@ -164,7 +158,7 @@ class FileListFragment : ViewBindingFragment<FragmentFileListBinding>() {
                         adapter.notifyItemRemoved(position)
                     }
                     adapter.refresh()
-                    progressDialog.dismiss()
+                    progressDialogFragment.dismiss()
                 }
             }
         }
@@ -187,26 +181,24 @@ class FileListFragment : ViewBindingFragment<FragmentFileListBinding>() {
         //更新文件标识及垃圾统计数据
         val notifyItems = ArrayList<Int>()
         //弹出处理进度对话框
-        val progressDialog = ProgressDialog(requireActivity())
-        progressDialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL)
-        progressDialog.setCancelable(false)
-        progressDialog.setMessage(getString(R.string.dialog_list_file_updating))
-        progressDialog.max = adapter.checkedSet.size
-        progressDialog.show()
+        val progressDialogFragment = ProgressDialogFragment().setTitle(getString(R.string.dialog_list_file_updating))
+        progressDialogFragment.setManagerAndTag(childFragmentManager, "progressDialog")
+        progressDialogFragment.show()
         //更新文件的协程
         CoroutinesHolder.default.launch {
             delay(500)
+            var count = 0f
             adapter.checkedSet.forEach { position ->
                 FileTreeManager.updateCleanState(fileInfo.children[position])
                 notifyItems.add(position)
-                progressDialog.incrementProgressBy(1)
+                progressDialogFragment.setPercent(++count / adapter.checkedSet.size)
             }
         }.invokeOnCompletion {//文件更新流程结束后进行刷新
             CoroutinesHolder.main.launch {
                 notifyItems.forEach { position ->
                     adapter.notifyItemChanged(position)
                 }
-                progressDialog.dismiss()
+                progressDialogFragment.dismiss()
             }
         }
     }
