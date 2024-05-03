@@ -69,7 +69,7 @@ data class FileTreeInfo(
     object FileSizeDescComparator : Comparator<FileTreeInfo> {
         override fun compare(file1: FileTreeInfo, file2: FileTreeInfo): Int {
             if (file1.size == file2.size) return 0
-            return if (file1.size < file2.size) -1 else 1
+            return if (file1.size > file2.size) -1 else 1
         }
     }
 
