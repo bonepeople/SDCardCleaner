@@ -5,11 +5,11 @@ import android.graphics.drawable.ColorDrawable
 import android.view.LayoutInflater
 import android.widget.PopupWindow
 import com.bonepeople.android.sdcardcleaner.data.FileTreeInfo
-import com.bonepeople.android.sdcardcleaner.databinding.PopupSortSelectorBinding
+import com.bonepeople.android.sdcardcleaner.databinding.PopupFileSortBinding
 import com.bonepeople.android.widget.util.AppView.singleClick
 
-class SortSelectorPopupWindow(context: Context) : PopupWindow(context) {
-    private val views = PopupSortSelectorBinding.inflate(LayoutInflater.from(context))
+class FileSortPopupWindow(context: Context) : PopupWindow(context) {
+    private val views = PopupFileSortBinding.inflate(LayoutInflater.from(context))
     private var selectAction: (Int) -> Unit = { }
 
     init {

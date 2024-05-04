@@ -9,7 +9,7 @@ import coil.load
 import com.bonepeople.android.base.viewbinding.ViewBindingRecyclerAdapter
 import com.bonepeople.android.sdcardcleaner.R
 import com.bonepeople.android.sdcardcleaner.data.FileTreeInfo
-import com.bonepeople.android.sdcardcleaner.databinding.ItemFileListBinding
+import com.bonepeople.android.sdcardcleaner.databinding.ItemFileExplorerBinding
 import com.bonepeople.android.sdcardcleaner.global.utils.NumberUtil
 import com.bonepeople.android.widget.ApplicationHolder
 import com.bonepeople.android.widget.util.AppView.gone
@@ -17,7 +17,7 @@ import com.bonepeople.android.widget.util.AppView.show
 import com.bonepeople.android.widget.util.AppView.singleClick
 import java.util.TreeSet
 
-class FileListAdapter(override val list: List<FileTreeInfo>, private val fragment: FileListFragment) : ViewBindingRecyclerAdapter<ItemFileListBinding, FileTreeInfo>() {
+class FileExplorerAdapter(override val list: List<FileTreeInfo>, private val fragment: FileExplorerFragment) : ViewBindingRecyclerAdapter<ItemFileExplorerBinding, FileTreeInfo>() {
     var multiSelect = false
         set(value) {
             field = value
@@ -25,7 +25,7 @@ class FileListAdapter(override val list: List<FileTreeInfo>, private val fragmen
         }
     val checkedSet = TreeSet<Int>()
 
-    override fun onBindView(views: ItemFileListBinding, data: FileTreeInfo, position: Int, payloads: List<Any>) {
+    override fun onBindView(views: ItemFileExplorerBinding, data: FileTreeInfo, position: Int, payloads: List<Any>) {
         if (payloads.isEmpty()) {
             //设置文件大小比例条
             val size = data.size.toDouble()

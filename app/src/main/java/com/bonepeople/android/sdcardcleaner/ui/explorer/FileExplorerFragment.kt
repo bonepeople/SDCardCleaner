@@ -15,7 +15,7 @@ import com.bonepeople.android.base.activity.StandardActivity
 import com.bonepeople.android.base.viewbinding.ViewBindingFragment
 import com.bonepeople.android.sdcardcleaner.R
 import com.bonepeople.android.sdcardcleaner.data.FileTreeInfo
-import com.bonepeople.android.sdcardcleaner.databinding.FragmentFileListBinding
+import com.bonepeople.android.sdcardcleaner.databinding.FragmentFileExplorerBinding
 import com.bonepeople.android.sdcardcleaner.global.CleanPathManager
 import com.bonepeople.android.sdcardcleaner.global.FileTreeManager
 import com.bonepeople.android.widget.CoroutinesHolder
@@ -27,13 +27,13 @@ import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
-class FileListFragment : ViewBindingFragment<FragmentFileListBinding>() {
+class FileExplorerFragment : ViewBindingFragment<FragmentFileExplorerBinding>() {
     private val fileInfo: FileTreeInfo by lazy { FileTreeManager.Holder.get(arguments?.getString("path") ?: "") ?: FileTreeInfo() }
-    private val adapter by lazy { FileListAdapter(fileInfo.children, this) }
+    private val adapter by lazy { FileExplorerAdapter(fileInfo.children, this) }
 
     override fun initView() {
         views.titleView.onActionClick {
-            SortSelectorPopupWindow(requireContext()).onSelected { sortType ->
+            FileSortPopupWindow(requireContext()).onSelected { sortType ->
                 if (fileInfo.sorted == sortType) return@onSelected //选择想用的排序方式，不再重复排序
                 when (sortType) {
                     FileTreeInfo.SortType.NAME_ASC -> {
@@ -204,7 +204,7 @@ class FileListFragment : ViewBindingFragment<FragmentFileListBinding>() {
     }
 
     companion object {
-        fun newInstance(file: FileTreeInfo) = FileListFragment().apply {
+        fun newInstance(file: FileTreeInfo) = FileExplorerFragment().apply {
             FileTreeManager.Holder.put(file)   // rootFile.path: /storage/emulated/0
             arguments = bundleOf("path" to file.path)
         }

@@ -16,7 +16,7 @@ import com.bonepeople.android.sdcardcleaner.data.FileTreeInfo
 import com.bonepeople.android.sdcardcleaner.data.GlobalSummaryInfo
 import com.bonepeople.android.sdcardcleaner.databinding.FragmentHomeBinding
 import com.bonepeople.android.sdcardcleaner.global.FileTreeManager
-import com.bonepeople.android.sdcardcleaner.ui.explorer.FileListFragment
+import com.bonepeople.android.sdcardcleaner.ui.explorer.FileExplorerFragment
 import com.bonepeople.android.sdcardcleaner.ui.setting.SettingFragment
 import com.bonepeople.android.widget.ApplicationHolder
 import com.bonepeople.android.widget.activity.result.launch
@@ -43,7 +43,7 @@ class HomeFragment : ViewBindingFragment<FragmentHomeBinding>() {
         updateSummary()
         views.cardViewScan.singleClick { if (coroutineJob?.isActive == true) stopScan() else checkScanPermission { startScan() } }
         views.textViewClean.singleClick { if (coroutineJob?.isActive == true) stopClean() else startClean() }
-        views.textViewBrowse.singleClick { StandardActivity.call(FileListFragment.newInstance(FileTreeManager.Summary.rootFile)).onResult { updateSummary() } }
+        views.textViewBrowse.singleClick { StandardActivity.call(FileExplorerFragment.newInstance(FileTreeManager.Summary.rootFile)).onResult { updateSummary() } }
     }
 
     /**

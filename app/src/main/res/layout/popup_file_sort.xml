@@ -11,7 +11,7 @@
         android:layout_height="wrap_content"
         android:drawablePadding="10dp"
         android:padding="10dp"
-        android:text="@string/popup_sort_selector_name"
+        android:text="@string/popup_file_sort_name"
         app:drawableStartCompat="@drawable/file_explorer_sort_name" />
 
     <TextView
@@ -20,6 +20,6 @@
         android:layout_height="wrap_content"
         android:drawablePadding="10dp"
         android:padding="10dp"
-        android:text="@string/popup_sort_selector_size"
+        android:text="@string/popup_file_sort_size"
         app:drawableStartCompat="@drawable/file_explorer_sort_size" />
 </LinearLayout>
