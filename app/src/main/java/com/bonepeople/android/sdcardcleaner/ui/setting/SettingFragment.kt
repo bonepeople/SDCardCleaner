@@ -6,9 +6,9 @@ import com.bonepeople.android.base.viewbinding.ViewBindingFragment
 import com.bonepeople.android.sdcardcleaner.App
 import com.bonepeople.android.sdcardcleaner.R
 import com.bonepeople.android.sdcardcleaner.databinding.FragmentSettingBinding
+import com.bonepeople.android.sdcardcleaner.global.utils.LogUtil
 import com.bonepeople.android.widget.ApplicationHolder
 import com.bonepeople.android.widget.CoroutinesHolder
-import com.bonepeople.android.widget.util.AppLog
 import com.bonepeople.android.widget.util.AppRandom
 import com.bonepeople.android.widget.util.AppTime
 import com.bonepeople.android.widget.util.AppView.singleClick
@@ -34,7 +34,7 @@ class SettingFragment : ViewBindingFragment<FragmentSettingBinding>() {
         CoroutinesHolder.io.launch {
             loadingDialog.show()
             val root = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOCUMENTS)
-            AppLog.defaultLog.debug(root.absolutePath)
+            LogUtil.app.debug(root.absolutePath)
             repeat(10) {
                 val dir = File(root, AppRandom.randomString(5))
                 dir.mkdirs()
