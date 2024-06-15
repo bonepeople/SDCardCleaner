@@ -5,12 +5,12 @@ plugins {
 
 android {
     namespace 'com.bonepeople.android.sdcardcleaner'
-    compileSdk 31
+    compileSdk 33
 
     defaultConfig {
         applicationId "com.bonepeople.android.sdcardcleaner"
         minSdk 23
-        targetSdk 31
+        targetSdk 33
         versionCode 11
         versionName "2.1.2"
     }
@@ -37,12 +37,12 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
     }
-    buildTypes.all {
+    buildTypes.configureEach {
         buildConfigField "long", "buildTime", "${System.currentTimeMillis()}"
     }
 
-    applicationVariants.all { variant ->
-        variant.outputs.all { output ->
+    applicationVariants.configureEach { variant ->
+        variant.outputs.configureEach { output ->
             def type = variant.buildType.name
             def releaseApkName = rootProject.name + '_' + type + "_" + versionName + '.apk'
             outputFileName = releaseApkName
@@ -54,8 +54,13 @@ android {
         targetCompatibility JavaVersion.VERSION_1_8
     }
 
+    kotlinOptions {
+        jvmTarget = "1.8"
+    }
+
     buildFeatures {
         viewBinding true
+        buildConfig true
     }
 }
 
