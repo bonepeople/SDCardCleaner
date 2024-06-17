@@ -11,6 +11,4 @@ deploymentTargetDropDown.xml
 gradle.xml
 compiler.xml
 migrations.xml
-/codeStyles/codeStyleConfig.xml
 /kotlinc.xml
-/codeStyles/Project.xml
