@@ -5,6 +5,7 @@ import com.bonepeople.android.base.viewbinding.ViewBindingFragment
 import com.bonepeople.android.sdcardcleaner.App
 import com.bonepeople.android.sdcardcleaner.R
 import com.bonepeople.android.sdcardcleaner.databinding.FragmentSettingBinding
+import com.bonepeople.android.sdcardcleaner.ui.setting.path.CleanPathListFragment
 import com.bonepeople.android.sdcardcleaner.ui.setting.test.TestFragment
 import com.bonepeople.android.widget.ApplicationHolder
 import com.bonepeople.android.widget.util.AppTime
@@ -15,8 +16,8 @@ import java.util.TimeZone
 class SettingFragment : ViewBindingFragment<FragmentSettingBinding>() {
     override fun initView() {
         views.titleView.title = getString(R.string.caption_text_set)
-        views.textViewWhite.singleClick { StandardActivity.open(CleanPathListFragment.newInstance(CleanPathListFragment.WHITE)) }
-        views.textViewBlack.singleClick { StandardActivity.open(CleanPathListFragment.newInstance(CleanPathListFragment.BLACK)) }
+        views.textViewWhite.singleClick { StandardActivity.open(CleanPathListFragment.newInstance(CleanPathListFragment.Mode.WHITE)) }
+        views.textViewBlack.singleClick { StandardActivity.open(CleanPathListFragment.newInstance(CleanPathListFragment.Mode.BLACK)) }
         views.textViewAbout.singleClick { StandardActivity.open(AboutFragment()) }
         views.textViewTest.switchShow(ApplicationHolder.debug) { it.singleClick { StandardActivity.open(TestFragment()) } }
         views.textViewVersion.run {
