@@ -21,11 +21,12 @@ import java.io.Serializable
 class CleanPathListFragment : ViewBindingFragment<FragmentCleanPathListBinding>() {
     private val viewModel: CleanPathListViewModel by viewModels { ViewModelFactory }
     private val listData = arrayListOf<String>()
-    private val adapter = CleanPathListAdapter(listData, this::onItemClick)
+    private val adapter = CleanPathListAdapter().onCLick(::onItemClick)
     private var mode: Mode = Mode.White
     override fun initView() {
         views.recyclerView.layoutManager = LinearLayoutManager(activity)
         views.recyclerView.addItemDecoration(DividerItemDecoration(activity, DividerItemDecoration.VERTICAL))
+        views.recyclerView.adapter = adapter
     }
 
     @Suppress("deprecation")
@@ -47,22 +48,25 @@ class CleanPathListFragment : ViewBindingFragment<FragmentCleanPathListBinding>(
                 }
             }
         }
-        views.recyclerView.adapter = adapter
+        if (listData.isEmpty()) {
+            views.textViewStatus.text = getString(R.string.state_emptyView)
+        } else {
+            adapter.submitList(listData)
+        }
     }
 
-    private fun onItemClick(index: Int) {
+    private fun onItemClick(data: String) {
         if (!FileTreeManager.scanning) {
             AlertDialog.Builder(requireActivity())
-                .setMessage(getString(R.string.dialog_list_path_remove, listData[index]))
+                .setMessage(getString(R.string.dialog_list_path_remove, data))
                 .setPositiveButton(android.R.string.ok) { _, _ ->
                     if (mode == Mode.White) {
-                        CleanPathManager.removeWhiteList(index)
+                        CleanPathManager.removeWhiteList(listData.indexOf(data))
                     } else {
-                        CleanPathManager.removeBlackList(index)
+                        CleanPathManager.removeBlackList(listData.indexOf(data))
                     }
-                    listData.removeAt(index)
-                    adapter.notifyItemRemoved(index)
-                    adapter.notifyItemRangeChanged(index, listData.size - index)
+                    listData.remove(data)
+                    adapter.submitList(listData)
                 }
                 .setNegativeButton(android.R.string.cancel, null)
                 .show()
