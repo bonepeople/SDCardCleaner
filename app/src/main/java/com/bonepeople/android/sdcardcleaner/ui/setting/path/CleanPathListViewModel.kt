@@ -9,27 +9,24 @@ import com.bonepeople.android.sdcardcleaner.global.CleanPathManager
 import com.bonepeople.android.widget.ApplicationHolder
 import kotlinx.coroutines.flow.MutableStateFlow
 
-class CleanPathListViewModel(private val mode: CleanPathListFragment.Mode) : ViewModel() {
-    val title = MutableStateFlow("")
+class CleanPathListViewModel(val mode: CleanPathListFragment.Mode) : ViewModel() {
     val listData = MutableStateFlow<List<String>>(emptyList())
-    val status = MutableStateFlow("")
+    val status = MutableStateFlow<Status>(Status.Nothing)
 
     init {
         viewModelScope.launchOnIO {
-            val basicPath = runCatching { Environment.getExternalStorageDirectory().path }.getOrDefault("")
-            val pathName = ApplicationHolder.app.getString(R.string.str_path_rootFile)
+            val rootPath = runCatching { Environment.getExternalStorageDirectory().path }.getOrDefault("")
+            val rootName = ApplicationHolder.app.getString(R.string.str_path_rootFile)
             when (mode) {
                 CleanPathListFragment.Mode.White -> {
-                    title.value = ApplicationHolder.app.getString(R.string.caption_text_white)
-                    CleanPathManager.whiteList.forEach { listData.value += it.replace(basicPath, pathName) }
+                    CleanPathManager.whiteList.forEach { listData.value += it.replace(rootPath, rootName) }
                 }
                 CleanPathListFragment.Mode.Black -> {
-                    title.value = ApplicationHolder.app.getString(R.string.caption_text_black)
-                    CleanPathManager.blackList.forEach { listData.value += it.replace(basicPath, pathName) }
+                    CleanPathManager.blackList.forEach { listData.value += it.replace(rootPath, rootName) }
                 }
             }
             if (listData.value.isEmpty()) {
-                status.value = ApplicationHolder.app.getString(R.string.state_emptyView)
+                status.value = Status.Empty
             }
         }
     }
@@ -40,5 +37,10 @@ class CleanPathListViewModel(private val mode: CleanPathListFragment.Mode) : Vie
             CleanPathListFragment.Mode.Black -> CleanPathManager.removeBlackList(listData.value.indexOf(data))
         }
         listData.value -= data
+    }
+
+    sealed class Status {
+        object Nothing : Status()
+        object Empty : Status()
     }
 }

@@ -22,23 +22,32 @@ class CleanPathListFragment : ViewBindingFragment<FragmentCleanPathListBinding>(
     private val adapter = CleanPathListAdapter().onCLick(::onItemClick)
 
     override fun initView() {
-        viewModel.title.observeWithLifecycle(viewLifecycleOwner) { views.titleView.title = it }
+        views.titleView.title = when (viewModel.mode) {
+            Mode.White -> getString(R.string.caption_text_white)
+            Mode.Black -> getString(R.string.caption_text_black)
+        }
         views.recyclerView.layoutManager = LinearLayoutManager(activity)
         views.recyclerView.addItemDecoration(DividerItemDecoration(activity, DividerItemDecoration.VERTICAL))
         views.recyclerView.adapter = adapter
         viewModel.listData.observeWithLifecycle(viewLifecycleOwner) { adapter.submitList(it) }
-        viewModel.status.observeWithLifecycle(viewLifecycleOwner) { views.textViewStatus.text = it }
+        viewModel.status.observeWithLifecycle(viewLifecycleOwner) {
+            views.textViewStatus.text = when (it) {
+                CleanPathListViewModel.Status.Nothing -> ""
+                CleanPathListViewModel.Status.Empty -> getString(R.string.state_emptyView)
+            }
+        }
     }
 
     private fun onItemClick(data: String) {
         if (!FileTreeManager.scanning) {
-            AlertDialog.Builder(requireActivity())
-                .setMessage(getString(R.string.dialog_list_path_remove, data))
-                .setPositiveButton(android.R.string.ok) { _, _ ->
+            with(AlertDialog.Builder(requireActivity())) {
+                setMessage(getString(R.string.dialog_list_path_remove, data))
+                setPositiveButton(android.R.string.ok) { _, _ ->
                     viewModel.clickItem(data)
                 }
-                .setNegativeButton(android.R.string.cancel, null)
-                .show()
+                setNegativeButton(android.R.string.cancel, null)
+                show()
+            }
         }
     }
 
