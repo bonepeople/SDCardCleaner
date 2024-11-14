@@ -3,6 +3,7 @@
     <JetCodeStyleSettings>
       <option name="LINE_BREAK_AFTER_MULTILINE_WHEN_ENTRY" value="false" />
       <option name="BLANK_LINES_BEFORE_DECLARATION_WITH_COMMENT_OR_ANNOTATION_ON_SEPARATE_LINE" value="0" />
+      <option name="CODE_STYLE_DEFAULTS" value="KOTLIN_OFFICIAL" />
     </JetCodeStyleSettings>
     <codeStyleSettings language="XML">
       <option name="FORCE_REARRANGE_MODE" value="1" />
@@ -118,6 +119,7 @@
       </arrangement>
     </codeStyleSettings>
     <codeStyleSettings language="kotlin">
+      <option name="CODE_STYLE_DEFAULTS" value="KOTLIN_OFFICIAL" />
       <option name="RIGHT_MARGIN" value="300" />
       <option name="KEEP_BLANK_LINES_IN_DECLARATIONS" value="1" />
       <option name="KEEP_BLANK_LINES_IN_CODE" value="1" />
