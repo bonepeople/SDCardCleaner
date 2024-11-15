@@ -3,7 +3,6 @@ package com.bonepeople.android.sdcardcleaner.ui.explorer
 import android.animation.ArgbEvaluator
 import android.content.pm.PackageInfo
 import android.content.pm.PackageManager
-import android.text.format.Formatter
 import androidx.constraintlayout.widget.ConstraintLayout
 import coil.load
 import com.bonepeople.android.base.viewbinding.ViewBindingRecyclerAdapter
@@ -12,6 +11,7 @@ import com.bonepeople.android.sdcardcleaner.data.FileTreeInfo
 import com.bonepeople.android.sdcardcleaner.databinding.ItemFileExplorerBinding
 import com.bonepeople.android.sdcardcleaner.global.utils.NumberUtil
 import com.bonepeople.android.widget.ApplicationHolder
+import com.bonepeople.android.widget.util.AppText
 import com.bonepeople.android.widget.util.AppView.gone
 import com.bonepeople.android.widget.util.AppView.show
 import com.bonepeople.android.widget.util.AppView.singleClick
@@ -65,16 +65,16 @@ class FileExplorerAdapter(override val list: List<FileTreeInfo>, private val fra
             //设置基本信息
             views.textViewName.text = data.name
             views.textViewDescription.text = when (data.type) {
-                FileTreeInfo.FileType.DIRECTORY -> views.root.context.getString(R.string.state_directory_size, Formatter.formatFileSize(views.root.context, data.size), data.fileCount)
+                FileTreeInfo.FileType.DIRECTORY -> views.root.context.getString(R.string.state_directory_size, AppText.formatFileSize(data.size), data.fileCount)
                 FileTreeInfo.FileType.ANDROID -> {
                     ApplicationHolder.app.packageManager.getPackageArchiveInfo(data.path, PackageManager.GET_ACTIVITIES)?.let { packageInfo: PackageInfo ->
                         val appName = packageInfo.applicationInfo.apply { publicSourceDir = data.path }.loadLabel(ApplicationHolder.app.packageManager)
-                        Formatter.formatFileSize(views.root.context, data.size) + " [${appName}-${packageInfo.versionName}]"
+                        AppText.formatFileSize(data.size) + " [${appName}-${packageInfo.versionName}]"
                     }
                 }
 
                 else -> null
-            } ?: Formatter.formatFileSize(views.root.context, data.size)
+            } ?: AppText.formatFileSize(data.size)
             views.root.singleClick(50) { fragment.clickFile(position) }
             views.root.setOnLongClickListener {
                 if (multiSelect) {

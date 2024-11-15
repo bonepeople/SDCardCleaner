@@ -3,8 +3,9 @@ package com.bonepeople.android.sdcardcleaner.global
 import com.bonepeople.android.sdcardcleaner.global.utils.CommonUtil
 import com.bonepeople.android.sdcardcleaner.global.utils.DataUtil
 import com.bonepeople.android.sdcardcleaner.global.utils.DataUtil.AppKey
+import com.bonepeople.android.widget.CoroutinesHolder
 import com.bonepeople.android.widget.util.AppGson
-import com.bonepeople.android.widget.util.AppStorage
+import kotlinx.coroutines.launch
 
 object CleanPathManager {
     val whiteList: ArrayList<String> by lazy {
@@ -16,15 +17,10 @@ object CleanPathManager {
         AppGson.toObject(DataUtil.app.getStringSync(AppKey.BLACK_LIST, "[]"))
     }
 
+    // remove after 2.1.5
     private fun transferData() {
-        if (!DataUtil.app.getBooleanSync(AppKey.ALREADY_TRANSFER_CLEAN_PATH)) {
-            val whiteList = AppStorage.getString(Keys.WHITE_LIST, "[]")
-            val blackList = AppStorage.getString(Keys.BLACK_LIST, "[]")
-
-            DataUtil.app.putStringSync(AppKey.WHITE_LIST, whiteList)
-            DataUtil.app.putStringSync(AppKey.BLACK_LIST, blackList)
-
-            DataUtil.app.putBooleanSync(AppKey.ALREADY_TRANSFER_CLEAN_PATH, true)
+        CoroutinesHolder.io.launch {
+            DataUtil.app.remove(AppKey.ALREADY_TRANSFER_CLEAN_PATH)
         }
     }
 
