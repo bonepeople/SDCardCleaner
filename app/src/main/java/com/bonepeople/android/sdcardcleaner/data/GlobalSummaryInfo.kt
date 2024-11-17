@@ -15,15 +15,21 @@ data class GlobalSummaryInfo(
     }
 
     fun getRubbishPercent(): Float {
-        return NumberUtil.div(rubbishSize.toDouble(), totalSpace.toDouble(), 3).toFloat()
+        return kotlin.runCatching {
+            NumberUtil.div(rubbishSize.toDouble(), totalSpace.toDouble(), 3).toFloat()
+        }.getOrDefault(0f)
     }
 
     fun getFilePercent(): Float {
-        return NumberUtil.div(fileSize.toDouble(), totalSpace.toDouble(), 3).toFloat()
+        return kotlin.runCatching {
+            NumberUtil.div(fileSize.toDouble(), totalSpace.toDouble(), 3).toFloat()
+        }.getOrDefault(0f)
     }
 
     fun getSystemPercent(): Float {
         //此数据仅用于StorageSummary中的展示，并不是单纯的系统空间占比
-        return (1 - NumberUtil.div(freeSpace.toDouble(), totalSpace.toDouble(), 3)).toFloat()
+        return kotlin.runCatching {
+            (1 - NumberUtil.div(freeSpace.toDouble(), totalSpace.toDouble(), 3)).toFloat()
+        }.getOrDefault(0f)
     }
 }

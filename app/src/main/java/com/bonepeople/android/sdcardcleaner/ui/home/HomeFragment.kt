@@ -7,13 +7,13 @@ import android.os.Build
 import android.os.Environment
 import android.provider.Settings
 import android.widget.Toast
+import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import com.bonepeople.android.base.activity.StandardActivity
-import com.bonepeople.android.base.util.CoroutineExtension.launchOnIO
+import com.bonepeople.android.base.util.FlowExtension.observeWithLifecycle
 import com.bonepeople.android.base.viewbinding.ViewBindingFragment
 import com.bonepeople.android.sdcardcleaner.R
 import com.bonepeople.android.sdcardcleaner.data.FileTreeInfo
-import com.bonepeople.android.sdcardcleaner.data.GlobalSummaryInfo
 import com.bonepeople.android.sdcardcleaner.databinding.FragmentHomeBinding
 import com.bonepeople.android.sdcardcleaner.global.FileTreeManager
 import com.bonepeople.android.sdcardcleaner.ui.explorer.FileExplorerFragment
@@ -25,12 +25,11 @@ import com.bonepeople.android.widget.util.AppTime
 import com.bonepeople.android.widget.util.AppToast
 import com.bonepeople.android.widget.util.AppView.show
 import com.bonepeople.android.widget.util.AppView.singleClick
-import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
 class HomeFragment : ViewBindingFragment<FragmentHomeBinding>() {
-    private var coroutineJob: Job? = null
+    private val viewModel: HomeViewModel by viewModels()
     private var quit = false
 
     override fun initView() {
@@ -40,33 +39,108 @@ class HomeFragment : ViewBindingFragment<FragmentHomeBinding>() {
             singleClick { StandardActivity.open(SettingFragment()) }
             show()
         }
-        updateSummary()
-        views.cardViewScan.singleClick { if (coroutineJob?.isActive == true) stopScan() else checkScanPermission { startScan() } }
-        views.textViewClean.singleClick { if (coroutineJob?.isActive == true) stopClean() else startClean() }
-        views.textViewBrowse.singleClick { StandardActivity.call(FileExplorerFragment.newInstance(FileTreeManager.Summary.rootFile)).onResult { updateSummary() } }
-    }
+        viewModel.currentSummery.observeWithLifecycle(viewLifecycleOwner) { views.storageSummary.updateView(it) }
+        viewModel.processTime.observeWithLifecycle(viewLifecycleOwner) {
+            val text = if (it == 0L) "" else getString(R.string.state_process_time, AppTime.getTimeString(it))
+            views.textViewTime.text = text
+        }
+        viewModel.pageState.observeWithLifecycle(viewLifecycleOwner) { state: HomeState ->
+            when (state) {
+                is HomeState.Init -> {
+                    views.textViewState.text = getString(R.string.state_ready)
+                    views.cardViewScan.isEnabled = false
+                    views.cardViewScan.alpha = 0.3f
+                    views.textViewScan.text = getString(R.string.caption_button_startScan)
+                    views.textViewClean.isEnabled = false
+                    views.textViewClean.text = getString(R.string.caption_button_startClean)
+                    views.textViewBrowse.isEnabled = false
+                }
+                is HomeState.Ready -> {
+                    views.textViewState.text = getString(R.string.state_ready)
+                    views.cardViewScan.isEnabled = true
+                    views.cardViewScan.alpha = 1f
+                    views.textViewScan.text = getString(R.string.caption_button_startScan)
+                    views.textViewClean.isEnabled = false
+                    views.textViewClean.text = getString(R.string.caption_button_startClean)
+                    views.textViewBrowse.isEnabled = false
+                }
 
-    /**
-     * 更新统计信息
-     */
-    private fun updateSummary() {
-        val summaryInfo = GlobalSummaryInfo(
-            totalSpace = FileTreeManager.Summary.totalSpace,
-            freeSpace = FileTreeManager.Summary.freeSpace,
-            fileCount = FileTreeManager.Summary.rootFile.fileCount,
-            fileSize = FileTreeManager.Summary.rootFile.size,
-            rubbishCount = FileTreeManager.Summary.rootFile.cleanState.count,
-            rubbishSize = FileTreeManager.Summary.rootFile.cleanState.size
-        )
-        views.storageSummary.updateView(summaryInfo)
-    }
+                HomeState.ScanExecuting -> {
+                    views.textViewState.text = getString(R.string.state_scan_executing)
+                    views.cardViewScan.isEnabled = true
+                    views.cardViewScan.alpha = 1f
+                    views.textViewScan.text = getString(R.string.caption_button_stopScan)
+                    views.textViewClean.isEnabled = false
+                    views.textViewClean.text = getString(R.string.caption_button_startClean)
+                    views.textViewBrowse.isEnabled = false
+                }
+                HomeState.ScanStopping -> {
+                    views.textViewState.text = getString(R.string.state_scan_stopping)
+                    views.cardViewScan.isEnabled = false
+                    views.cardViewScan.alpha = 0.3f
+                    views.textViewScan.text = getString(R.string.caption_button_stopScan)
+                    views.textViewClean.isEnabled = false
+                    views.textViewClean.text = getString(R.string.caption_button_startClean)
+                    views.textViewBrowse.isEnabled = false
+                }
+                HomeState.ScanFinish -> {
+                    views.textViewState.text = getString(R.string.state_scan_finish)
+                    views.cardViewScan.isEnabled = true
+                    views.cardViewScan.alpha = 1f
+                    views.textViewScan.text = getString(R.string.caption_button_startScan)
+                    views.textViewClean.isEnabled = true
+                    views.textViewClean.text = getString(R.string.caption_button_startClean)
+                    views.textViewBrowse.isEnabled = true
+                }
 
-    /**
-     * 更新处理时间
-     */
-    private fun updateProcessTime(startTime: Long) {
-        val time = System.currentTimeMillis() - startTime
-        views.textViewTime.text = getString(R.string.state_process_time, AppTime.getTimeString(time))
+                HomeState.CleanExecuting -> {
+                    views.textViewState.text = getString(R.string.state_clean_executing)
+                    views.cardViewScan.isEnabled = false
+                    views.cardViewScan.alpha = 0.3f
+                    views.textViewScan.text = getString(R.string.caption_button_startScan)
+                    views.textViewClean.isEnabled = true
+                    views.textViewClean.text = getString(R.string.caption_button_stopClean)
+                    views.textViewBrowse.isEnabled = true
+                }
+                HomeState.CleanStopping -> {
+                    views.textViewState.text = getString(R.string.state_clean_stopping)
+                    views.cardViewScan.isEnabled = false
+                    views.cardViewScan.alpha = 0.3f
+                    views.textViewScan.text = getString(R.string.caption_button_startScan)
+                    views.textViewClean.isEnabled = false
+                    views.textViewClean.text = getString(R.string.caption_button_stopClean)
+                    views.textViewBrowse.isEnabled = true
+                }
+                HomeState.CleanFinish -> {
+                    views.textViewState.text = getString(R.string.state_clean_finish)
+                    views.cardViewScan.isEnabled = true
+                    views.cardViewScan.alpha = 1f
+                    views.textViewScan.text = getString(R.string.caption_button_startScan)
+                    views.textViewClean.isEnabled = true
+                    views.textViewClean.text = getString(R.string.caption_button_startClean)
+                    views.textViewBrowse.isEnabled = true
+                }
+            }
+        }
+        views.cardViewScan.singleClick {
+            if (viewModel.pageState.value != HomeState.ScanExecuting) {
+                checkScanPermission { viewModel.startScan() }
+            } else {
+                viewModel.stopScan()
+            }
+        }
+        views.textViewClean.singleClick {
+            if (viewModel.pageState.value != HomeState.CleanExecuting) {
+                viewModel.startClean()
+            } else {
+                viewModel.stopClean()
+            }
+        }
+        views.textViewBrowse.singleClick {
+            StandardActivity.call(FileExplorerFragment.newInstance(FileTreeManager.Summary.rootFile)).onResult {
+                viewModel.updateSummary()
+            }
+        }
     }
 
     /**
@@ -102,106 +176,6 @@ class HomeFragment : ViewBindingFragment<FragmentHomeBinding>() {
                     }
                 }
         }
-    }
-
-    /**
-     * 开始扫描文件
-     */
-    @Suppress("deprecation")
-    private fun startScan() {
-        //更新界面，状态信息、按钮名称、按钮状态
-        views.textViewState.text = getString(R.string.state_scan_executing)
-        views.textViewScan.text = getString(R.string.caption_button_stopScan)
-        views.textViewClean.isEnabled = false
-        views.textViewBrowse.isEnabled = false
-        val startTime = System.currentTimeMillis() //记录开始时间
-        FileTreeManager.scanning = true //设置扫描状态为true
-        coroutineJob = viewLifecycleOwner.lifecycleScope.launch {
-            launchOnIO { //开启IO协程扫描文件
-                val file = Environment.getExternalStorageDirectory()
-                FileTreeManager.Summary.rootFile = FileTreeInfo()
-                //使用Dispatchers.IO调度器开启的协程占用的线程数是有上限的，在所有线程都被使用时，新的协程会等待进行中协程释放线程
-                FileTreeManager.scanFile(null, FileTreeManager.Summary.rootFile, file)
-                coroutineJob?.cancel()
-            }
-            launch { //开启UI协程更新界面，每500毫秒更新一次
-                while (true) {
-                    delay(500)
-                    updateProcessTime(startTime)
-                    updateSummary()
-                }
-            }
-        }
-        coroutineJob?.invokeOnCompletion { //协程执行完毕后，更新界面
-            viewLifecycleOwner.lifecycleScope.launch {
-                views.textViewState.text = getString(R.string.state_scan_finish)
-                views.textViewScan.text = getString(R.string.caption_button_startScan)
-                views.cardViewScan.isEnabled = true
-                views.cardViewScan.alpha = 1f
-                views.textViewClean.isEnabled = true
-                views.textViewBrowse.isEnabled = true
-                FileTreeManager.scanning = false
-                updateProcessTime(startTime)
-                updateSummary()
-            }
-        }
-    }
-
-    /**
-     * 停止扫描文件
-     */
-    private fun stopScan() {
-        views.textViewState.text = getString(R.string.state_scan_stopping)
-        views.cardViewScan.isEnabled = false
-        views.cardViewScan.alpha = 0.3f
-        coroutineJob?.cancel()
-    }
-
-    /**
-     * 开始执行清理逻辑
-     */
-    private fun startClean() {
-        //更新界面，状态信息、按钮名称、按钮状态
-        views.textViewState.text = getString(R.string.state_clean_executing)
-        views.textViewClean.text = getString(R.string.caption_button_stopClean)
-        views.cardViewScan.isEnabled = false
-        views.cardViewScan.alpha = 0.3f
-        views.textViewBrowse.isEnabled = false
-        val startTime = System.currentTimeMillis() //记录开始时间
-        coroutineJob = viewLifecycleOwner.lifecycleScope.launch {
-            launchOnIO { //开启IO协程清理文件
-                FileTreeManager.deleteFile(FileTreeManager.Summary.rootFile, false)
-                coroutineJob?.cancel()
-            }
-            launch { //开启UI协程更新界面，每500毫秒更新一次
-                while (true) {
-                    delay(500)
-                    updateProcessTime(startTime)
-                    updateSummary()
-                }
-            }
-        }
-        coroutineJob?.invokeOnCompletion { //协程执行完毕后，更新界面
-            viewLifecycleOwner.lifecycleScope.launch {
-                views.textViewState.text = getString(R.string.state_clean_finish)
-                views.textViewClean.text = getString(R.string.caption_button_startClean)
-                views.cardViewScan.isEnabled = true
-                views.cardViewScan.alpha = 1f
-                views.textViewClean.isEnabled = true
-                views.textViewBrowse.isEnabled = true
-                updateProcessTime(startTime)
-                updateSummary()
-            }
-        }
-    }
-
-    /**
-     * 停止清理逻辑
-     */
-    private fun stopClean() {
-        views.textViewState.text = getString(R.string.state_clean_stopping)
-        views.textViewClean.isEnabled = false
-        coroutineJob?.cancel()
     }
 
     override fun onBackPressed() {

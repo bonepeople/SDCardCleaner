@@ -67,6 +67,7 @@ object FileTreeManager {
                         //为防止无意义的遍历，在协程被取消时提前返回
                         //不提前返回也不会产生异常，已处于取消状态的coroutineScope不会再创建新的协程
                         if (!isActive) return@coroutineScope
+                        // 开启的协程占用的线程数是有上限的，在所有线程都被使用时，新的协程会等待进行中协程释放线程
                         launch {
                             scanFile(fileInfo, FileTreeInfo(), it)
                         }
