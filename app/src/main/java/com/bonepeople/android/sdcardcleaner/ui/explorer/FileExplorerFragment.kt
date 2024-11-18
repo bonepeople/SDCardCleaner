@@ -74,7 +74,7 @@ class FileExplorerFragment : ViewBindingFragment<FragmentFileExplorerBinding>() 
             fileInfo.name
         }
         views.titleView.title = title
-        views.textViewPath.text = fileInfo.path.replace(FileTreeManager.Summary.rootFile.path, getString(R.string.str_path_rootFile))
+        views.textViewPath.text = fileInfo.path
         views.textViewEmpty.switchVisible(fileInfo.children.isEmpty())
         views.recyclerView.switchVisible(fileInfo.children.isNotEmpty()) { recyclerView: RecyclerView ->
             recyclerView.adapter = adapter
