@@ -38,9 +38,9 @@ class HomeFragment : ViewBindingFragment<FragmentHomeBinding>() {
             show()
         }
         updateSummary()
-        views.buttonScan.singleClick { if (coroutineJob?.isActive == true) stopScan() else checkScanPermission { startScan() } }
-        views.buttonClean.singleClick { if (coroutineJob?.isActive == true) stopClean() else startClean() }
-        views.buttonView.singleClick { StandardActivity.call(FileListFragment(FileTreeManager.Summary.rootFile)).onResult { updateSummary() } }
+        views.cardViewScan.singleClick { if (coroutineJob?.isActive == true) stopScan() else checkScanPermission { startScan() } }
+        views.textViewClean.singleClick { if (coroutineJob?.isActive == true) stopClean() else startClean() }
+        views.textViewBrowse.singleClick { StandardActivity.call(FileListFragment(FileTreeManager.Summary.rootFile)).onResult { updateSummary() } }
     }
 
     /**
@@ -108,9 +108,9 @@ class HomeFragment : ViewBindingFragment<FragmentHomeBinding>() {
     private fun startScan() {
         //更新界面，状态信息、按钮名称、按钮状态
         views.textViewState.text = getString(R.string.state_scan_executing)
-        views.buttonScan.text = getString(R.string.caption_button_stopScan)
-        views.buttonClean.isEnabled = false
-        views.buttonView.isEnabled = false
+        views.textViewScan.text = getString(R.string.caption_button_stopScan)
+        views.textViewClean.isEnabled = false
+        views.textViewBrowse.isEnabled = false
         val startTime = System.currentTimeMillis() //记录开始时间
         FileTreeManager.scanning = true //设置扫描状态为true
         coroutineJob = launch {
@@ -132,10 +132,11 @@ class HomeFragment : ViewBindingFragment<FragmentHomeBinding>() {
         coroutineJob?.invokeOnCompletion { //协程执行完毕后，更新界面
             launch {
                 views.textViewState.text = getString(R.string.state_scan_finish)
-                views.buttonScan.text = getString(R.string.caption_button_startScan)
-                views.buttonScan.isEnabled = true
-                views.buttonClean.isEnabled = true
-                views.buttonView.isEnabled = true
+                views.textViewScan.text = getString(R.string.caption_button_startScan)
+                views.cardViewScan.isEnabled = true
+                views.cardViewScan.alpha = 1f
+                views.textViewClean.isEnabled = true
+                views.textViewBrowse.isEnabled = true
                 FileTreeManager.scanning = false
                 updateProcessTime(startTime)
                 updateSummary()
@@ -148,7 +149,8 @@ class HomeFragment : ViewBindingFragment<FragmentHomeBinding>() {
      */
     private fun stopScan() {
         views.textViewState.text = getString(R.string.state_scan_stopping)
-        views.buttonScan.isEnabled = false
+        views.cardViewScan.isEnabled = false
+        views.cardViewScan.alpha = 0.3f
         coroutineJob?.cancel()
     }
 
@@ -158,9 +160,10 @@ class HomeFragment : ViewBindingFragment<FragmentHomeBinding>() {
     private fun startClean() {
         //更新界面，状态信息、按钮名称、按钮状态
         views.textViewState.text = getString(R.string.state_clean_executing)
-        views.buttonClean.text = getString(R.string.caption_button_stopClean)
-        views.buttonScan.isEnabled = false
-        views.buttonView.isEnabled = false
+        views.textViewClean.text = getString(R.string.caption_button_stopClean)
+        views.cardViewScan.isEnabled = false
+        views.cardViewScan.alpha = 0.3f
+        views.textViewBrowse.isEnabled = false
         val startTime = System.currentTimeMillis() //记录开始时间
         coroutineJob = launch {
             launchOnIO { //开启IO协程清理文件
@@ -178,10 +181,11 @@ class HomeFragment : ViewBindingFragment<FragmentHomeBinding>() {
         coroutineJob?.invokeOnCompletion { //协程执行完毕后，更新界面
             launch {
                 views.textViewState.text = getString(R.string.state_clean_finish)
-                views.buttonClean.text = getString(R.string.caption_button_startClean)
-                views.buttonScan.isEnabled = true
-                views.buttonClean.isEnabled = true
-                views.buttonView.isEnabled = true
+                views.textViewClean.text = getString(R.string.caption_button_startClean)
+                views.cardViewScan.isEnabled = true
+                views.cardViewScan.alpha = 1f
+                views.textViewClean.isEnabled = true
+                views.textViewBrowse.isEnabled = true
                 updateProcessTime(startTime)
                 updateSummary()
             }
@@ -193,7 +197,7 @@ class HomeFragment : ViewBindingFragment<FragmentHomeBinding>() {
      */
     private fun stopClean() {
         views.textViewState.text = getString(R.string.state_clean_stopping)
-        views.buttonClean.isEnabled = false
+        views.textViewClean.isEnabled = false
         coroutineJob?.cancel()
     }
 

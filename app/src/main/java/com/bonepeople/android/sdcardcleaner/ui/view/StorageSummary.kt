@@ -16,8 +16,11 @@ class StorageSummary(context: Context, attrs: AttributeSet?) : ConstraintLayout(
     private val views = ViewStorageSummaryBinding.inflate(LayoutInflater.from(context), this, true)
     private val percentConstraintSet = ConstraintSet()
 
-    override fun onFinishInflate() {
-        super.onFinishInflate()
+    init {
+        initView()
+    }
+
+    private fun initView() {
         views.blockPercent.children.forEachIndexed { index, view ->
             if (view.id == -1) {
                 view.id = index + 1
