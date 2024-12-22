@@ -95,17 +95,29 @@ class FileListFragment(private val file: FileTreeInfo) : ViewBindingFragment<Fra
             adapter.notifyItemChanged(position, "CheckBox")
         } else {//处于浏览状态
             val child = file.children[position]
-            if (child.type == FileTreeInfo.FileType.DIRECTORY) { //文件夹
-                StandardActivity.call(FileListFragment(child)).onResult { adapter.refresh() }
-            } else { //文件
-                kotlin.runCatching {
+            when (child.type) {
+                FileTreeInfo.FileType.DIRECTORY -> { // 文件夹
+                    StandardActivity.call(FileListFragment(child)).onResult { adapter.refresh() }
+                }
+
+                FileTreeInfo.FileType.ANDROID -> {
+                    // 安装app
                     val uri = Uri.parse(child.path)
                     val intent = Intent(Intent.ACTION_VIEW)
-                    val mimeType = MimeTypeMap.getSingleton().getMimeTypeFromExtension(MimeTypeMap.getFileExtensionFromUrl(child.path))
-                    intent.setDataAndType(uri, mimeType)
+                    intent.setDataAndType(uri, "application/vnd.android.package-archive")
                     startActivity(intent)
-                }.getOrElse {
-                    AppToast.show("cannot open")
+                }
+
+                else -> { // 其他文件
+                    kotlin.runCatching {
+                        val uri = Uri.parse(child.path)
+                        val intent = Intent(Intent.ACTION_VIEW)
+                        val mimeType = MimeTypeMap.getSingleton().getMimeTypeFromExtension(MimeTypeMap.getFileExtensionFromUrl(child.path))
+                        intent.setDataAndType(uri, mimeType)
+                        startActivity(intent)
+                    }.getOrElse {
+                        AppToast.show("cannot open")
+                    }
                 }
             }
         }
