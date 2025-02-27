@@ -16,8 +16,8 @@ import java.util.TimeZone
 class SettingFragment : ViewBindingFragment<FragmentSettingBinding>() {
     override fun initView() {
         views.titleView.title = getString(R.string.caption_text_set)
-        views.textViewWhite.singleClick { StandardActivity.open(CleanPathListFragment.newInstance(CleanPathListFragment.Mode.WHITE)) }
-        views.textViewBlack.singleClick { StandardActivity.open(CleanPathListFragment.newInstance(CleanPathListFragment.Mode.BLACK)) }
+        views.textViewWhite.singleClick { StandardActivity.open(CleanPathListFragment.newInstance(CleanPathListFragment.Mode.White)) }
+        views.textViewBlack.singleClick { StandardActivity.open(CleanPathListFragment.newInstance(CleanPathListFragment.Mode.Black)) }
         views.textViewAbout.singleClick { StandardActivity.open(AboutFragment()) }
         views.textViewTest.switchShow(ApplicationHolder.debug) { it.singleClick { StandardActivity.open(TestFragment()) } }
         views.textViewVersion.run {
