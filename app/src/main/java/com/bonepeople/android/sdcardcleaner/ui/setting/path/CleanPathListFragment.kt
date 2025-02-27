@@ -1,7 +1,6 @@
 package com.bonepeople.android.sdcardcleaner.ui.setting.path
 
 import android.os.Bundle
-import android.os.Environment
 import androidx.appcompat.app.AlertDialog
 import androidx.core.os.bundleOf
 import androidx.fragment.app.viewModels
@@ -11,48 +10,24 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewmodel.CreationExtras
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.bonepeople.android.base.util.FlowExtension.observeWithLifecycle
 import com.bonepeople.android.base.viewbinding.ViewBindingFragment
 import com.bonepeople.android.sdcardcleaner.R
 import com.bonepeople.android.sdcardcleaner.databinding.FragmentCleanPathListBinding
-import com.bonepeople.android.sdcardcleaner.global.CleanPathManager
 import com.bonepeople.android.sdcardcleaner.global.FileTreeManager
 import java.io.Serializable
 
 class CleanPathListFragment : ViewBindingFragment<FragmentCleanPathListBinding>() {
     private val viewModel: CleanPathListViewModel by viewModels { ViewModelFactory }
-    private val listData = arrayListOf<String>()
     private val adapter = CleanPathListAdapter().onCLick(::onItemClick)
-    private var mode: Mode = Mode.White
+
     override fun initView() {
+        viewModel.title.observeWithLifecycle(viewLifecycleOwner) { views.titleView.title = it }
         views.recyclerView.layoutManager = LinearLayoutManager(activity)
         views.recyclerView.addItemDecoration(DividerItemDecoration(activity, DividerItemDecoration.VERTICAL))
         views.recyclerView.adapter = adapter
-    }
-
-    @Suppress("deprecation")
-    override fun initData(savedInstanceState: Bundle?) {
-        mode = arguments?.getSerializable("mode") as? Mode ?: Mode.White
-        val basicPath = Environment.getExternalStorageDirectory().path
-        when (mode) {
-            Mode.White -> {
-                views.titleView.title = getString(R.string.caption_text_white)
-                CleanPathManager.whiteList.forEach {
-                    listData.add(it.replace(basicPath, getString(R.string.str_path_rootFile)))
-                }
-            }
-
-            Mode.Black -> {
-                views.titleView.title = getString(R.string.caption_text_black)
-                CleanPathManager.blackList.forEach {
-                    listData.add(it.replace(basicPath, getString(R.string.str_path_rootFile)))
-                }
-            }
-        }
-        if (listData.isEmpty()) {
-            views.textViewStatus.text = getString(R.string.state_emptyView)
-        } else {
-            adapter.submitList(listData)
-        }
+        viewModel.listData.observeWithLifecycle(viewLifecycleOwner) { adapter.submitList(it) }
+        viewModel.status.observeWithLifecycle(viewLifecycleOwner) { views.textViewStatus.text = it }
     }
 
     private fun onItemClick(data: String) {
@@ -60,13 +35,7 @@ class CleanPathListFragment : ViewBindingFragment<FragmentCleanPathListBinding>(
             AlertDialog.Builder(requireActivity())
                 .setMessage(getString(R.string.dialog_list_path_remove, data))
                 .setPositiveButton(android.R.string.ok) { _, _ ->
-                    if (mode == Mode.White) {
-                        CleanPathManager.removeWhiteList(listData.indexOf(data))
-                    } else {
-                        CleanPathManager.removeBlackList(listData.indexOf(data))
-                    }
-                    listData.remove(data)
-                    adapter.submitList(listData)
+                    viewModel.clickItem(data)
                 }
                 .setNegativeButton(android.R.string.cancel, null)
                 .show()
