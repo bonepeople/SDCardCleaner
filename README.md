@@ -26,3 +26,27 @@ Android手机SD卡清理工具
 
 ### 警告
 使用本程序删除的文件均由用户指定，一切删除后果均由用户承担。
+
+
+
+
+
+
+## SDCard v2.1.3 Release Note
+
++ Refactored `CleanPathListFragment` with MVVM architecture
+  > Improved stability by separating UI and business logic, reducing potential crashes during page recreation.  
+  > Optimized performance for a smoother user experience.  
+
+
+
+
+
+
+
+
+
+
+
+
+
